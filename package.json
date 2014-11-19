@@ -1,0 +1,12 @@
+{
+  "name": "Site-Tester",
+  "description": "Test sites for errors",
+  "dependencies": {
+    "express": "^4.10.2",
+    "jade": "^1.7.0",
+    "phantomas": "^1.7.0",
+    "phapper": "^0.1.9",
+    "serve-index": "^1.5.0",
+    "socket.io": "^1.2.0"
+  }
+}
