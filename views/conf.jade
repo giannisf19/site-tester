@@ -1,0 +1,24 @@
+doctype html
+html
+    head
+        include partials/head
+    body
+        .container-fluid
+            include partials/navbar
+            .col-xs-4
+                h1 Settings
+                form(role='form', id='main-input-box')
+                    div.input-group
+                        input(type='text', placeholder='http://example.com', name='item', data-bind="value: newItem, valueUpdate: 'afterkeydown'").form-control
+                        span.input-group-btn
+                            input(type='submit' value='Add' data-bind="click: add, enable: isValid()").btn.btn-primary
+
+                    ol(data-bind="foreach: urls").list-group
+                        li.list-group-item
+                            span(data-bind="text: $data")
+                            button(data-bind="click: function() {$root.remove($data)}").btn-group.pull-right
+                                i.glyphicon.glyphicon-trash
+            .col-xs-8
+                h2 Run Scheduler
+
+    include partials/footer

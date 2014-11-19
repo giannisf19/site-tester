@@ -19,9 +19,16 @@ var test = new engine('http://google.com', {});
 
 
 app.get('/', function(req, res) {
-   res.render('index');
+    app.locals.activePage = 'main'
+    res.render('index');
 });
 
+
+app.get('/conf', function(req, res){
+    app.locals.activePage = 'conf'
+    app.locals.settings =  JSON.stringify({urls: ['ena', 'dio']});
+    res.render('conf');
+});
 
 server.listen(300, function() {
     console.log('Listening on port ' + server.address().port);

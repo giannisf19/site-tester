@@ -5,3 +5,23 @@ html
     body
        .container-fluid
             include partials/navbar
+           .row.clearfix
+               .col-xs-3#page-selector-menu
+                   ul.nav.nav-tabs.tabs-left
+                       li.active
+                           a(data-toggle='tab', href='#solun') solun
+                       li
+                           a(data-toggle='tab', href='#ellinair') ellinair
+
+               .col-xs-9
+                   .row.clearfix
+                        .btn-group
+                             button.btn Graph
+                   .tab-content.top-buffer
+                       .tab-pane.active#solun
+                           p solun page
+                       .tab-pane#ellinair
+                           p ellinair page
+
+
+    include partials/footer

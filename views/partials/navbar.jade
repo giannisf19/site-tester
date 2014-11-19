@@ -1,5 +1,14 @@
-.row.clearfix
-    .col-lg-2
-        p logo
-    .col-lg-10
-        p menu
+-var activeConf = (activePage == 'conf' ? 'active' : '');
+-var activeMain = (!activeConf ? 'active' : '' );
+
+
+.row.clearfix#navbar
+    .colapse.navbar-collapse
+        .col-lg-2
+            .i.fa.fa-3x.fa-home
+        .col-lg-10
+            ul.nav.nav-tabs
+                li(class='#{activeMain}')
+                    a(href='/') Results
+                li(class='#{activeConf}')
+                    a(href='/conf') Configuration
