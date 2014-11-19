@@ -11,7 +11,7 @@ var viewModel = function(settings) {
 
 
     var count =0;
-    var socket = io.connect('http://localhost:300');
+   // var socket = io.connect('http://localhost:300');
 
     self.newItem = ko.observable('http://');
     self.urls = ko.observableArray(settings.urls);
@@ -50,10 +50,10 @@ var viewModel = function(settings) {
     }
 
 
-    socket.on('isRunning', function (data) {
-        console.log(data.isRunning);
-        self.isRunning = data.isRunning;
-    });
+    //socket.on('isRunning', function (data) {
+    //    console.log(data.isRunning);
+    //    self.isRunning = data.isRunning;
+    //});
 
 
 };
