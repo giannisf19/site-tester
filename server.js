@@ -30,14 +30,17 @@ app.locals.pretty = true;
 
 
 app.get('/', function(req, res) {
+    db.reload();
     app.locals.activePage = 'main';
     app.locals.result = db.getData('./history');
+
     app.locals.settings = JSON.stringify(db.getData('./settings'));
     res.render('index');
 });
 
 
 app.get('/conf', function(req, res){
+    db.reload();
     app.locals.activePage = 'conf';
     app.locals.settings = JSON.stringify(db.getData('./settings'));
     res.render('conf');
@@ -54,7 +57,9 @@ app.post('/runNow', function(req, res) {
     testEngine.runNow();
 });
 
-
+app.post('/deleteDb', function() {
+    helper.ClearHistory();
+});
 
 io.on('connection', function(socket) {
     globalSocket = socket;

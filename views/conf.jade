@@ -32,6 +32,8 @@ html
                             | Screenshot
 
 
+                    span.display-block.left.bottom
+                        button.btn.btn-danger(data-bind="click: deleteDb") Delete history db
 
                 .col-md-6
                     h4 Scheduler
@@ -39,6 +41,7 @@ html
                     span
                         button.left-buffer.btn.btn-primary(data-bind= "css: { disabled: !canRun() }, click: runNow, text: isRunning() ? 'Test Running...' : 'Run now'" )
                             i.fa.fa-spin.fa-spinner(data-bind="visible: isRunning()")
+
 
 
         include partials/footer

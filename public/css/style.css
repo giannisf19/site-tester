@@ -33,3 +33,7 @@
     border: 1px solid gray;
     background: wheat;
 }
+
+.display-block {
+    display: block;
+}

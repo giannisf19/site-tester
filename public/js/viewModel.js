@@ -59,6 +59,17 @@ var viewModel = function(settings) {
         });
     };
 
+    self.deleteDb = function() {
+        if (confirm('Are you sure ?')) {
+            $.ajax({
+                type: 'post',
+                url: self.host() + '/deleteDb'
+            });
+        }
+
+
+    };
+
     function shakeForm() {
         var l = 20;
         for( var i = 0; i < 10; i++ )
