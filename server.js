@@ -1,16 +1,18 @@
 var express = require('express'),
     app = new express(),
+    helper = require('./lib/helper'),
     server = require('http').Server(app),
     bodyParser = require('body-parser'),
     io = require('socket.io')(server),
     fs = require('fs'),
     engine = require('./lib/engine.js'),
     Jsondb  = require('node-json-db'),
-    db = new Jsondb('./db/db.json', true, true),
-    helper = require('./lib/helper');
+    parser = require('./lib/parser');
 
 
 helper.Init();
+
+db = new Jsondb('./db/db.json', true, true)
 
 var globalSocket = {};
 var testEngine = new engine();
@@ -69,6 +71,9 @@ io.on('connection', function(socket) {
 
 
 
-server.listen(300, function() {
-    console.log('Listening on port ' + server.address().port);
-});
+//fs.writeFileSync('test.json', parser.GetDataByPage());
+
+
+//server.listen(300, function() {
+//    console.log('Listening on port ' + server.address().port);
+//});
