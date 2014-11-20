@@ -13,7 +13,7 @@ html
                    .col-xs-3#page-selector-menu
 
                            ul.nav.nav-tabs.tabs-left
-                               each val,index in ['ena', 'dio']
+                               each val,index in urls
                                    li(class='#{index == 0 ? "active" : ""}')
                                        a(data-toggle='tab', href='##{index}') #{val}
 

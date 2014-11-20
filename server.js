@@ -35,14 +35,24 @@ app.get('/', function(req, res) {
     db.reload();
     var results = db.getData('./history');
     var dates = [];
+    var urls = [];
+
     app.locals.activePage = 'main';
-    app.locals.urls = JSON.stringify(results[0]);
+
 
 
     _.forEach(results, function(item){
         dates.push(Object.keys(item)[0]);
     });
 
+    _.forEach(results[0], function(item) {
+        _.forEach(item[0], function(current) {
+            urls.push(current.url)
+        });
+
+    });
+
+    app.locals.urls = urls;
     app.locals.dates = dates;
     app.locals.settings = JSON.stringify(db.getData('./settings'));
     res.render('index');
