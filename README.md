@@ -3,4 +3,7 @@ site-tester
 
 Test websites for errors 
 
-run sudo node server.js to start
+run 
+
+```javascript
+sudo node server.js to start
