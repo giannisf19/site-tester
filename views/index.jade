@@ -1,4 +1,4 @@
-- var zero = result.length == 0
+- var zero = urls.length == 0
 
 
 doctype html
@@ -13,7 +13,7 @@ html
                    .col-xs-3#page-selector-menu
 
                            ul.nav.nav-tabs.tabs-left
-                               each val,index in result
+                               each val,index in ['ena', 'dio']
                                    li(class='#{index == 0 ? "active" : ""}')
                                        a(data-toggle='tab', href='##{index}') #{val}
 
@@ -23,8 +23,8 @@ html
                            .btn-group
                                 include partials/metrics
                                 select
-                                    each val in result
-                                        option #{Object.keys(val)[0]}
+                                    each val in dates
+                                        option #{val}
 
                        .tab-content.top-buffer
                            .tab-pane.active.result-content#0

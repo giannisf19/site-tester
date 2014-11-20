@@ -19,6 +19,7 @@ var viewModel = function(settings) {
     self.screenshot = ko.observable(settings.screenshot);
     self.newItem = ko.observable('http://');
     self.urls = ko.observableArray(settings.urls);
+    self.histories = ko.observableArray([]);
 
     self.isValid = ko.computed(function() {
         var pattern = new RegExp(/^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/);
@@ -67,6 +68,11 @@ var viewModel = function(settings) {
             });
         }
 
+
+    };
+
+
+    self.fetchHistoryByName = function(name) {
 
     };
 
@@ -121,12 +127,6 @@ var viewModel = function(settings) {
 
             $('#screenshot').prop('checked', self.screenshot());
         }
-
-
-
-
-
-
 
 };
 

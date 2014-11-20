@@ -33,10 +33,17 @@ app.locals.pretty = true;
 
 app.get('/', function(req, res) {
     db.reload();
+    var results = db.getData('./history');
+    var dates = [];
     app.locals.activePage = 'main';
-    app.locals.result = db.getData('./history');
+    app.locals.urls = JSON.stringify(results[0]);
 
 
+    _.forEach(results, function(item){
+        dates.push(Object.keys(item)[0]);
+    });
+
+    app.locals.dates = dates;
     app.locals.settings = JSON.stringify(db.getData('./settings'));
     res.render('index');
 });
