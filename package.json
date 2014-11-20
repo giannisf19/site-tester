@@ -5,9 +5,9 @@
     "body-parser": "^1.9.2",
     "express": "^4.10.2",
     "jade": "^1.7.0",
+    "lodash": "^2.4.1",
     "node-json-db": "^0.3.2",
     "phantomas": "^1.7.0",
-    "phapper": "^0.1.9",
     "serve-index": "^1.5.0",
     "socket.io": "^1.2.0"
   }

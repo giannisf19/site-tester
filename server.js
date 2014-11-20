@@ -21,7 +21,6 @@ app.use(bodyParser.json());
 app.locals.pretty = true;
 
 
-var test = new engine('http://google.com', {});
 
 
 
@@ -66,6 +65,6 @@ io.on('connection', function(socket) {
 
 
 
-server.listen(300, function() {
-    console.log('Listening on port ' + server.address().port);
-});
+//server.listen(300, function() {
+//    console.log('Listening on port ' + server.address().port);
+//});
