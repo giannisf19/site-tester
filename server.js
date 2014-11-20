@@ -59,7 +59,6 @@ app.post('/runNow', function(req, res) {
 io.on('connection', function(socket) {
     globalSocket = socket;
     testEngine.setSocket(globalSocket);
-    globalSocket.emit('isRunning', {isRunning: false})
 
 });
 
