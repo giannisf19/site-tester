@@ -1,5 +1,6 @@
 - var zero = result.length == 0
 
+
 doctype html
 html
     head
@@ -8,12 +9,11 @@ html
        .container-fluid
             include partials/navbar
            .row.clearfix
-
                if !zero
                    .col-xs-3#page-selector-menu
 
                            ul.nav.nav-tabs.tabs-left
-                               each val,index in ['http://google.com/sdf', 'http://mzt.ru/hahah']
+                               each val,index in result
                                    li(class='#{index == 0 ? "active" : ""}')
                                        a(data-toggle='tab', href='##{index}') #{val}
 
@@ -22,7 +22,9 @@ html
                        .row.clearfix
                            .btn-group
                                 include partials/metrics
-
+                                select
+                                    each val in result
+                                        option #{Object.keys(val)[0]}
 
                        .tab-content.top-buffer
                            .tab-pane.active.result-content#0
@@ -31,8 +33,10 @@ html
                                p ellinair page #{length}
 
                    .col-md-1.top-buffer-2x
-                        button.btn.btn-info.active Graph
-                        button.btn.btn-info Numbers
+
+                       button.btn.btn-info.active Graph
+                       button.btn.btn-info.active Timeline
+                       button.btn.btn-info Numbers
 
                 else
                     .cols-md-12

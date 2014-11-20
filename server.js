@@ -36,6 +36,7 @@ app.get('/', function(req, res) {
     app.locals.activePage = 'main';
     app.locals.result = db.getData('./history');
 
+
     app.locals.settings = JSON.stringify(db.getData('./settings'));
     res.render('index');
 });
