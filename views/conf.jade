@@ -6,33 +6,39 @@ html
         .container-fluid
             include partials/navbar
             h1.text-center Settings
-            .col-md-4
-                h4 Pages
-                form(role='form', id='main-input-box')
-                    div.input-group
-                        input(type='text', placeholder='http://example.com', name='item', data-bind="value: newItem, valueUpdate: 'afterkeydown'").form-control
-                        span.input-group-btn
-                            input(type='submit' value='Add' data-bind="click: add, enable: isValid()").btn.btn-primary
+            .row.clearfix.top-buffer-2x#settings
 
-                    ol(data-bind="foreach: urls").list-group
-                        li.list-group-item
-                            span(data-bind="text: $data")
-                            button(data-bind="click: function() {$root.remove($data)}").btn-group.pull-right
-                                i.glyphicon.glyphicon-trash
+                .col-md-4
+                    h4 Pages
+                    form(role='form', id='main-input-box')
+                        div.input-group
+                            input(type='text', placeholder='http://example.com', name='item', data-bind="value: newItem, valueUpdate: 'afterkeydown'").form-control
+                            span.input-group-btn
+                                input(type='submit' value='Add' data-bind="click: add, enable: isValid()").btn.btn-primary
 
-
-
-            .col-md-2
-                h4 Options
+                        ol(data-bind="foreach: urls").list-group
+                            li.list-group-item
+                                span(data-bind="text: $data")
+                                button(data-bind="click: function() {$root.remove($data)}").btn-group.pull-right
+                                    i.glyphicon.glyphicon-trash
 
 
 
-            .col-md-6
-                h4 Scheduler
-                #cron
-                span.left-buffer.btn.btn-primary(data-bind= "css: { disabled: canRun() }" )
-                    a.btn-z(data-bind="text: isRunning ? 'Test Running...' : 'Run now'")
-                    i.fa.fa-spin.fa-spinner
+                .col-md-2
+                    h4 Options
+                    .checkbox
+                        label
+                            input(type='checkbox')#screenshot
+                            | Screenshot
+
+
+
+                .col-md-6
+                    h4 Scheduler
+                    #cron
+                    span
+                        button.left-buffer.btn.btn-primary(data-bind= "css: { disabled: !canRun() }, text: isRunning() ? 'Test Running...' : 'Run now'" )
+                            i.fa.fa-spin.fa-spinner(data-bind="visible: isRunning()")
 
 
         include partials/footer

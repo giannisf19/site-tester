@@ -19,6 +19,7 @@ var viewModel = function(settings) {
     self.screenshot = ko.observable(settings.screenshot);
     self.newItem = ko.observable('http://');
     self.urls = ko.observableArray(settings.urls);
+
     self.isValid = ko.computed(function() {
         var pattern = new RegExp(/^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/);
 
@@ -28,7 +29,7 @@ var viewModel = function(settings) {
     self.isRunning = ko.observable();
     self.canRun = ko.computed(function() {
         return !self.isRunning() && self.urls().length
-    });
+    }, self);
 
     self.add = function() {
         if (! _.contains(self.urls(), self.newItem())) {
@@ -74,7 +75,7 @@ var viewModel = function(settings) {
 
     socket.on('isRunning', function (data) {
         console.log(data.isRunning);
-        self.isRunning = data.isRunning;
+        self.isRunning( data.isRunning);
     });
 
 
@@ -91,6 +92,18 @@ var viewModel = function(settings) {
             },
             useGentleSelect: true
         });
+
+
+        if ($('#screenshot').length)
+        {
+            $('#screenshot').on('change', function(){
+                self.screenshot($(this).prop('checked'));
+                pushSettingsToServer();
+            });
+
+            $('#screenshot').prop('checked', self.screenshot());
+        }
+
 
 
 

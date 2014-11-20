@@ -50,13 +50,15 @@ app.post('/saveSettings', function(req,res){
 
 
 
+app.post('/runNow', function(req, res) {
 
+});
 
 
 
 io.on('connection', function(socket) {
     globalSocket = socket;
-    globalSocket.emit('isRunning', {isRunning: true})
+    globalSocket.emit('isRunning', {isRunning: false})
 
 });
 

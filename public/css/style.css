@@ -11,6 +11,11 @@
 
 .btn-z {
     color: white;
+
+}
+
+.top-buffer-2x {
+    margin-top: 40px;
 }
 
 .left-buffer {
@@ -19,4 +24,9 @@
 
 .text-center {
     text-align: center;
+}
+
+#settings {
+    border: 1px solid gray;
+    background: wheat;
 }
