@@ -52,6 +52,13 @@ var viewModel = function(settings) {
     };
 
 
+    self.runNow = function() {
+        $.ajax({
+            type: 'post',
+            url: self.host() + '/runNow'
+        });
+    };
+
     function shakeForm() {
         var l = 20;
         for( var i = 0; i < 10; i++ )

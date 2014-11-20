@@ -13,6 +13,7 @@ var express = require('express'),
 helper.Init();
 
 var globalSocket = {};
+var testEngine = new engine();
 
 app.set('view engine', 'jade');
 app.set('views', __dirname + '/views');
@@ -50,21 +51,20 @@ app.post('/saveSettings', function(req,res){
 
 
 app.post('/runNow', function(req, res) {
-
+    testEngine.runNow();
 });
 
 
 
 io.on('connection', function(socket) {
     globalSocket = socket;
+    testEngine.setSocket(globalSocket);
     globalSocket.emit('isRunning', {isRunning: false})
 
 });
 
 
 
-
-
-//server.listen(300, function() {
-//    console.log('Listening on port ' + server.address().port);
-//});
+server.listen(300, function() {
+    console.log('Listening on port ' + server.address().port);
+});
