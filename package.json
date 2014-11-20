@@ -2,6 +2,7 @@
   "name": "Site-Tester",
   "description": "Test sites for errors",
   "dependencies": {
+    "body-parser": "^1.9.2",
     "express": "^4.10.2",
     "jade": "^1.7.0",
     "node-json-db": "^0.3.2",

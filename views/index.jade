@@ -8,26 +8,30 @@ html
        .container-fluid
             include partials/navbar
            .row.clearfix
-               .col-xs-3#page-selector-menu
-                   if zero
-                       ul.nav.nav-tabs.tabs-left
-                           li.active
-                               a(data-toggle='tab', href='#solun') solun
-                           li
-                               a(data-toggle='tab', href='#ellinair') ellinair
 
-               .col-xs-9
-                   .row.clearfix
-                       .btn-group
-                            button.btn.btn-primary Graph
-                            button.btn.btn-primary Numbers
+               if zero
+                   .col-xs-3#page-selector-menu
+
+                           ul.nav.nav-tabs.tabs-left
+                               each val,index in ['http://google.com/sdf', 'http://mzt.ru/hahah']
+                                   li(class='#{index == 0 ? "active" : ""}')
+                                       a(data-toggle='tab', href='##{index}') #{val}
 
 
-                   .tab-content.top-buffer
-                       .tab-pane.active#solun
-                           p solun page
-                       .tab-pane#ellinair
-                           p ellinair page #{length}
+                   .col-md-9
+                       .row.clearfix
+                           .btn-group
+                                button.btn.btn-primary Graph
+                                button.btn.btn-primary Numbers
 
 
-    include partials/footer
+                       .tab-content.top-buffer
+                           .tab-pane.active#0
+                               p solun page
+                           .tab-pane(id='1')
+                               p ellinair page #{length}
+                else
+                    .cols-md-12
+                        p No Results yet.
+
+        include partials/footer

@@ -5,8 +5,9 @@ html
     body
         .container-fluid
             include partials/navbar
-            .col-xs-4
-                h1 Settings
+            h1.text-center Settings
+            .col-md-4
+                h4 Pages
                 form(role='form', id='main-input-box')
                     div.input-group
                         input(type='text', placeholder='http://example.com', name='item', data-bind="value: newItem, valueUpdate: 'afterkeydown'").form-control
@@ -18,7 +19,20 @@ html
                             span(data-bind="text: $data")
                             button(data-bind="click: function() {$root.remove($data)}").btn-group.pull-right
                                 i.glyphicon.glyphicon-trash
-            .col-xs-8
-                h2 Run Scheduler
 
-    include partials/footer
+
+
+            .col-md-2
+                h4 Options
+
+
+
+            .col-md-6
+                h4 Scheduler
+                #cron
+                span.left-buffer.btn.btn-primary(data-bind= "css: { disabled: canRun() }" )
+                    a.btn-z(data-bind="text: isRunning ? 'Test Running...' : 'Run now'")
+                    i.fa.fa-spin.fa-spinner
+
+
+        include partials/footer

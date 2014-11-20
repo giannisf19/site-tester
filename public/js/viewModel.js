@@ -11,8 +11,12 @@ var viewModel = function(settings) {
 
 
     var count =0;
-   // var socket = io.connect('http://localhost:300');
+    var socket = io.connect('http://localhost:300');
 
+
+    self.host = ko.observable('http://localhost:300');
+    self.cron = ko.observable(settings.cron);
+    self.screenshot = ko.observable(settings.screenshot);
     self.newItem = ko.observable('http://');
     self.urls = ko.observableArray(settings.urls);
     self.isValid = ko.computed(function() {
@@ -22,12 +26,15 @@ var viewModel = function(settings) {
     }, self);
 
     self.isRunning = ko.observable();
-
+    self.canRun = ko.computed(function() {
+        return !self.isRunning() && self.urls().length
+    });
 
     self.add = function() {
         if (! _.contains(self.urls(), self.newItem())) {
             self.urls.unshift(self.newItem());
             self.newItem('http://');
+            pushSettingsToServer();
             return;
         }
 
@@ -39,6 +46,7 @@ var viewModel = function(settings) {
 
     self.remove = function(item) {
         self.urls.remove(item);
+        pushSettingsToServer();
 
     };
 
@@ -50,10 +58,43 @@ var viewModel = function(settings) {
     }
 
 
-    //socket.on('isRunning', function (data) {
-    //    console.log(data.isRunning);
-    //    self.isRunning = data.isRunning;
-    //});
+
+    function pushSettingsToServer() {
+
+        var data = ko.toJSON({settings :{'urls' : self.urls(), 'screenshot' : self.screenshot(), 'cron' : self.cron()}}) ;
+
+        $.ajax({
+            type: 'post',
+            url: self.host() + '/saveSettings',
+            contentType: 'application/json',
+            data: data
+        });
+    }
+
+
+    socket.on('isRunning', function (data) {
+        console.log(data.isRunning);
+        self.isRunning = data.isRunning;
+    });
+
+
+
+
+
+        if($('#cron').length)
+        $('#cron').cron({
+            initial: self.cron(),
+            onChange: function() {
+                self.cron($('#cron').cron('value'));
+                pushSettingsToServer();
+
+            },
+            useGentleSelect: true
+        });
+
+
+
+
 
 
 };
