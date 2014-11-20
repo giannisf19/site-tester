@@ -18,18 +18,22 @@ html
                                        a(data-toggle='tab', href='##{index}') #{val}
 
 
-                   .col-md-9
+                   .col-md-8
                        .row.clearfix
                            .btn-group
-                                button.btn.btn-primary.btn Graph
-                                button.btn.btn-primary Numbers
+                                include partials/metrics
 
 
                        .tab-content.top-buffer
-                           .tab-pane.active#0
+                           .tab-pane.active.result-content#0
                                p solun page
                            .tab-pane(id='1')
                                p ellinair page #{length}
+
+                   .col-md-1.top-buffer-2x
+                        button.btn.btn-info.active Graph
+                        button.btn.btn-info Numbers
+
                 else
                     .cols-md-12
                         p No Results yet.
