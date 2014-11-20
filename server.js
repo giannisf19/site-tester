@@ -71,9 +71,9 @@ io.on('connection', function(socket) {
 
 
 
-//fs.writeFileSync('test.json', parser.GetDataByPage());
+//fs.writeFileSync('test.json', JSON.stringify(parser.GetDataByPage()));
 
 
-//server.listen(300, function() {
-//    console.log('Listening on port ' + server.address().port);
-//});
+server.listen(300, function() {
+    console.log('Listening on port ' + server.address().port);
+});
