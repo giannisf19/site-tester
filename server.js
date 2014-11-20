@@ -16,17 +16,18 @@ var test = new engine('http://google.com', {});
 
 
 
+app.locals.settings =  JSON.stringify({urls: ['ena', 'dio']});
 
 
 app.get('/', function(req, res) {
     app.locals.activePage = 'main'
+    app.locals.result = [];
     res.render('index');
 });
 
 
 app.get('/conf', function(req, res){
     app.locals.activePage = 'conf'
-    app.locals.settings =  JSON.stringify({urls: ['ena', 'dio']});
     res.render('conf');
 });
 

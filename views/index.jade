@@ -1,3 +1,5 @@
+- var zero = result.length == 0
+
 doctype html
 html
     head
@@ -7,22 +9,25 @@ html
             include partials/navbar
            .row.clearfix
                .col-xs-3#page-selector-menu
-                   ul.nav.nav-tabs.tabs-left
-                       li.active
-                           a(data-toggle='tab', href='#solun') solun
-                       li
-                           a(data-toggle='tab', href='#ellinair') ellinair
+                   if zero
+                       ul.nav.nav-tabs.tabs-left
+                           li.active
+                               a(data-toggle='tab', href='#solun') solun
+                           li
+                               a(data-toggle='tab', href='#ellinair') ellinair
 
                .col-xs-9
                    .row.clearfix
                        .btn-group
-                            span.btn.btn-primary.btn-block Graph
+                            button.btn.btn-primary Graph
+                            button.btn.btn-primary Numbers
+
 
                    .tab-content.top-buffer
                        .tab-pane.active#solun
                            p solun page
                        .tab-pane#ellinair
-                           p ellinair page
+                           p ellinair page #{length}
 
 
     include partials/footer
