@@ -54,6 +54,7 @@ app.get('/', function(req, res) {
     app.locals.urls = urls;
     app.locals.dates = dates;
     app.locals.settings = JSON.stringify(db.getData('./settings'));
+    app.locals.host = req.headers.host.toString();
     res.render('index');
 });
 
@@ -62,6 +63,7 @@ app.get('/conf', function(req, res){
     db.reload();
     app.locals.activePage = 'conf';
     app.locals.settings = JSON.stringify(db.getData('./settings'));
+    app.locals.host = req.headers.host.toString();
     res.render('conf');
 });
 

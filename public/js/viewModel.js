@@ -6,15 +6,15 @@
 
 
 
-var viewModel = function(settings) {
+var viewModel = function(settings, host) {
     var self = this;
 
 
     var count =0;
-    var socket = io.connect('http://localhost:300');
 
 
-    self.host = ko.observable('http://localhost:300');
+
+    self.host = ko.observable('http://' + host);
     self.cron = ko.observable(settings.cron);
     self.screenshot = ko.observable(settings.screenshot);
     self.newItem = ko.observable('http://');
@@ -31,6 +31,10 @@ var viewModel = function(settings) {
     self.canRun = ko.computed(function() {
         return !self.isRunning() && self.urls().length
     }, self);
+
+
+
+    var socket = io.connect(self.host());
 
     self.add = function() {
         if (! _.contains(self.urls(), self.newItem())) {
