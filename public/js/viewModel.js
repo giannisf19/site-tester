@@ -21,6 +21,8 @@ var viewModel = function(settings, host) {
     self.urls = ko.observableArray(settings.urls);
     self.histories = ko.observableArray([]);
 
+
+
     self.isValid = ko.computed(function() {
         var pattern = new RegExp(/^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/);
 
@@ -137,6 +139,17 @@ var viewModel = function(settings, host) {
 
 
 
+
+
+
+var TestHistory = function() {
+
+};
+
+
+var TestInstance = function() {
+
+};
 
 
 

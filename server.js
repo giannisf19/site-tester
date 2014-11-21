@@ -12,7 +12,7 @@ var express = require('express'),
 
 helper.Init();
 
-db = new Jsondb('./db/db.json', true, true)
+db = new Jsondb('./db/db.json', true, true);
 
 var globalSocket = {};
 var testEngine = new engine();
