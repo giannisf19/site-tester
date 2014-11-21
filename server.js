@@ -68,6 +68,7 @@ app.get('/conf', function(req, res){
 
 app.post('/saveSettings', function(req,res){
     db.push('./settings', req.body.settings);
+    res.send('Ok');
 });
 
 

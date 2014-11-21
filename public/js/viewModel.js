@@ -93,6 +93,7 @@ var viewModel = function(settings) {
             url: self.host() + '/saveSettings',
             contentType: 'application/json',
             data: data
+
         });
     }
 

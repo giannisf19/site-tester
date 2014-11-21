@@ -11,5 +11,10 @@
     "phantomas": "^1.7.0",
     "serve-index": "^1.5.0",
     "socket.io": "^1.2.0"
-  }
+  },
+
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:giannisf19/site-tester.git"
+    }
 }
