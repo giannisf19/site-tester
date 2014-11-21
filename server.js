@@ -42,14 +42,13 @@ app.get('/', function(req, res) {
 
 
     _.forEach(results, function(item){
-        dates.push(Object.keys(item)[0]);
+        dates.unshift(Object.keys(item)[0]);
     });
 
-    _.forEach(results[0], function(item) {
-        _.forEach(item[0], function(current) {
-            urls.push(current.url)
+    _.forEach(results.pop(), function(item) {
+        _.forEach(item, function(current){
+            urls.unshift(current.url);
         });
-
     });
 
     app.locals.urls = urls;

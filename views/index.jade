@@ -27,10 +27,9 @@ html
                                         option #{val}
 
                        .tab-content.top-buffer
-                           .tab-pane.active.result-content#0
-                               p solun page
-                           .tab-pane(id='1')
-                               p ellinair page #{length}
+                           each val, index in urls
+                                .tab-pane.result-content(id='#{index}',class='#{index ==0  ? "active" : ""}')
+                                        p #{val}
 
                    .col-md-1.top-buffer-2x
 
