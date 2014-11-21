@@ -83,6 +83,26 @@ app.post('/deleteDb', function() {
     helper.ClearHistory();
 });
 
+
+
+
+app.post('/api/', function(req, res) {
+    res.json({
+        message: "Site tester api"
+    }) ;
+});
+
+
+
+
+
+
+
+
+
+
+
+
 io.on('connection', function(socket) {
     globalSocket = socket;
     testEngine.setSocket(globalSocket);

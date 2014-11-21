@@ -9,7 +9,7 @@ var viewModel = function(settings, host) {
     var self = this;
 
 
-    var count =0;
+    var count = 0;
 
 
 
@@ -138,9 +138,6 @@ var viewModel = function(settings, host) {
 
 
 
-
-
-
 var TestHistory = function() {
     var self = this;
 
@@ -154,6 +151,7 @@ var TestInstance = function() {
     var self = this;
 
 
+    self.offenders = ko.observableArray([]);
     self.getTestData = function() {
 
     };
