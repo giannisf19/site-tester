@@ -5,7 +5,6 @@
 
 
 
-
 var viewModel = function(settings, host) {
     var self = this;
 
@@ -143,11 +142,21 @@ var viewModel = function(settings, host) {
 
 
 var TestHistory = function() {
+    var self = this;
+
+    self.testDate = ko.observable();
+    self.tests = ko.observable();
 
 };
 
 
 var TestInstance = function() {
+    var self = this;
+
+
+    self.getTestData = function() {
+
+    };
 
 };
 
