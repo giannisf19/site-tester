@@ -602,6 +602,7 @@
     ],
     "settings": {
         "urls": [
+            "http://sdf.gr",
             "http://google.gr",
             "http://dfgdf.gr"
         ],

@@ -23,6 +23,11 @@ var viewModel = (function () {
         this.count = 0;
 
         this.selectedHistory.subscribe(function () {
+            console.log('sdf');
+            var result = _this.getHistoryByName(_this.selectedHistory());
+
+            console.log(result);
+
             _this.getHistoryByName(_this.selectedHistory());
         });
 
@@ -117,7 +122,7 @@ var viewModel = (function () {
             url: this.host() + '/api/GetHistoryByName',
             data: data,
             success: function (data, status) {
-                console.log(data);
+                return data;
             }
         });
     };

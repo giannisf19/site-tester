@@ -15,7 +15,7 @@ class viewModel {
     private urls: KnockoutObservableArray<string>;
     private isRunning : KnockoutObservable<boolean>;
     private histories: KnockoutObservableArray<any>;
-    private selectedHistory : KnockoutObservable<string>
+    private selectedHistory : KnockoutObservable<string>;
     private isValid : KnockoutComputed<boolean>;
     private canRun : KnockoutComputed<boolean>;
     private socket : SocketIO.Socket;
@@ -41,6 +41,11 @@ class viewModel {
         this.count = 0;
 
         this.selectedHistory.subscribe(() => {
+
+          console.log('sdf')
+            var result = this.getHistoryByName(this.selectedHistory());
+
+            console.log(result);
 
             this.getHistoryByName(this.selectedHistory());
 
@@ -158,7 +163,7 @@ class viewModel {
             url: this.host() + '/api/GetHistoryByName',
             data: data,
             success: (data, status) => {
-                console.log(data)     
+                return data;
             }
 
         });
