@@ -98,7 +98,8 @@ app.post('/api/', function(req, res) {
 
 app.post('/api/GetHistoryByName', function(req, res) {
 
-     res.json(parser.GetHistoryByName(req.body.name));
+    var data = parser.GetHistoryByName(req.body.name);
+     res.json(data);
 
 });
 

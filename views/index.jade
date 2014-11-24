@@ -13,11 +13,10 @@ html
                    .col-xs-3#page-selector-menu
 
                            ul.nav.nav-tabs.tabs-left
-                               each val,index in urls
-                                   li(class='#{index == 0 ? "active" : ""}')
-                                       a(data-toggle='tab', href='##{index}') #{val}
-
-
+                               // ko foreach: currentData
+                               li(data-bind="css: {active: $index() == 0 }")
+                                   a(data-toggle='tab' , data-bind= "text: $data.url, attr: {href: ('#' + $index())}")
+                               // /ko
                    .col-md-8
                        .row.clearfix
                            .btn-group
@@ -27,10 +26,10 @@ html
                                         option #{val}
 
                        .tab-content.top-buffer
-                           each val, index in urls
-                                .tab-pane.result-content(id='#{index}',class='#{index ==0  ? "active" : ""}')
-                                        p #{val}
-
+                           // ko foreach: currentData
+                           .tab-pane.result-content(data-bind="css: {active: $index() == 0}, attr: {id: $index}")
+                                   p(data-bind="text: $data.url")
+                            // /ko
                    .col-md-1.top-buffer-2x
 
                        button.btn.btn-info.active Graph

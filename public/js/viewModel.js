@@ -17,18 +17,37 @@ var viewModel = (function () {
         this.isRunning = ko.observable(false);
 
         this.selectedHistory = ko.observable('');
+        this.currentData = ko.observable({});
 
         var socket = io.connect(this.host());
 
         this.count = 0;
 
         this.selectedHistory.subscribe(function () {
-            console.log('sdf');
-            var result = _this.getHistoryByName(_this.selectedHistory());
+            var exists = false;
 
-            console.log(result);
+            _.forEach(_this.histories(), function (item) {
+                if (item.getDate() == _this.selectedHistory()) {
+                    exists = true;
+                }
+            });
 
-            _this.getHistoryByName(_this.selectedHistory());
+            if (true) {
+                _this.addToHistories(_this.selectedHistory());
+            } else {
+                console.log('Skipping, already in list.');
+            }
+
+            var data = {};
+
+            _.forEach(_this.histories(), function (item) {
+                if (item.getDate() == _this.selectedHistory()) {
+                    data = { data: item.tests, date: item.testDate };
+                }
+            });
+
+            console.log(data);
+            _this.currentData(data);
         });
 
         this.isValid = ko.computed(function () {
@@ -91,9 +110,6 @@ var viewModel = (function () {
         }
     };
 
-    viewModel.prototype.fetchHistoryByName = function (name) {
-    };
-
     viewModel.prototype.shakeForm = function () {
         var l = 20;
         for (var i = 0; i < 10; i++)
@@ -111,39 +127,55 @@ var viewModel = (function () {
         });
     };
 
-    viewModel.prototype.getHistoryByName = function (name) {
-        var history = {};
+    viewModel.prototype.addToHistories = function (name) {
+        var _this = this;
         var data = ko.toJSON({ 'name': name });
 
         $.ajax({
             type: 'post',
+            async: false,
             contentType: 'application/json',
-            dataTyoe: 'json',
+            dataType: 'json',
             url: this.host() + '/api/GetHistoryByName',
             data: data,
-            success: function (data, status) {
-                return data;
+            success: function (result, status) {
+                var toAdd = [];
+
+                _.forEach(result[_this.selectedHistory()], function (test) {
+                    if (test.result) {
+                        var offenders = test.result.offenders || {};
+                        var metrics = test.result.metrics || {};
+
+                        toAdd.push(new TestInstance(offenders, metrics, test.url));
+                    }
+                });
+
+                console.log('Adding to histories..');
+
+                _this.histories.push(new TestHistory(_this.selectedHistory(), toAdd));
             }
         });
     };
     return viewModel;
 })();
-;
 
 var TestHistory = (function () {
-    function TestHistory() {
-        this.testDate = ko.observable('');
-        this.tests = ko.observable();
+    function TestHistory(date, tests) {
+        this.testDate = date;
+        this.tests = tests;
     }
+    TestHistory.prototype.getDate = function () {
+        return this.testDate;
+    };
     return TestHistory;
 })();
-;
 
 var TestInstance = (function () {
-    function TestInstance() {
-        this.offenders = ko.observableArray([]);
+    function TestInstance(offenders, metrics, url) {
+        this.offenders = offenders;
+        this.metrics = metrics;
+        this.url = url;
     }
     return TestInstance;
 })();
-;
 //# sourceMappingURL=viewModel.js.map

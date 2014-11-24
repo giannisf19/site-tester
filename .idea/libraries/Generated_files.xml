@@ -3,10 +3,12 @@
     <properties>
       <sourceFilesUrls>
         <item url="file://$PROJECT_DIR$/public/js/viewModel.js" />
+        <item url="file://$PROJECT_DIR$/public/js/types.js" />
       </sourceFilesUrls>
     </properties>
     <CLASSES>
       <root url="file://$PROJECT_DIR$/public/js/viewModel.js" />
+      <root url="file://$PROJECT_DIR$/public/js/types.js" />
     </CLASSES>
     <SOURCES />
   </library>

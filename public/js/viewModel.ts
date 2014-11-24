@@ -20,11 +20,11 @@ class viewModel {
     private canRun : KnockoutComputed<boolean>;
     private socket : SocketIO.Socket;
     private count: number;
-
+    private currentData : KnockoutObservable<any>;
 
     constructor(private settings : SiteTesterSettings,  host : string) {
         
-
+    	
         this.host = ko.observable('http://' + host);
         this.cron  = ko.observable(settings.cron);
         this.screenshot = ko.observable(settings.screenshot);
@@ -34,6 +34,8 @@ class viewModel {
         this.isRunning = ko.observable(false);
 
         this.selectedHistory = ko.observable('');
+        this.currentData = ko.observable({});
+
 
         var socket = io.connect(this.host());
         
@@ -42,14 +44,37 @@ class viewModel {
 
         this.selectedHistory.subscribe(() => {
 
-          console.log('sdf')
-            var result = this.getHistoryByName(this.selectedHistory());
 
-            console.log(result);
+           var exists = false;
 
-            this.getHistoryByName(this.selectedHistory());
+            _.forEach(this.histories(), (item : TestHistory) => {
+                if (item.getDate() == this.selectedHistory()) {exists = true;}
+            });
 
-        })
+            if (true) {
+                this.addToHistories(this.selectedHistory());
+            }
+
+            else {
+                console.log('Skipping, already in list.');
+            }
+
+
+                var data = {};
+
+                _.forEach(this.histories(), (item)=> {
+                    if (item.getDate() == this.selectedHistory()) {
+                        data = {data: item.tests, date: item.testDate}
+                    }
+                });
+
+
+                console.log(data);
+                this.currentData(data);
+
+
+
+        });
 
         this.isValid = ko.computed(() => {
             var pattern = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
@@ -126,9 +151,6 @@ class viewModel {
     }
 
 
-    fetchHistoryByName(name) {
-
-    }
 
      shakeForm() {
         var l = 20;
@@ -152,49 +174,73 @@ class viewModel {
      }
 
 
-    getHistoryByName(name: string) {
-        var history = {};
+    addToHistories(name: string) {
         var data = ko.toJSON({ 'name': name });
 
         $.ajax({
             type: 'post',
+            async: false,
             contentType: 'application/json',
-            dataTyoe: 'json',
+            dataType: 'json',
             url: this.host() + '/api/GetHistoryByName',
             data: data,
-            success: (data, status) => {
-                return data;
+            success: (result, status) => {
+
+                var toAdd : TestInstance[] = [];
+
+                _.forEach(result[this.selectedHistory()], (test : any) => {
+                    if (test.result)
+                    {
+                        var offenders = test.result.offenders || {};
+                        var metrics = test.result.metrics || {};
+
+                        toAdd.push(new TestInstance(offenders, metrics, test.url));
+                    }
+
+
+                });
+
+                console.log('Adding to histories..');
+
+                this.histories.push(new TestHistory(this.selectedHistory(), toAdd))
             }
 
         });
     }
 
-
-};
+}
 
 
 
 class TestHistory  {
 
-    private testDate: KnockoutObservable<string>;
-    private tests : KnockoutObservable<any>;
+    private testDate: string;
+    private tests : TestInstance[];
 
-    constructor() {
-        this.testDate = ko.observable('');
-        this.tests = ko.observable();
+    constructor(date, tests) {
+        this.testDate = date;
+        this.tests = tests;
     }
 
-};
+    getDate() {
+        return this.testDate;
+    }
+
+}
 
 
 class TestInstance {
-    private offenders  : KnockoutObservableArray<any>;
+    private offenders  : any[];
+    private metrics : any[];
+    private url : string;
 
-    constructor() {
-        this.offenders = ko.observableArray([]);
+    constructor(offenders, metrics, url) {
+        this.offenders = offenders;
+        this.metrics = metrics;
+        this.url = url;
     }
 
 
-};
+}
 
 
