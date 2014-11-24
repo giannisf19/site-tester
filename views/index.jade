@@ -25,11 +25,13 @@ html
                        .tab-content.top-buffer
                            // ko foreach: currentData
                            .tab-pane.result-content(data-bind="css: {active: $index() == 0}, attr: {id: $index}")
-                               .tabs_container
-                                   #tabs-1
-                                       p tabs 1 container
-                                   #tabs-2
-                                       p tabs 2 container
+                               .tab-content.metric-tabs
+                                   .tab-pane.summary.active
+                                       p summary
+                                   .tab-pane.jserror#js_error
+                                       p jsErrors
+                                   .tab-pane.notfound#not_found
+                                       p notFound(404)
                             // /ko
                    .col-md-1.top-buffer-2x
                         include partials/modes
