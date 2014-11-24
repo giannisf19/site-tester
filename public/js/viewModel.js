@@ -32,7 +32,7 @@ var viewModel = (function () {
                 }
             });
 
-            if (true) {
+            if (!exists) {
                 _this.addToHistories(_this.selectedHistory());
             } else {
                 console.log('Skipping, already in list.');
@@ -46,7 +46,6 @@ var viewModel = (function () {
                 }
             });
 
-            console.log(data);
             _this.currentData(data);
         });
 

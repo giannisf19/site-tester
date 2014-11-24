@@ -51,7 +51,7 @@ class viewModel {
                 if (item.getDate() == this.selectedHistory()) {exists = true;}
             });
 
-            if (true) {
+            if (! exists) {
                 this.addToHistories(this.selectedHistory());
             }
 
@@ -69,9 +69,7 @@ class viewModel {
                 });
 
 
-                console.log(data);
                 this.currentData(data);
-
 
 
         });
