@@ -1,26 +1,8 @@
-
-
-
-
-
-
-
-
-
-
-
-
-btn-group(data-toggle='buttons')
-    label.btn.btn-primary.active
-        input(type='radio', name='options' id='option1', autocomplete='off' checked)
-        |Summary
-
-        //-------------------------------------------------------------------
-    label.btn.btn-primary
-        input(type='radio', name='options' id='option1', autocomplete='off' )
-        |jsErrors
-
-        //------------------------------------------------------------------
-    label.btn.btn-primary
-        input(type='radio', name='options' id='option1', autocomplete='off' )
-        |Not Found (404)
+div(role='tabpanel')
+    ul.nav.nav-tabs(role='tablist')
+        li.active
+            a(href='#home', role='tab', data-toggle='tab') Summary
+        li
+            a(href='#home', role='tab', data-toggle='tab') jsError
+        li
+            a(href='#home', role='tab', data-toggle='tab') notFound

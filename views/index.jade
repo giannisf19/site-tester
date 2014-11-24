@@ -10,25 +10,26 @@ html
             include partials/navbar
            .row.clearfix
                if !zero
-                   .col-xs-3#page-selector-menu
+                   .col-md-2#page-selector-menu
 
                            ul.nav.nav-tabs.tabs-left
                                // ko foreach: currentData
                                li(data-bind="css: {active: $index() == 0 }")
                                    a(data-toggle='tab' , data-bind= "text: $data.url, attr: {href: ('#' + $index())}")
                                // /ko
-                   .col-md-8
+                   .col-md-9
                        .row.clearfix
                            .btn-group
                                 include partials/metrics
-                                select(data-bind='value: selectedHistory').selectpicker
-                                    each val in dates
-                                        option #{val}
 
                        .tab-content.top-buffer
                            // ko foreach: currentData
                            .tab-pane.result-content(data-bind="css: {active: $index() == 0}, attr: {id: $index}")
-                               p f
+                               .tabs_container
+                                   #tabs-1
+                                       p tabs 1 container
+                                   #tabs-2
+                                       p tabs 2 container
                             // /ko
                    .col-md-1.top-buffer-2x
                         include partials/modes

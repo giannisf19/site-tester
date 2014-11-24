@@ -42,3 +42,11 @@
     border: 1px solid;
     background: wheat;
 }
+
+.nav-tabs {
+    width: auto;
+    display: inline-block;
+    margin-bottom: 0;
+    float: left
+
+}

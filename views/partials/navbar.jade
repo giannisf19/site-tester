@@ -11,3 +11,13 @@
                  a(href='/') Results
              li(class='#{activeConf}')
                  a(href='/conf') Configuration
+
+             if activeMain == 'active'
+                 li.left-buffer
+                     select(data-bind='value: selectedHistory').selectpicker
+                         each val in dates
+                             option #{val}
+
+                 li.left-buffer
+                    span Some indicator button or image
+                        i.fa.fa-2x.fa-wrench
