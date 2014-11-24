@@ -1,3 +1,4 @@
 script(type='text/javascript', src='js/viewModel.js')
 script(type='text/javascript').
-        ko.applyBindings(new viewModel(!{settings}, '#{host}'))
+	var vm = new viewModel(!{settings}, '#{host}');
+	ko.applyBindings(vm)

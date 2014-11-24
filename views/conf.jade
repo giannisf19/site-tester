@@ -28,7 +28,7 @@ html
                     h4 Options
                     .checkbox
                         label
-                            input(type='checkbox')#screenshot
+                            input(type='checkbox', data-bind="checked: screenshot, click: pushSettingsToServer() ")#screenshot
                             | Screenshot
 
 

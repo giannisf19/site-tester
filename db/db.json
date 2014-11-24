@@ -1,0 +1,611 @@
+{
+    "history": [
+        {
+            "Sat Nov 22 2014 21:55:38 GMT+0200": [
+                {
+                    "url": "http://dfgdf.gr"
+                },
+                {
+                    "url": "http://google.gr",
+                    "result": {
+                        "generator": "phantomas v1.7.0",
+                        "url": "http://www.google.gr/",
+                        "metrics": {
+                            "requests": 9,
+                            "gzipRequests": 0,
+                            "postRequests": 0,
+                            "httpsRequests": 0,
+                            "notFound": 0,
+                            "bodySize": 6445,
+                            "contentLength": 62045,
+                            "httpTrafficCompleted": 1520,
+                            "timeToFirstByte": 355,
+                            "timeToLastByte": 451,
+                            "ajaxRequests": 0,
+                            "htmlCount": 3,
+                            "htmlSize": 825,
+                            "cssCount": 0,
+                            "cssSize": 0,
+                            "jsCount": 1,
+                            "jsSize": 996,
+                            "jsonCount": 0,
+                            "jsonSize": 0,
+                            "imageCount": 5,
+                            "imageSize": 60224,
+                            "videoCount": 0,
+                            "videoSize": 0,
+                            "webfontCount": 0,
+                            "webfontSize": 0,
+                            "base64Count": 0,
+                            "base64Size": 0,
+                            "otherCount": 0,
+                            "otherSize": 0,
+                            "cacheHits": 4,
+                            "cacheMisses": 0,
+                            "cachePasses": 0,
+                            "cachingNotSpecified": 0,
+                            "cachingTooShort": 0,
+                            "cachingDisabled": 0,
+                            "oldCachingHeaders": 8,
+                            "consoleMessages": 0,
+                            "cookiesSent": 0,
+                            "cookiesRecv": 353,
+                            "domainsWithCookies": 1,
+                            "documentCookiesLength": 76,
+                            "documentCookiesCount": 1,
+                            "documentHeight": 1024,
+                            "commentsSize": 0,
+                            "whiteSpacesSize": 41,
+                            "DOMelementsCount": 97,
+                            "DOMelementMaxDepth": 10,
+                            "nodesWithInlineCSS": 20,
+                            "imagesScaledDown": 0,
+                            "imagesWithoutDimensions": 1,
+                            "DOMidDuplicated": 0,
+                            "hiddenContentSize": 10135,
+                            "DOMmutationsInserts": 0,
+                            "DOMmutationsRemoves": 0,
+                            "DOMmutationsAttributes": 0,
+                            "DOMqueries": 9,
+                            "DOMqueriesById": 5,
+                            "DOMqueriesByClassName": 0,
+                            "DOMqueriesByTagName": 4,
+                            "DOMqueriesByQuerySelectorAll": 0,
+                            "DOMinserts": 6,
+                            "DOMqueriesDuplicated": 1,
+                            "DOMqueriesAvoidable": 1,
+                            "domains": 3,
+                            "maxRequestsPerDomain": 7,
+                            "medianRequestsPerDomain": 1,
+                            "eventsBound": 17,
+                            "globalVariables": 7,
+                            "globalVariablesFalsy": 0,
+                            "headersCount": 115,
+                            "headersSentCount": 25,
+                            "headersRecvCount": 90,
+                            "headersSize": 4256,
+                            "headersSentSize": 992,
+                            "headersRecvSize": 3264,
+                            "headersBiggerThanContent": 2,
+                            "jQueryVersion": "",
+                            "jQueryOnDOMReadyFunctions": 0,
+                            "jQuerySizzleCalls": 0,
+                            "documentWriteCalls": 0,
+                            "evalCalls": 7,
+                            "jsErrors": 0,
+                            "localStorageEntries": 0,
+                            "redirects": 1,
+                            "redirectsTime": 232,
+                            "assetsNotGzipped": 2,
+                            "assetsWithQueryString": 0,
+                            "assetsWithCookies": 6,
+                            "smallImages": 2,
+                            "multipleRequests": 0,
+                            "timeToFirstCss": 0,
+                            "timeToFirstJs": 1221,
+                            "timeToFirstImage": 771,
+                            "domInteractive": 686,
+                            "domContentLoaded": 686,
+                            "domContentLoadedEnd": 694,
+                            "domComplete": 1423,
+                            "timeBackend": 20,
+                            "timeFrontend": 80,
+                            "statusCodesTrail": "301,200",
+                            "windowAlerts": 0,
+                            "windowConfirms": 0,
+                            "windowPrompts": 0,
+                            "bodyHTMLSize": 14728,
+                            "iframesCount": 0,
+                            "smallestResponse": 387,
+                            "biggestResponse": 35615,
+                            "fastestResponse": 111,
+                            "slowestResponse": 530,
+                            "smallestLatency": 111,
+                            "biggestLatency": 355,
+                            "medianResponse": 197,
+                            "medianLatency": 196
+                        },
+                        "offenders": {
+                            "htmlCount": [
+                                "http://google.gr/ (0.21 kB)",
+                                "http://www.google.gr/ (0.59 kB)",
+                                "http://clients1.google.gr/generate_204 (0.00 kB)"
+                            ],
+                            "jsCount": [
+                                "http://www.google.gr/xjs/_/js/k=xjs.hp.en_US.YU1Y-X5EHRU.O/m=sb_he,pcc/rt=j/d=1/t=zcms/rs=ACT90oF1XCz-9XT7lCNfAUenHvDScFfezw (0.97 kB)"
+                            ],
+                            "imageCount": [
+                                "http://www.google.gr/images/icons/product/chrome-48.png (1.79 kB)",
+                                "http://www.google.gr/images/srpr/logo9w.png (8.04 kB)",
+                                "http://www.google.gr/textinputassistant/tia.png (0.38 kB)",
+                                "http://www.google.gr/images/srpr/nav_logo80.png (34.78 kB)",
+                                "http://www.google.gr/images/nav_logo176.png (13.83 kB)"
+                            ],
+                            "cacheHits": [
+                                "http://www.google.gr/images/icons/product/chrome-48.png",
+                                "http://www.google.gr/textinputassistant/tia.png",
+                                "http://www.google.gr/images/srpr/nav_logo80.png",
+                                "http://www.google.gr/xjs/_/js/k=xjs.hp.en_US.YU1Y-X5EHRU.O/m=sb_he,pcc/rt=j/d=1/t=zcms/rs=ACT90oF1XCz-9XT7lCNfAUenHvDScFfezw"
+                            ],
+                            "oldCachingHeaders": [
+                                "http://google.gr/ - Expires: Mon, 22 Dec 2014 19:55:49 GMT",
+                                "http://www.google.gr/ - Expires: -1",
+                                "http://www.google.gr/images/icons/product/chrome-48.png - Expires: Sun, 30 Nov 2014 13:30:47 GMT",
+                                "http://www.google.gr/images/srpr/logo9w.png - Expires: Sat, 22 Nov 2014 19:55:49 GMT",
+                                "http://www.google.gr/textinputassistant/tia.png - Expires: Thu, 29 Oct 2015 07:59:48 GMT",
+                                "http://www.google.gr/images/srpr/nav_logo80.png - Expires: Sun, 30 Nov 2014 08:46:52 GMT",
+                                "http://www.google.gr/xjs/_/js/k=xjs.hp.en_US.YU1Y-X5EHRU.O/m=sb_he,pcc/rt=j/d=1/t=zcms/rs=ACT90oF1XCz-9XT7lCNfAUenHvDScFfezw - Expires: Thu, 19 Nov 2015 23:31:40 GMT",
+                                "http://www.google.gr/images/nav_logo176.png - Expires: Sat, 22 Nov 2014 19:55:50 GMT"
+                            ],
+                            "domainsWithCookies": [
+                                "www.google.gr: 2 cookie(s)"
+                            ],
+                            "nodesWithInlineCSS": [
+                                "body > div#mngb > div#gbar > nobr[0] > a.gb1 (text-decoration:none)",
+                                "body > div#mngb > div.gbh (left:0)",
+                                "body > div#mngb > div.gbh (right:0)",
+                                "body > center[2] > span#prt (display:block)",
+                                "body > center[2] > span#prt > div[1] > div#pmocntr2 (behavior:url(#default#userdata);display:none)",
+                                "body > center[2] > span#prt > div[1] > div#pmocntr2 > table[1] > tbody[1] > tr[0] > td[1] > div.xbtn (float:right)",
+                                "body > center[2] > div#lga > div[0] (padding:28px 0 3px)",
+                                "body > center[2] > div#lga > div[0] > div#hplogo (height:110px;width:276px;background:url(/images/srpr/logo9w.png) no-repeat)",
+                                "body > center[2] > div#lga > div[0] > div#hplogo > div[0] (color:#777;font-size:16px;font-weight:bold;position:relative;top:70px;left:218px)",
+                                "body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds (height:32px;margin:4px 0)",
+                                "body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] (position:relative;zoom:1)",
+                                "body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah (color: rgb(0, 0, 0); margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px; padding-top: 5px; padding-bottom: 0px; padding-left: 6px; vertical-align: top; padding-right: 38px; outline-style: none; outline-width: initial; outline-color: initial; )",
+                                "body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > img[1] (position:absolute;cursor:pointer;right:5px;top:4px;z-index:300)",
+                                "body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > br[4] (line-height:0)",
+                                "body > center[2] > div[5] (font-size:83%;min-height:3.5em)",
+                                "body > center[2] > span#footer > div[0] (font-size:10pt)",
+                                "body > center[2] > span#footer > div[0] > div#fll (margin:19px auto;text-align:center)",
+                                "body > center[2] > span#footer > p[1] (color:#767676;font-size:8pt)",
+                                "body > table.gstl_0.gssb_c (display: none; width: 459px; top: 234px; left: 410px; position: absolute; )",
+                                "body > table.gstl_0.gssb_c > tbody[0] > tr[0] > td.gssb_e (width: 100%; )"
+                            ],
+                            "imagesWithoutDimensions": [
+                                "body > center[2] > span#prt > div[1] > div#pmocntr2 > table[1] > tbody[1] > tr[2] > td.padi > img[1] <http://www.google.gr/images/icons/product/chrome-48.png>"
+                            ],
+                            "hiddenContentSize": [
+                                "body > center[2] > span#prt > div[1] > style[0] (1783 characters)",
+                                "body > center[2] > span#prt > div[1] > script[4] (5270 characters)",
+                                "body > div#xjsi > script[0] (1511 characters)"
+                            ],
+                            "DOMqueriesById": [
+                                "#pmocntr2 (in #document)",
+                                "#xjsd (in #document)",
+                                "#gbqf (in #document)",
+                                "#gs_id0 (in #document)",
+                                "#sbhost (in #document)"
+                            ],
+                            "DOMqueriesByTagName": [
+                                "head (in #document)",
+                                "tbody (in table)",
+                                "input (in body > center[2] > form[3])",
+                                "input (in body > center[2] > form[3])"
+                            ],
+                            "DOMinserts": [
+                                "\"script\" appended to \"body > div#xjsd\"",
+                                "\"style\" appended to \"head\"",
+                                "\"#text\" appended to \"head > style[6]\"",
+                                "\"table.gstl_0.gssb_c\" appended to \"body\"",
+                                "\"input\" appended to \"body > center[2] > form[3]\"",
+                                "\"input\" appended to \"body > center[2] > form[3]\""
+                            ],
+                            "DOMqueriesDuplicated": [
+                                "tag name \"input\" (in body > center[2] > form[3]): 2 queries"
+                            ],
+                            "domains": [
+                                "www.google.gr: 7 request(s)",
+                                "google.gr: 1 request(s)",
+                                "clients1.google.gr: 1 request(s)"
+                            ],
+                            "eventsBound": [
+                                "\"keydown\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah\"",
+                                "\"select\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah\"",
+                                "\"mousedown\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah\"",
+                                "\"keyup\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah\"",
+                                "\"keypress\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah\"",
+                                "\"mouseup\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah\"",
+                                "\"focus\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah\"",
+                                "\"blur\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah\"",
+                                "\"cut\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah\"",
+                                "\"paste\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah\"",
+                                "\"input\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah\"",
+                                "\"compositionstart\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah\"",
+                                "\"compositionend\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah\"",
+                                "\"resize\" bound to \"window\"",
+                                "\"click\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > span.ds > span.lsbb > input.lsb\"",
+                                "\"click\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > span.ds > span.lsbb > input.lsb\"",
+                                "\"message\" bound to \"window\""
+                            ],
+                            "globalVariables": [
+                                "_gjuc",
+                                "_gjwl",
+                                "_gjh",
+                                "google",
+                                "_",
+                                "jsl",
+                                "closure_memoize_cache_"
+                            ],
+                            "headersBiggerThanContent": [
+                                "http://google.gr/ (body: 0.21 kB / headers: 0.32 kB)",
+                                "http://www.google.gr/ (body: 0.59 kB / headers: 0.75 kB)"
+                            ],
+                            "redirects": [
+                                "http://google.gr/ is a redirect (HTTP 301 Moved Permanently) to http://www.google.gr/ (took 232 ms)"
+                            ],
+                            "assetsNotGzipped": [
+                                "http://www.google.gr/ (HTML)",
+                                "http://www.google.gr/xjs/_/js/k=xjs.hp.en_US.YU1Y-X5EHRU.O/m=sb_he,pcc/rt=j/d=1/t=zcms/rs=ACT90oF1XCz-9XT7lCNfAUenHvDScFfezw (JS)"
+                            ],
+                            "assetsWithCookies": [
+                                "http://www.google.gr/images/icons/product/chrome-48.png (IMAGE)",
+                                "http://www.google.gr/images/srpr/logo9w.png (IMAGE)",
+                                "http://www.google.gr/textinputassistant/tia.png (IMAGE)",
+                                "http://www.google.gr/images/srpr/nav_logo80.png (IMAGE)",
+                                "http://www.google.gr/xjs/_/js/k=xjs.hp.en_US.YU1Y-X5EHRU.O/m=sb_he,pcc/rt=j/d=1/t=zcms/rs=ACT90oF1XCz-9XT7lCNfAUenHvDScFfezw (JS)",
+                                "http://www.google.gr/images/nav_logo176.png (IMAGE)"
+                            ],
+                            "smallImages": [
+                                "http://www.google.gr/images/icons/product/chrome-48.png (1.79 kB)",
+                                "http://www.google.gr/textinputassistant/tia.png (0.38 kB)"
+                            ],
+                            "timeToFirstJs": [
+                                "http://www.google.gr/xjs/_/js/k=xjs.hp.en_US.YU1Y-X5EHRU.O/m=sb_he,pcc/rt=j/d=1/t=zcms/rs=ACT90oF1XCz-9XT7lCNfAUenHvDScFfezw received in 1221 ms"
+                            ],
+                            "timeToFirstImage": [
+                                "http://www.google.gr/images/icons/product/chrome-48.png received in 771 ms"
+                            ],
+                            "smallestResponse": [
+                                "http://www.google.gr/textinputassistant/tia.png (0.38 kB)"
+                            ],
+                            "biggestResponse": [
+                                "http://www.google.gr/images/srpr/nav_logo80.png (34.78 kB)"
+                            ],
+                            "fastestResponse": [
+                                "http://www.google.gr/images/nav_logo176.png (111 ms)"
+                            ],
+                            "slowestResponse": [
+                                "http://www.google.gr/xjs/_/js/k=xjs.hp.en_US.YU1Y-X5EHRU.O/m=sb_he,pcc/rt=j/d=1/t=zcms/rs=ACT90oF1XCz-9XT7lCNfAUenHvDScFfezw (530 ms)"
+                            ],
+                            "smallestLatency": [
+                                "http://www.google.gr/images/nav_logo176.png (111 ms)"
+                            ],
+                            "biggestLatency": [
+                                "http://www.google.gr/ (355 ms)"
+                            ]
+                        },
+                        "asserts": false
+                    }
+                }
+            ]
+        },
+        {
+            "Sun Nov 23 2014 02:03:18 GMT+0200": [
+                {
+                    "url": "http://dfgdf.gr"
+                },
+                {
+                    "url": "http://google.gr",
+                    "result": {
+                        "generator": "phantomas v1.7.0",
+                        "url": "http://www.google.gr/",
+                        "metrics": {
+                            "requests": 9,
+                            "gzipRequests": 0,
+                            "postRequests": 0,
+                            "httpsRequests": 0,
+                            "notFound": 0,
+                            "bodySize": 7856,
+                            "contentLength": 63456,
+                            "httpTrafficCompleted": 2262,
+                            "timeToFirstByte": 344,
+                            "timeToLastByte": 518,
+                            "ajaxRequests": 0,
+                            "htmlCount": 3,
+                            "htmlSize": 2236,
+                            "cssCount": 0,
+                            "cssSize": 0,
+                            "jsCount": 1,
+                            "jsSize": 996,
+                            "jsonCount": 0,
+                            "jsonSize": 0,
+                            "imageCount": 5,
+                            "imageSize": 60224,
+                            "videoCount": 0,
+                            "videoSize": 0,
+                            "webfontCount": 0,
+                            "webfontSize": 0,
+                            "base64Count": 0,
+                            "base64Size": 0,
+                            "otherCount": 0,
+                            "otherSize": 0,
+                            "cacheHits": 4,
+                            "cacheMisses": 0,
+                            "cachePasses": 0,
+                            "cachingNotSpecified": 0,
+                            "cachingTooShort": 0,
+                            "cachingDisabled": 0,
+                            "oldCachingHeaders": 8,
+                            "consoleMessages": 0,
+                            "cookiesSent": 0,
+                            "cookiesRecv": 353,
+                            "domainsWithCookies": 1,
+                            "documentCookiesLength": 76,
+                            "documentCookiesCount": 1,
+                            "documentHeight": 1024,
+                            "commentsSize": 0,
+                            "whiteSpacesSize": 41,
+                            "DOMelementsCount": 97,
+                            "DOMelementMaxDepth": 10,
+                            "nodesWithInlineCSS": 20,
+                            "imagesScaledDown": 0,
+                            "imagesWithoutDimensions": 1,
+                            "DOMidDuplicated": 0,
+                            "hiddenContentSize": 10135,
+                            "DOMmutationsInserts": 0,
+                            "DOMmutationsRemoves": 0,
+                            "DOMmutationsAttributes": 0,
+                            "DOMqueries": 9,
+                            "DOMqueriesById": 5,
+                            "DOMqueriesByClassName": 0,
+                            "DOMqueriesByTagName": 4,
+                            "DOMqueriesByQuerySelectorAll": 0,
+                            "DOMinserts": 6,
+                            "DOMqueriesDuplicated": 1,
+                            "DOMqueriesAvoidable": 1,
+                            "domains": 3,
+                            "maxRequestsPerDomain": 7,
+                            "medianRequestsPerDomain": 1,
+                            "eventsBound": 17,
+                            "globalVariables": 7,
+                            "globalVariablesFalsy": 0,
+                            "headersCount": 115,
+                            "headersSentCount": 25,
+                            "headersRecvCount": 90,
+                            "headersSize": 4256,
+                            "headersSentSize": 992,
+                            "headersRecvSize": 3264,
+                            "headersBiggerThanContent": 1,
+                            "jQueryVersion": "",
+                            "jQueryOnDOMReadyFunctions": 0,
+                            "jQuerySizzleCalls": 0,
+                            "documentWriteCalls": 0,
+                            "evalCalls": 7,
+                            "jsErrors": 0,
+                            "localStorageEntries": 0,
+                            "redirects": 1,
+                            "redirectsTime": 283,
+                            "assetsNotGzipped": 2,
+                            "assetsWithQueryString": 0,
+                            "assetsWithCookies": 6,
+                            "smallImages": 2,
+                            "multipleRequests": 0,
+                            "timeToFirstCss": 0,
+                            "timeToFirstJs": 1906,
+                            "timeToFirstImage": 887,
+                            "domInteractive": 806,
+                            "domContentLoaded": 807,
+                            "domContentLoadedEnd": 819,
+                            "domComplete": 2144,
+                            "timeBackend": 14,
+                            "timeFrontend": 86,
+                            "statusCodesTrail": "301,200",
+                            "windowAlerts": 0,
+                            "windowConfirms": 0,
+                            "windowPrompts": 0,
+                            "bodyHTMLSize": 14728,
+                            "iframesCount": 0,
+                            "smallestResponse": 387,
+                            "biggestResponse": 35615,
+                            "fastestResponse": 136,
+                            "slowestResponse": 1110,
+                            "smallestLatency": 128,
+                            "biggestLatency": 344,
+                            "medianResponse": 242,
+                            "medianLatency": 242
+                        },
+                        "offenders": {
+                            "htmlCount": [
+                                "http://google.gr/ (0.21 kB)",
+                                "http://www.google.gr/ (1.97 kB)",
+                                "http://clients1.google.gr/generate_204 (0.00 kB)"
+                            ],
+                            "jsCount": [
+                                "http://www.google.gr/xjs/_/js/k=xjs.hp.en_US.YU1Y-X5EHRU.O/m=sb_he,pcc/rt=j/d=1/t=zcms/rs=ACT90oF1XCz-9XT7lCNfAUenHvDScFfezw (0.97 kB)"
+                            ],
+                            "imageCount": [
+                                "http://www.google.gr/images/icons/product/chrome-48.png (1.79 kB)",
+                                "http://www.google.gr/images/srpr/logo9w.png (8.04 kB)",
+                                "http://www.google.gr/textinputassistant/tia.png (0.38 kB)",
+                                "http://www.google.gr/images/srpr/nav_logo80.png (34.78 kB)",
+                                "http://www.google.gr/images/nav_logo176.png (13.83 kB)"
+                            ],
+                            "cacheHits": [
+                                "http://www.google.gr/images/icons/product/chrome-48.png",
+                                "http://www.google.gr/textinputassistant/tia.png",
+                                "http://www.google.gr/images/srpr/nav_logo80.png",
+                                "http://www.google.gr/xjs/_/js/k=xjs.hp.en_US.YU1Y-X5EHRU.O/m=sb_he,pcc/rt=j/d=1/t=zcms/rs=ACT90oF1XCz-9XT7lCNfAUenHvDScFfezw"
+                            ],
+                            "oldCachingHeaders": [
+                                "http://google.gr/ - Expires: Tue, 23 Dec 2014 00:03:19 GMT",
+                                "http://www.google.gr/ - Expires: -1",
+                                "http://www.google.gr/images/icons/product/chrome-48.png - Expires: Sun, 30 Nov 2014 13:30:47 GMT",
+                                "http://www.google.gr/images/srpr/logo9w.png - Expires: Sun, 23 Nov 2014 00:03:20 GMT",
+                                "http://www.google.gr/textinputassistant/tia.png - Expires: Thu, 29 Oct 2015 07:59:48 GMT",
+                                "http://www.google.gr/images/srpr/nav_logo80.png - Expires: Sun, 30 Nov 2014 08:46:52 GMT",
+                                "http://www.google.gr/xjs/_/js/k=xjs.hp.en_US.YU1Y-X5EHRU.O/m=sb_he,pcc/rt=j/d=1/t=zcms/rs=ACT90oF1XCz-9XT7lCNfAUenHvDScFfezw - Expires: Thu, 19 Nov 2015 23:31:40 GMT",
+                                "http://www.google.gr/images/nav_logo176.png - Expires: Sun, 23 Nov 2014 00:03:21 GMT"
+                            ],
+                            "domainsWithCookies": [
+                                "www.google.gr: 2 cookie(s)"
+                            ],
+                            "nodesWithInlineCSS": [
+                                "body > div#mngb > div#gbar > nobr[0] > a.gb1 (text-decoration:none)",
+                                "body > div#mngb > div.gbh (left:0)",
+                                "body > div#mngb > div.gbh (right:0)",
+                                "body > center[2] > span#prt (display:block)",
+                                "body > center[2] > span#prt > div[1] > div#pmocntr2 (behavior:url(#default#userdata);display:none)",
+                                "body > center[2] > span#prt > div[1] > div#pmocntr2 > table[1] > tbody[1] > tr[0] > td[1] > div.xbtn (float:right)",
+                                "body > center[2] > div#lga > div[0] (padding:28px 0 3px)",
+                                "body > center[2] > div#lga > div[0] > div#hplogo (height:110px;width:276px;background:url(/images/srpr/logo9w.png) no-repeat)",
+                                "body > center[2] > div#lga > div[0] > div#hplogo > div[0] (color:#777;font-size:16px;font-weight:bold;position:relative;top:70px;left:218px)",
+                                "body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds (height:32px;margin:4px 0)",
+                                "body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] (position:relative;zoom:1)",
+                                "body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah (color: rgb(0, 0, 0); margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px; padding-top: 5px; padding-bottom: 0px; padding-left: 6px; vertical-align: top; padding-right: 38px; outline-style: none; outline-width: initial; outline-color: initial; )",
+                                "body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > img[1] (position:absolute;cursor:pointer;right:5px;top:4px;z-index:300)",
+                                "body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > br[4] (line-height:0)",
+                                "body > center[2] > div[5] (font-size:83%;min-height:3.5em)",
+                                "body > center[2] > span#footer > div[0] (font-size:10pt)",
+                                "body > center[2] > span#footer > div[0] > div#fll (margin:19px auto;text-align:center)",
+                                "body > center[2] > span#footer > p[1] (color:#767676;font-size:8pt)",
+                                "body > table.gstl_0.gssb_c (display: none; width: 459px; top: 234px; left: 410px; position: absolute; )",
+                                "body > table.gstl_0.gssb_c > tbody[0] > tr[0] > td.gssb_e (width: 100%; )"
+                            ],
+                            "imagesWithoutDimensions": [
+                                "body > center[2] > span#prt > div[1] > div#pmocntr2 > table[1] > tbody[1] > tr[2] > td.padi > img[1] <http://www.google.gr/images/icons/product/chrome-48.png>"
+                            ],
+                            "hiddenContentSize": [
+                                "body > center[2] > span#prt > div[1] > style[0] (1783 characters)",
+                                "body > center[2] > span#prt > div[1] > script[4] (5270 characters)",
+                                "body > div#xjsi > script[0] (1511 characters)"
+                            ],
+                            "DOMqueriesById": [
+                                "#pmocntr2 (in #document)",
+                                "#xjsd (in #document)",
+                                "#gbqf (in #document)",
+                                "#gs_id0 (in #document)",
+                                "#sbhost (in #document)"
+                            ],
+                            "DOMqueriesByTagName": [
+                                "head (in #document)",
+                                "tbody (in table)",
+                                "input (in body > center[2] > form[3])",
+                                "input (in body > center[2] > form[3])"
+                            ],
+                            "DOMinserts": [
+                                "\"script\" appended to \"body > div#xjsd\"",
+                                "\"style\" appended to \"head\"",
+                                "\"#text\" appended to \"head > style[6]\"",
+                                "\"table.gstl_0.gssb_c\" appended to \"body\"",
+                                "\"input\" appended to \"body > center[2] > form[3]\"",
+                                "\"input\" appended to \"body > center[2] > form[3]\""
+                            ],
+                            "DOMqueriesDuplicated": [
+                                "tag name \"input\" (in body > center[2] > form[3]): 2 queries"
+                            ],
+                            "domains": [
+                                "www.google.gr: 7 request(s)",
+                                "google.gr: 1 request(s)",
+                                "clients1.google.gr: 1 request(s)"
+                            ],
+                            "eventsBound": [
+                                "\"keydown\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah\"",
+                                "\"select\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah\"",
+                                "\"mousedown\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah\"",
+                                "\"keyup\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah\"",
+                                "\"keypress\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah\"",
+                                "\"mouseup\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah\"",
+                                "\"focus\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah\"",
+                                "\"blur\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah\"",
+                                "\"cut\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah\"",
+                                "\"paste\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah\"",
+                                "\"input\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah\"",
+                                "\"compositionstart\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah\"",
+                                "\"compositionend\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > div.ds > div[0] > input.lst.tiah\"",
+                                "\"resize\" bound to \"window\"",
+                                "\"click\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > span.ds > span.lsbb > input.lsb\"",
+                                "\"click\" bound to \"body > center[2] > form[3] > table[0] > tbody[0] > tr[0] > td[1] > span.ds > span.lsbb > input.lsb\"",
+                                "\"message\" bound to \"window\""
+                            ],
+                            "globalVariables": [
+                                "_gjuc",
+                                "_gjwl",
+                                "_gjh",
+                                "google",
+                                "_",
+                                "jsl",
+                                "closure_memoize_cache_"
+                            ],
+                            "headersBiggerThanContent": [
+                                "http://google.gr/ (body: 0.21 kB / headers: 0.32 kB)"
+                            ],
+                            "redirects": [
+                                "http://google.gr/ is a redirect (HTTP 301 Moved Permanently) to http://www.google.gr/ (took 283 ms)"
+                            ],
+                            "assetsNotGzipped": [
+                                "http://www.google.gr/ (HTML)",
+                                "http://www.google.gr/xjs/_/js/k=xjs.hp.en_US.YU1Y-X5EHRU.O/m=sb_he,pcc/rt=j/d=1/t=zcms/rs=ACT90oF1XCz-9XT7lCNfAUenHvDScFfezw (JS)"
+                            ],
+                            "assetsWithCookies": [
+                                "http://www.google.gr/images/icons/product/chrome-48.png (IMAGE)",
+                                "http://www.google.gr/images/srpr/logo9w.png (IMAGE)",
+                                "http://www.google.gr/textinputassistant/tia.png (IMAGE)",
+                                "http://www.google.gr/images/srpr/nav_logo80.png (IMAGE)",
+                                "http://www.google.gr/xjs/_/js/k=xjs.hp.en_US.YU1Y-X5EHRU.O/m=sb_he,pcc/rt=j/d=1/t=zcms/rs=ACT90oF1XCz-9XT7lCNfAUenHvDScFfezw (JS)",
+                                "http://www.google.gr/images/nav_logo176.png (IMAGE)"
+                            ],
+                            "smallImages": [
+                                "http://www.google.gr/images/icons/product/chrome-48.png (1.79 kB)",
+                                "http://www.google.gr/textinputassistant/tia.png (0.38 kB)"
+                            ],
+                            "timeToFirstJs": [
+                                "http://www.google.gr/xjs/_/js/k=xjs.hp.en_US.YU1Y-X5EHRU.O/m=sb_he,pcc/rt=j/d=1/t=zcms/rs=ACT90oF1XCz-9XT7lCNfAUenHvDScFfezw received in 1906 ms"
+                            ],
+                            "timeToFirstImage": [
+                                "http://www.google.gr/images/icons/product/chrome-48.png received in 887 ms"
+                            ],
+                            "smallestResponse": [
+                                "http://www.google.gr/textinputassistant/tia.png (0.38 kB)"
+                            ],
+                            "biggestResponse": [
+                                "http://www.google.gr/images/srpr/nav_logo80.png (34.78 kB)"
+                            ],
+                            "fastestResponse": [
+                                "http://www.google.gr/images/srpr/logo9w.png (136 ms)"
+                            ],
+                            "slowestResponse": [
+                                "http://www.google.gr/xjs/_/js/k=xjs.hp.en_US.YU1Y-X5EHRU.O/m=sb_he,pcc/rt=j/d=1/t=zcms/rs=ACT90oF1XCz-9XT7lCNfAUenHvDScFfezw (1110 ms)"
+                            ],
+                            "smallestLatency": [
+                                "http://www.google.gr/images/nav_logo176.png (128 ms)"
+                            ],
+                            "biggestLatency": [
+                                "http://www.google.gr/ (344 ms)"
+                            ]
+                        },
+                        "asserts": false
+                    }
+                }
+            ]
+        }
+    ],
+    "settings": {
+        "urls": [
+            "http://google.gr",
+            "http://dfgdf.gr"
+        ],
+        "screenshot": true,
+        "cron": "20 17 * * *"
+    }
+}

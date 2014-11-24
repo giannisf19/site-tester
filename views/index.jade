@@ -22,7 +22,7 @@ html
                        .row.clearfix
                            .btn-group
                                 include partials/metrics
-                                select
+                                select(data-bind='value: selectedHistory')
                                     each val in dates
                                         option #{val}
 
