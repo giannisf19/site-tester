@@ -21,20 +21,18 @@ html
                        .row.clearfix
                            .btn-group
                                 include partials/metrics
-                                select(data-bind='value: selectedHistory')
+                                select(data-bind='value: selectedHistory').selectpicker
                                     each val in dates
                                         option #{val}
 
                        .tab-content.top-buffer
                            // ko foreach: currentData
                            .tab-pane.result-content(data-bind="css: {active: $index() == 0}, attr: {id: $index}")
-                                   p(data-bind="text: $data.url")
+                               p f
                             // /ko
                    .col-md-1.top-buffer-2x
+                        include partials/modes
 
-                       button.btn.btn-info.active Graph
-                       button.btn.btn-info.active Timeline
-                       button.btn.btn-info Numbers
 
                 else
                     .cols-md-12
