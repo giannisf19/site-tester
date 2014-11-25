@@ -7,7 +7,8 @@ var express = require('express'),
     fs = require('fs'),
     engine = require('./lib/engine.js'),
     Jsondb  = require('node-json-db'),
-    parser = require('./lib/parser');
+    parser = require('./lib/parser'),
+    _ = require('lodash');
 
 
 helper.Init();
