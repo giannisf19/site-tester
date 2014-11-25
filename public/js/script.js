@@ -31,8 +31,4 @@ $(function() {
 
 
 
-    $('#modes-buttons').find('input').on('click', function() {
-        alert('oh yeah')
-    });
-
 });

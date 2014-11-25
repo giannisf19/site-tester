@@ -1,14 +1,14 @@
-btn-group(data-toggle='buttons')#modes-buttons
-   label.btn.btn-primary.active
-      input(type='radio', name='options' value='numbers', id='option1', autocomplete='off', data-bind="checked: mode")
+.btn-group#modes-buttons
+   label.btn.btn-primary(data-bind="css: {'active': selectedMode() == 'numbers'}")
+      input(type='radio', name='options', value='numbers', id='option1', data-bind="checked: selectedMode" )
       |Numbers
 
       //-------------------------------------------------------------------
-   label.btn.btn-primary
-      input(type='radio', name='options' value='graph', id='option2' autocomplete='off', data-bind=": mode" )
+   label.btn.btn-primary(data-bind="css: {'active': selectedMode() == 'graph'}")
+      input(type='radio', name='options', value='graph', id='option2' , data-bind="checked: selectedMode" )
       |Graph
 
       //------------------------------------------------------------------
-   label.btn.btn-primary
-      input(type='radio', name='options' value='timeline', id='option3', autocomplete='off',  data-bind="checked: mode" )
+   label.btn.btn-primary(data-bind="css: {'active': selectedMode() == 'timeline'}")
+      input(type='radio', name='options', value='timeline', id='option3',  data-bind="checked: selectedMode" )
       |Timeline
