@@ -18,6 +18,7 @@ var viewModel = (function () {
 
         this.selectedHistory = ko.observable('');
         this.currentData = ko.observable({});
+        this.mode = ko.observable('graph');
 
         var socket = io.connect(this.host());
 

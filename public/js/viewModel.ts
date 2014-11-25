@@ -21,6 +21,8 @@ class viewModel {
     private socket : SocketIO.Socket;
     private count: number;
     private currentData : KnockoutObservable<any>;
+    private mode : KnockoutObservable<string>;
+
 
     constructor(private settings : SiteTesterSettings,  host : string) {
         
@@ -35,7 +37,7 @@ class viewModel {
 
         this.selectedHistory = ko.observable('');
         this.currentData = ko.observable({});
-
+        this.mode = ko.observable('graph');
 
         var socket = io.connect(this.host());
         

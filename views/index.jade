@@ -27,7 +27,7 @@ html
                            .tab-pane.result-content(data-bind="css: {active: $index() == 0}, attr: {id: $index}")
                                .tab-content.metric-tabs
                                    .tab-pane.summary.active
-                                       p summary
+                                       p(data-bind="text: $data.url")
                                    .tab-pane.jserror#js_error
                                        p jsErrors
                                    .tab-pane.notfound#not_found
