@@ -34,7 +34,6 @@ class viewModel {
         this.urls = ko.observableArray(settings.urls);
         this.histories = ko.observableArray([]);
         this.isRunning = ko.observable(false);
-
         this.selectedHistory = ko.observable('');
         this.currentData = ko.observable({});
         this.selectedMode = ko.observable('numbers');
@@ -94,8 +93,6 @@ class viewModel {
 
 
 
-
-
         if ($('#cron').length)
             $('#cron').cron({
                 initial: this.cron(),
@@ -109,8 +106,6 @@ class viewModel {
 
     }
 
-
-  
 
     add()  {
         if (! _.contains(this.urls(), this.newItem())) {
@@ -151,13 +146,11 @@ class viewModel {
     }
 
 
-
      shakeForm() {
         var l = 20;
         for( var i = 0; i < 10; i++ )
             $( "form > div > input").eq(0).animate( { 'margin-left': "+=" + ( l = -l ) + 'px' }, 30);
     }
-
 
 
      pushSettingsToServer() {
@@ -197,11 +190,9 @@ class viewModel {
                         toAdd.push(new TestInstance(offenders, metrics, test.url));
                     }
 
-
                 });
 
                 console.log('Adding to histories..');
-
                 this.histories.push(new TestHistory(this.selectedHistory(), toAdd))
             }
 
@@ -239,7 +230,6 @@ class TestInstance {
         this.metrics = metrics;
         this.url = url;
     }
-
 
 }
 

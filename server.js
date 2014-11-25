@@ -117,7 +117,7 @@ io.on('connection', function(socket) {
 
 
 
-//fs.writeFileSync('test.json', JSON.stringify(parser.GetDataByPage()));
+
 
 
 server.listen(300, function() {

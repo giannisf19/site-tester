@@ -15,7 +15,6 @@ var viewModel = (function () {
         this.urls = ko.observableArray(settings.urls);
         this.histories = ko.observableArray([]);
         this.isRunning = ko.observable(false);
-
         this.selectedHistory = ko.observable('');
         this.currentData = ko.observable({});
         this.selectedMode = ko.observable('numbers');
@@ -151,7 +150,6 @@ var viewModel = (function () {
                 });
 
                 console.log('Adding to histories..');
-
                 _this.histories.push(new TestHistory(_this.selectedHistory(), toAdd));
             }
         });
