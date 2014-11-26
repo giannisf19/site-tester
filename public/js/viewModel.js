@@ -42,7 +42,7 @@ var viewModel = (function () {
                 // to make a timeline graph we need all run histories
                 _.forEach($('#historiesPicker').find('option'), function (history) {
                     var h = $(history).val();
-
+                    console.log("to h einai: " + h);
                     _this.addToHistories(h);
                 });
 
@@ -129,14 +129,12 @@ var viewModel = (function () {
 
     viewModel.prototype.addToHistories = function (name) {
         var _this = this;
-        var data = ko.toJSON({ 'name': name });
-
-        console.log(name);
-        var exists = _.every(this.histories(), function (item) {
-            return !(name == item.getDate());
+        var data = ko.toJSON({ 'name': name.trim() });
+        var exists = _.some(this.histories(), function (item) {
+            return name == item.getDate();
         });
 
-        if (exists) {
+        if (!exists) {
             $.ajax({
                 type: 'post',
                 async: false,
@@ -147,7 +145,7 @@ var viewModel = (function () {
                 success: function (result, status) {
                     var toAdd = [];
 
-                    _.forEach(result[_this.selectedHistory()], function (test) {
+                    _.forEach(result[name], function (test) {
                         if (test.result) {
                             var offenders = test.result.offenders || {};
                             var metrics = test.result.metrics || {};
@@ -157,7 +155,7 @@ var viewModel = (function () {
                     });
 
                     console.log('Adding to histories..');
-                    _this.histories.push(new SiteTesterTypes.TestHistory(_this.selectedHistory(), toAdd));
+                    _this.histories.push(new SiteTesterTypes.TestHistory(name, toAdd));
                 }
             });
         } else {
@@ -184,33 +182,42 @@ var viewModel = (function () {
                 var data = { dates: [], url: current.getData().url, data: { name: metricType, count: [] } };
 
                 _.forEach(_this.histories(), function (history) {
-                    var k = _.filter(history.getTests(), function (item) {
-                        return item.getData().url == current.getData().url;
+                    //var k = _.filter(history.getTests(), (item : SiteTesterTypes.TestInstance)  => {
+                    //    console.log("to current " + current.getData().url)
+                    //    console.log("to history " + item.getData().url)
+                    //    return item.getData().url == current.getData().url
+                    //});
+                    var k;
+                    _.forEach(history.getTests(), function (item) {
+                        if (item.getData().url == current.getData().url) {
+                            console.log("gotcha");
+                            k = item;
+                        }
                     });
 
-                    if (k[0]) {
-                        data.data.count.push(k[0].getData().offenders.jserrors);
-                        data.dates.push(history.getDate());
+                    data.dates.push(history.getDate());
+
+                    if (k) {
+                        data.data.count.push(k.getData().offenders.jsErrors.length);
                     }
                 });
 
+                console.log(data.dates);
+                console.log(data.data.count);
+
                 $(divSelector).find('.graphContainer').highcharts({
                     title: {
-                        text: 'Fruiot consumption'
+                        text: 'Javascript errors'
                     },
                     xAxis: {
-                        categories: data.dates
+                        categories: ['simera', 'aurio', 'pio meta']
                     },
                     yAxis: {
                         title: {
-                            text: 'Fruit eaten'
+                            text: 'jsErrors'
                         }
                     },
-                    series: [
-                        {
-                            name: 'Jane',
-                            data: [1, 0, 4]
-                        }, {
+                    series: [{
                             name: current.getData().url,
                             data: data.data.count
                         }]

@@ -79,7 +79,7 @@ class viewModel {
 
                 _.forEach($('#historiesPicker').find('option'), (history) => {
                    var h = $(history).val();
-
+                     console.log("to h einai: " + h)
                     this.addToHistories(h);
                 });
 
@@ -181,12 +181,10 @@ class viewModel {
 
 
     addToHistories(name: string) {
-        var data = ko.toJSON({ 'name': name });
+        var data = ko.toJSON({ 'name': name.trim() });
+        var exists = _.some(this.histories(), (item : SiteTesterTypes.TestHistory) => {return name == item.getDate()});
 
-        console.log(name)
-        var exists = _.every(this.histories(), (item : SiteTesterTypes.TestHistory) => {return !(name == item.getDate())});
-
-        if ( exists) {
+        if ( !exists) {
 
             $.ajax({
                 type: 'post',
@@ -199,7 +197,7 @@ class viewModel {
 
                     var toAdd : SiteTesterTypes.TestInstance[] = [];
 
-                    _.forEach(result[this.selectedHistory()], (test : any) => {
+                    _.forEach(result[name], (test : any) => {
                         if (test.result)
                         {
                             var offenders = test.result.offenders || {};
@@ -211,7 +209,7 @@ class viewModel {
                     });
 
                     console.log('Adding to histories..');
-                    this.histories.push(new SiteTesterTypes.TestHistory(this.selectedHistory(), toAdd))
+                    this.histories.push(new SiteTesterTypes.TestHistory(name, toAdd))
                 }
 
             });
@@ -253,14 +251,27 @@ class viewModel {
 
                 _.forEach(this.histories(), (history : SiteTesterTypes.TestHistory) => {
 
-                    var k = _.filter(history.getTests(), (item : SiteTesterTypes.TestInstance)  => {
-                        return item.getData().url == current.getData().url
+                    //var k = _.filter(history.getTests(), (item : SiteTesterTypes.TestInstance)  => {
+                    //    console.log("to current " + current.getData().url)
+                    //    console.log("to history " + item.getData().url)
+                    //    return item.getData().url == current.getData().url
+                    //});
+
+
+                    var k;
+                    _.forEach(history.getTests(), (item) => {
+                        if (item.getData().url == current.getData().url) {
+                            console.log("gotcha")
+                            k = item;
+                        }
                     });
 
 
-                    if (k[0]) {
-                        data.data.count.push(k[0].getData().offenders.jserrors);
-                        data.dates.push(history.getDate());
+                    data.dates.push(history.getDate());
+
+
+                    if (k) {
+                        data.data.count.push(k.getData().offenders.jsErrors.length);
                     }
 
                 });
@@ -268,27 +279,25 @@ class viewModel {
 
 
 
-
+                console.log(data.dates)
+                console.log(data.data.count)
 
                 $(divSelector).find('.graphContainer').highcharts({
 
 
                     title: {
-                        text: 'Fruiot consumption'
+                        text: 'Javascript errors'
                     },
 
                     xAxis: {
-                        categories: data.dates
+                        categories: ['simera', 'aurio', 'pio meta']
                     },
                     yAxis: {
                         title: {
-                            text: 'Fruit eaten'
+                            text: 'jsErrors'
                         }
                     },
                     series: [{
-                        name: 'Jane',
-                        data: [1, 0, 4]
-                    }, {
                         name: current.getData().url,
                         data: data.data.count
                     }]
