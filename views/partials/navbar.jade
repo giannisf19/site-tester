@@ -14,7 +14,7 @@
 
              if activeMain == 'active'
                  li.left-buffer
-                     select(data-bind='value: selectedHistory').selectpicker
+                     select(data-bind='value: selectedHistory', id='historiesPicker').selectpicker
                          each val in dates
                              option #{val}
 

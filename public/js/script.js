@@ -31,8 +31,7 @@ $(function() {
 
 
     window.updateKOBindings = function(newElement) {
-        console.log(newElement)
-      ko.applyBindings(vm, $(newElement)[0])
+      ko.applyBindings(vm, $(newElement)[0]);
     };
 
 });

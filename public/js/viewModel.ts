@@ -11,6 +11,7 @@ declare var updateKOBindings : any ;
 
 interface JQuery  {
     cron : any;
+    highcharts : any;
 }
 
 
@@ -56,21 +57,7 @@ class viewModel {
 
         this.selectedHistory.subscribe(() => {
 
-           var exists = false;
-
-            _.forEach(this.histories(), (item : SiteTesterTypes.TestHistory) => {
-                if (item.getDate() == this.selectedHistory()) {exists = true;}
-            });
-
-            if (! exists) {
                 this.addToHistories(this.selectedHistory());
-            }
-
-            else {
-                console.log('Skipping, already in list.');
-            }
-
-
                 var data = {};
 
                 _.forEach(this.histories(), (item)=> {
@@ -79,7 +66,6 @@ class viewModel {
                     }
                 });
 
-
                 this.currentData(data);
 
 
@@ -87,6 +73,17 @@ class viewModel {
 
         this.selectedMode.subscribe((mode) => {
             if (mode == 'timeline') {
+
+
+                // to make a timeline graph we need all run histories
+
+                _.forEach($('#historiesPicker').find('option'), (history) => {
+                   var h = $(history).val();
+
+                    this.addToHistories(h);
+                });
+
+
                 this.makeTimelineGraph(new SiteTesterTypes.MetricData(SiteTesterTypes.MetricType.javascript_Error))
             }
         });
@@ -132,7 +129,7 @@ class viewModel {
         }
 
         if (this.count >= 1) {toastr.error("Url already in list"); this.count =-1}
-        this.shakeForm();
+        viewModel.shakeForm();
         this.count++
 
     }
@@ -162,7 +159,7 @@ class viewModel {
     }
 
 
-     shakeForm() {
+     static shakeForm() {
         var l = 20;
         for( var i = 0; i < 10; i++ )
             $( "form > div > input").eq(0).animate( { 'margin-left': "+=" + ( l = -l ) + 'px' }, 30);
@@ -186,33 +183,46 @@ class viewModel {
     addToHistories(name: string) {
         var data = ko.toJSON({ 'name': name });
 
-        $.ajax({
-            type: 'post',
-            async: false,
-            contentType: 'application/json',
-            dataType: 'json',
-            url: this.host() + '/api/GetHistoryByName',
-            data: data,
-            success: (result, status) => {
+        console.log(name)
+        var exists = _.every(this.histories(), (item : SiteTesterTypes.TestHistory) => {return !(name == item.getDate())});
 
-                var toAdd : SiteTesterTypes.TestInstance[] = [];
+        if ( exists) {
 
-                _.forEach(result[this.selectedHistory()], (test : any) => {
-                    if (test.result)
-                    {
-                        var offenders = test.result.offenders || {};
-                        var metrics = test.result.metrics || {};
+            $.ajax({
+                type: 'post',
+                async: false,
+                contentType: 'application/json',
+                dataType: 'json',
+                url: this.host() + '/api/GetHistoryByName',
+                data: data,
+                success: (result, status) => {
 
-                        toAdd.push(new SiteTesterTypes.TestInstance(offenders, metrics, test.url));
-                    }
+                    var toAdd : SiteTesterTypes.TestInstance[] = [];
 
-                });
+                    _.forEach(result[this.selectedHistory()], (test : any) => {
+                        if (test.result)
+                        {
+                            var offenders = test.result.offenders || {};
+                            var metrics = test.result.metrics || {};
 
-                console.log('Adding to histories..');
-                this.histories.push(new SiteTesterTypes.TestHistory(this.selectedHistory(), toAdd))
-            }
+                            toAdd.push(new SiteTesterTypes.TestInstance(offenders, metrics, test.url));
+                        }
 
-        });
+                    });
+
+                    console.log('Adding to histories..');
+                    this.histories.push(new SiteTesterTypes.TestHistory(this.selectedHistory(), toAdd))
+                }
+
+            });
+
+        }
+
+        else {
+            console.log('Skipping, already in list..')
+        }
+
+
     }
 
 
@@ -226,17 +236,69 @@ class viewModel {
 
             // append the div to DOM and set visibility
 
-            var divSelecttor = '#'  +divId;
+            var divSelector = '#'  +divId;
 
-            if (!$(divSelecttor).length) {
+            if (!$(divSelector).length) {
                 $(docSelector).find(metricType.getCssClass()).append(containerDiv);
+                $(divSelector).attr('data-bind', "visible: selectedMode() == 'timeline'");
 
 
 
-                $('#' +divId).append("sdfsdfsdfsdfdssdfsdsdfsdf");
-                $('#' + divId).attr('data-bind', "visible: selectedMode() == 'timeline'");
+                $(divSelector).append("<div class='graphContainer' style='width: 100%; height: 400px;'></div>");
 
-                updateKOBindings(divSelecttor);
+
+
+                var data = {dates: [], url: current.getData().url, data: {name: metricType, count: []}}; // Data for graph
+
+
+                _.forEach(this.histories(), (history : SiteTesterTypes.TestHistory) => {
+
+                    var k = _.filter(history.getTests(), (item : SiteTesterTypes.TestInstance)  => {
+                        return item.getData().url == current.getData().url
+                    });
+
+
+                    if (k[0]) {
+                        data.data.count.push(k[0].getData().offenders.jserrors);
+                        data.dates.push(history.getDate());
+                    }
+
+                });
+
+
+
+
+
+
+                $(divSelector).find('.graphContainer').highcharts({
+
+
+                    title: {
+                        text: 'Fruiot consumption'
+                    },
+
+                    xAxis: {
+                        categories: data.dates
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Fruit eaten'
+                        }
+                    },
+                    series: [{
+                        name: 'Jane',
+                        data: [1, 0, 4]
+                    }, {
+                        name: current.getData().url,
+                        data: data.data.count
+                    }]
+
+
+                });
+
+
+
+                updateKOBindings(divSelector);
             }
 
 

@@ -25,20 +25,7 @@ var viewModel = (function () {
         this.count = 0;
 
         this.selectedHistory.subscribe(function () {
-            var exists = false;
-
-            _.forEach(_this.histories(), function (item) {
-                if (item.getDate() == _this.selectedHistory()) {
-                    exists = true;
-                }
-            });
-
-            if (!exists) {
-                _this.addToHistories(_this.selectedHistory());
-            } else {
-                console.log('Skipping, already in list.');
-            }
-
+            _this.addToHistories(_this.selectedHistory());
             var data = {};
 
             _.forEach(_this.histories(), function (item) {
@@ -52,6 +39,13 @@ var viewModel = (function () {
 
         this.selectedMode.subscribe(function (mode) {
             if (mode == 'timeline') {
+                // to make a timeline graph we need all run histories
+                _.forEach($('#historiesPicker').find('option'), function (history) {
+                    var h = $(history).val();
+
+                    _this.addToHistories(h);
+                });
+
                 _this.makeTimelineGraph(new SiteTesterTypes.MetricData(0 /* javascript_Error */));
             }
         });
@@ -91,7 +85,7 @@ var viewModel = (function () {
             toastr.error("Url already in list");
             this.count = -1;
         }
-        this.shakeForm();
+        viewModel.shakeForm();
         this.count++;
     };
 
@@ -116,7 +110,7 @@ var viewModel = (function () {
         }
     };
 
-    viewModel.prototype.shakeForm = function () {
+    viewModel.shakeForm = function () {
         var l = 20;
         for (var i = 0; i < 10; i++)
             $("form > div > input").eq(0).animate({ 'margin-left': "+=" + (l = -l) + 'px' }, 30);
@@ -137,47 +131,92 @@ var viewModel = (function () {
         var _this = this;
         var data = ko.toJSON({ 'name': name });
 
-        $.ajax({
-            type: 'post',
-            async: false,
-            contentType: 'application/json',
-            dataType: 'json',
-            url: this.host() + '/api/GetHistoryByName',
-            data: data,
-            success: function (result, status) {
-                var toAdd = [];
-
-                _.forEach(result[_this.selectedHistory()], function (test) {
-                    if (test.result) {
-                        var offenders = test.result.offenders || {};
-                        var metrics = test.result.metrics || {};
-
-                        toAdd.push(new SiteTesterTypes.TestInstance(offenders, metrics, test.url));
-                    }
-                });
-
-                console.log('Adding to histories..');
-                _this.histories.push(new SiteTesterTypes.TestHistory(_this.selectedHistory(), toAdd));
-            }
+        console.log(name);
+        var exists = _.every(this.histories(), function (item) {
+            return !(name == item.getDate());
         });
+
+        if (exists) {
+            $.ajax({
+                type: 'post',
+                async: false,
+                contentType: 'application/json',
+                dataType: 'json',
+                url: this.host() + '/api/GetHistoryByName',
+                data: data,
+                success: function (result, status) {
+                    var toAdd = [];
+
+                    _.forEach(result[_this.selectedHistory()], function (test) {
+                        if (test.result) {
+                            var offenders = test.result.offenders || {};
+                            var metrics = test.result.metrics || {};
+
+                            toAdd.push(new SiteTesterTypes.TestInstance(offenders, metrics, test.url));
+                        }
+                    });
+
+                    console.log('Adding to histories..');
+                    _this.histories.push(new SiteTesterTypes.TestHistory(_this.selectedHistory(), toAdd));
+                }
+            });
+        } else {
+            console.log('Skipping, already in list..');
+        }
     };
 
     viewModel.prototype.makeTimelineGraph = function (metricType) {
+        var _this = this;
         _.forEach(this.currentData().data, function (current) {
             var divId = viewModel.getValidDivId(current.getData().url, metricType.getCssClass());
             var containerDiv = "<div id='" + divId + "'></div>";
             var docSelector = "*[data-url='" + current.getData().url + "']";
 
             // append the div to DOM and set visibility
-            var divSelecttor = '#' + divId;
+            var divSelector = '#' + divId;
 
-            if (!$(divSelecttor).length) {
+            if (!$(divSelector).length) {
                 $(docSelector).find(metricType.getCssClass()).append(containerDiv);
+                $(divSelector).attr('data-bind', "visible: selectedMode() == 'timeline'");
 
-                $('#' + divId).append("sdfsdfsdfsdfdssdfsdsdfsdf");
-                $('#' + divId).attr('data-bind', "visible: selectedMode() == 'timeline'");
+                $(divSelector).append("<div class='graphContainer' style='width: 100%; height: 400px;'></div>");
 
-                updateKOBindings(divSelecttor);
+                var data = { dates: [], url: current.getData().url, data: { name: metricType, count: [] } };
+
+                _.forEach(_this.histories(), function (history) {
+                    var k = _.filter(history.getTests(), function (item) {
+                        return item.getData().url == current.getData().url;
+                    });
+
+                    if (k[0]) {
+                        data.data.count.push(k[0].getData().offenders.jserrors);
+                        data.dates.push(history.getDate());
+                    }
+                });
+
+                $(divSelector).find('.graphContainer').highcharts({
+                    title: {
+                        text: 'Fruiot consumption'
+                    },
+                    xAxis: {
+                        categories: data.dates
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Fruit eaten'
+                        }
+                    },
+                    series: [
+                        {
+                            name: 'Jane',
+                            data: [1, 0, 4]
+                        }, {
+                            name: current.getData().url,
+                            data: data.data.count
+                        }]
+                });
+
+                updateKOBindings(divSelector);
             }
         });
     };

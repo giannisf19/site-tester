@@ -46,12 +46,16 @@
             return this.testDate;
         }
 
+        getTests() {
+            return this.tests;
+        }
+
     }
 
 
     export class TestInstance {
-        private offenders  : any[];
-        private metrics : any[];
+        private offenders  : any;
+        private metrics : any;
         private url : string;
 
         constructor(offenders, metrics, url) {

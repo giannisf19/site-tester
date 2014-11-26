@@ -25,6 +25,10 @@ var SiteTesterTypes;
         TestHistory.prototype.getDate = function () {
             return this.testDate;
         };
+
+        TestHistory.prototype.getTests = function () {
+            return this.tests;
+        };
         return TestHistory;
     })();
     SiteTesterTypes.TestHistory = TestHistory;
