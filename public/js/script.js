@@ -30,5 +30,9 @@ $(function() {
     });
 
 
+    window.updateKOBindings = function(newElement) {
+        console.log(newElement)
+      ko.applyBindings(vm, $(newElement)[0])
+    };
 
 });

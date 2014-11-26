@@ -1,4 +1,4 @@
-- var zero = urls.length == 0
+- var zero = urls.length == 0;
 
 
 doctype html
@@ -25,12 +25,13 @@ html
                        .tab-content.top-buffer
                            // ko foreach: currentData
                            .tab-pane.result-content(data-bind="css: {active: $index() == 0}, attr: {id: $index}")
-                               .tab-content.metric-tabs
+                               .tab-content.metric-tabs(data-bind="attr: {'data-url': $data.url}")
                                    .tab-pane.summary.active
-                                       p(data-bind="text: $data.url")
-                                   .tab-pane.jserror#js_error
-                                       p jsErrors
-                                   .tab-pane.notfound#not_found
+                                       p(data-bind= "text: $data.metrics.gzipRequests")
+
+                                   .tab-pane.jserror
+                                     p jsErrosr
+                                   .tab-pane.notfound
                                        p notFound(404)
                             // /ko
                    .col-md-1.top-buffer-2x

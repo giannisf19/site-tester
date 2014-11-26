@@ -6,6 +6,16 @@
 /// <reference path="types.ts"/>
 
 
+declare var io: any;
+declare var updateKOBindings : any ;
+
+interface JQuery  {
+    cron : any;
+}
+
+
+
+
 class viewModel {
 
     private host : KnockoutObservable<string>;
@@ -24,7 +34,8 @@ class viewModel {
     private selectedMode : KnockoutObservable<string>;
 
 
-    constructor(private settings : SiteTesterSettings,  host : string) {
+
+    constructor(private settings : SiteTesterTypes.SiteTesterSettings,  host : string) {
         
     	
         this.host = ko.observable('http://' + host);
@@ -45,10 +56,9 @@ class viewModel {
 
         this.selectedHistory.subscribe(() => {
 
-
            var exists = false;
 
-            _.forEach(this.histories(), (item : TestHistory) => {
+            _.forEach(this.histories(), (item : SiteTesterTypes.TestHistory) => {
                 if (item.getDate() == this.selectedHistory()) {exists = true;}
             });
 
@@ -73,6 +83,12 @@ class viewModel {
                 this.currentData(data);
 
 
+        });
+
+        this.selectedMode.subscribe((mode) => {
+            if (mode == 'timeline') {
+                this.makeTimelineGraph(new SiteTesterTypes.MetricData(SiteTesterTypes.MetricType.javascript_Error))
+            }
         });
 
         this.isValid = ko.computed(() => {
@@ -156,7 +172,7 @@ class viewModel {
      pushSettingsToServer() {
 
         var data = ko.toJSON({settings :{'urls' : this.urls(), 'screenshot' : this.screenshot(), 'cron' : this.cron()}}) ;
-        console.log(this.screenshot())
+        console.log(this.screenshot());
         $.ajax({
             type: 'post',
             url: this.host() + '/saveSettings',
@@ -179,7 +195,7 @@ class viewModel {
             data: data,
             success: (result, status) => {
 
-                var toAdd : TestInstance[] = [];
+                var toAdd : SiteTesterTypes.TestInstance[] = [];
 
                 _.forEach(result[this.selectedHistory()], (test : any) => {
                     if (test.result)
@@ -187,50 +203,56 @@ class viewModel {
                         var offenders = test.result.offenders || {};
                         var metrics = test.result.metrics || {};
 
-                        toAdd.push(new TestInstance(offenders, metrics, test.url));
+                        toAdd.push(new SiteTesterTypes.TestInstance(offenders, metrics, test.url));
                     }
 
                 });
 
                 console.log('Adding to histories..');
-                this.histories.push(new TestHistory(this.selectedHistory(), toAdd))
+                this.histories.push(new SiteTesterTypes.TestHistory(this.selectedHistory(), toAdd))
             }
 
         });
     }
 
+
+    makeTimelineGraph(metricType : SiteTesterTypes.MetricData) {
+
+        _.forEach(this.currentData().data, (current : SiteTesterTypes.TestInstance)=> {
+            var divId = viewModel.getValidDivId(current.getData().url, metricType.getCssClass());
+            var containerDiv = "<div id='" +  divId+ "'></div>";
+            var docSelector = "*[data-url='" + current.getData().url + "']";
+
+
+            // append the div to DOM and set visibility
+
+            var divSelecttor = '#'  +divId;
+
+            if (!$(divSelecttor).length) {
+                $(docSelector).find(metricType.getCssClass()).append(containerDiv);
+
+
+
+                $('#' +divId).append("sdfsdfsdfsdfdssdfsdsdfsdf");
+                $('#' + divId).attr('data-bind', "visible: selectedMode() == 'timeline'");
+
+                updateKOBindings(divSelecttor);
+            }
+
+
+        });
+    }
+
+
+    static getValidDivId(url : string, cssClass : string) {
+        return url.split('//')[1].split('.')[0] + cssClass.split('.')[1];
+    }
+
+
 }
 
 
 
-class TestHistory  {
 
-    private testDate: string;
-    private tests : TestInstance[];
-
-    constructor(date, tests) {
-        this.testDate = date;
-        this.tests = tests;
-    }
-
-    getDate() {
-        return this.testDate;
-    }
-
-}
-
-
-class TestInstance {
-    private offenders  : any[];
-    private metrics : any[];
-    private url : string;
-
-    constructor(offenders, metrics, url) {
-        this.offenders = offenders;
-        this.metrics = metrics;
-        this.url = url;
-    }
-
-}
 
 

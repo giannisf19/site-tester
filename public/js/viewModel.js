@@ -4,6 +4,7 @@
 /// <reference path="../../typings/lodash/lodash.d.ts"/>
 /// <reference path="../../typings/toastr/toastr.d.ts"/>
 /// <reference path="types.ts"/>
+
 var viewModel = (function () {
     function viewModel(settings, host) {
         var _this = this;
@@ -47,6 +48,12 @@ var viewModel = (function () {
             });
 
             _this.currentData(data);
+        });
+
+        this.selectedMode.subscribe(function (mode) {
+            if (mode == 'timeline') {
+                _this.makeTimelineGraph(new SiteTesterTypes.MetricData(0 /* javascript_Error */));
+            }
         });
 
         this.isValid = ko.computed(function () {
@@ -145,35 +152,39 @@ var viewModel = (function () {
                         var offenders = test.result.offenders || {};
                         var metrics = test.result.metrics || {};
 
-                        toAdd.push(new TestInstance(offenders, metrics, test.url));
+                        toAdd.push(new SiteTesterTypes.TestInstance(offenders, metrics, test.url));
                     }
                 });
 
                 console.log('Adding to histories..');
-                _this.histories.push(new TestHistory(_this.selectedHistory(), toAdd));
+                _this.histories.push(new SiteTesterTypes.TestHistory(_this.selectedHistory(), toAdd));
             }
         });
     };
-    return viewModel;
-})();
 
-var TestHistory = (function () {
-    function TestHistory(date, tests) {
-        this.testDate = date;
-        this.tests = tests;
-    }
-    TestHistory.prototype.getDate = function () {
-        return this.testDate;
+    viewModel.prototype.makeTimelineGraph = function (metricType) {
+        _.forEach(this.currentData().data, function (current) {
+            var divId = viewModel.getValidDivId(current.getData().url, metricType.getCssClass());
+            var containerDiv = "<div id='" + divId + "'></div>";
+            var docSelector = "*[data-url='" + current.getData().url + "']";
+
+            // append the div to DOM and set visibility
+            var divSelecttor = '#' + divId;
+
+            if (!$(divSelecttor).length) {
+                $(docSelector).find(metricType.getCssClass()).append(containerDiv);
+
+                $('#' + divId).append("sdfsdfsdfsdfdssdfsdsdfsdf");
+                $('#' + divId).attr('data-bind', "visible: selectedMode() == 'timeline'");
+
+                updateKOBindings(divSelecttor);
+            }
+        });
     };
-    return TestHistory;
-})();
 
-var TestInstance = (function () {
-    function TestInstance(offenders, metrics, url) {
-        this.offenders = offenders;
-        this.metrics = metrics;
-        this.url = url;
-    }
-    return TestInstance;
+    viewModel.getValidDivId = function (url, cssClass) {
+        return url.split('//')[1].split('.')[0] + cssClass.split('.')[1];
+    };
+    return viewModel;
 })();
 //# sourceMappingURL=viewModel.js.map
