@@ -29,7 +29,7 @@ html
                                .tab-content.metric-tabs.col-md-12(data-bind="attr: {'data-url': $data.url}")
                                    .tab-pane.summary.active.graph
                                        div.metric-selector.col-md-2
-                                           select(data-bind= "options: $root.availableMetrics, selectedOptions: $root.selectedMetrics", size=20, multiple='true')
+                                           select(data-bind= "options: $root.availableMetrics, selectedOptions: $root.selectedMetrics, visible: $root.selectedMode() == 'timeline' || $root.selectedMode() == 'graph'", size=20, multiple='true')
                                .loader.hide
                                     p Loading..
 
