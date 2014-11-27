@@ -36,7 +36,7 @@ var viewModel = (function () {
 
                     _.forEach(item.tests, function (val) {
                         var arr = _.map(val.offenders, function (v, i) {
-                            return [i];
+                            return i;
                         });
                         ko.utils.arrayPushAll(_this.availableMetrics(), _.difference(arr, _this.availableMetrics()));
                     });
@@ -213,7 +213,8 @@ var viewModel = (function () {
                 _.forEach(history.getTests(), function (item) {
                     if (item.getData().url == current.getData().url) {
                         _.forEach(_this.selectedMetrics(), function (metric) {
-                            metricData = item.getData().offenders[metric].length || 0;
+                            var temp = item.getData().offenders[metric];
+                            metricData = temp ? temp.length : 0;
 
                             console.log(item);
                             var myIndex = _.findIndex(seriesData, function (e) {

@@ -68,7 +68,7 @@ class viewModel {
                         data = {data: item.tests, date: item.testDate};
 
                         _.forEach(item.tests, (val : any) => {
-                            var arr  = _.map(val.offenders, (v,i) => {return [i]});
+                            var arr  = _.map(val.offenders, (v,i) => {return i});
                             ko.utils.arrayPushAll(this.availableMetrics(), _.difference(arr, this.availableMetrics()));
 
                         })
@@ -295,7 +295,8 @@ class viewModel {
 
                             _.forEach(this.selectedMetrics(), (metric) =>{ // Collect data for selected metrics
 
-                                metricData =  item.getData().offenders[metric].length || 0;
+                                var temp = item.getData().offenders[metric];
+                                metricData =  temp ? temp.length  : 0
 
                                 console.log(item)
                                 var myIndex = _.findIndex(seriesData, (e) => {return e.name == metric});

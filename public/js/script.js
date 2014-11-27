@@ -1,8 +1,12 @@
 $(function() {
 
+
+
+
+
+
     $(document).on('click', 'ul.page-selector a', function (e) {
         e.preventDefault();
-
 
 
         //Get the clicked tab
@@ -41,8 +45,6 @@ $(function() {
         catch(ex) {
             console.log(ex);
         }
-
-
 
     };
 

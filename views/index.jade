@@ -28,7 +28,7 @@ html
                                .tab-content.metric-tabs.col-md-12(data-bind="attr: {'data-url': $data.url}")
                                    .tab-pane.summary.active.graph
                                        div.metric-selector.col-md-2
-                                           select.select(data-bind= "options: $root.availableMetrics, selectedOptions: $root.selectedMetrics", size=20, multiple='true')
+                                           select(data-bind= "options: $root.availableMetrics, selectedOptions: $root.selectedMetrics", size=20, multiple='true')
 
                             // /ko
                    .col-md-1.top-buffer-2x
