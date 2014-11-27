@@ -31,7 +31,19 @@ $(function() {
 
 
     window.updateKOBindings = function(newElement) {
-      ko.applyBindings(vm, $(newElement)[0]);
+
+        var toAdd = $(newElement)[0];
+
+       try {
+           ko.applyBindings(vm, toAdd)
+       }
+
+        catch(ex) {
+            console.log(ex);
+        }
+
+
+
     };
 
 });

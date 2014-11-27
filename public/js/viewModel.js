@@ -19,6 +19,8 @@ var viewModel = (function () {
         this.selectedHistory = ko.observable('');
         this.currentData = ko.observable({});
         this.selectedMode = ko.observable('numbers');
+        this.availableMetrics = ko.observableArray([]);
+        this.selectedMetrics = ko.observableArray([]);
 
         var socket = io.connect(this.host());
 
@@ -31,6 +33,13 @@ var viewModel = (function () {
             _.forEach(_this.histories(), function (item) {
                 if (item.getDate() == _this.selectedHistory()) {
                     data = { data: item.tests, date: item.testDate };
+
+                    _.forEach(item.tests, function (val) {
+                        var arr = _.map(val.offenders, function (v, i) {
+                            return [i];
+                        });
+                        ko.utils.arrayPushAll(_this.availableMetrics(), _.difference(arr, _this.availableMetrics()));
+                    });
                 }
             });
 
@@ -42,11 +51,15 @@ var viewModel = (function () {
                 // to make a timeline graph we need all run histories
                 _.forEach($('#historiesPicker').find('option'), function (history) {
                     var h = $(history).val();
-                    console.log("to h einai: " + h);
                     _this.addToHistories(h);
                 });
 
-                _this.makeTimelineGraph(new SiteTesterTypes.MetricData(0 /* javascript_Error */));
+                _this.selectedMetrics.subscribe(function () {
+                    _this.makeTimelineGraph();
+                    console.log('updatingGraph');
+                });
+
+                _this.makeTimelineGraph();
             }
         });
 
@@ -73,6 +86,12 @@ var viewModel = (function () {
                 useGentleSelect: true
             });
     }
+    viewModel.prototype.update = function () {
+        if (this.selectedMode() == 'timeline') {
+            this.makeTimelineGraph();
+        }
+    };
+
     viewModel.prototype.add = function () {
         if (!_.contains(this.urls(), this.newItem())) {
             this.urls.unshift(this.newItem());
@@ -163,68 +182,73 @@ var viewModel = (function () {
         }
     };
 
-    viewModel.prototype.makeTimelineGraph = function (metricType) {
+    viewModel.prototype.makeTimelineGraph = function () {
         var _this = this;
+        var graphWidth = 0;
+
         _.forEach(this.currentData().data, function (current) {
-            var divId = viewModel.getValidDivId(current.getData().url, metricType.getCssClass());
-            var containerDiv = "<div id='" + divId + "'></div>";
+            var cssClass = '.graph';
+            var divId = viewModel.getValidDivId(current.getData().url, cssClass);
+            var divSelector = '#' + divId;
+            var containerDiv = "<div class='col-md-10' id='" + divId + "'></div>";
             var docSelector = "*[data-url='" + current.getData().url + "']";
 
             // append the div to DOM and set visibility
-            var divSelector = '#' + divId;
-
             if (!$(divSelector).length) {
-                $(docSelector).find(metricType.getCssClass()).append(containerDiv);
+                $(docSelector).find(cssClass).append(containerDiv);
                 $(divSelector).attr('data-bind', "visible: selectedMode() == 'timeline'");
-
                 $(divSelector).append("<div class='graphContainer' style='width: 100%; height: 400px;'></div>");
+            }
 
-                var data = { dates: [], url: current.getData().url, data: { name: metricType, count: [] } };
+            // update the width of the graph
+            graphWidth = $(divSelector).find('.graphContainer').width() > graphWidth ? $(divSelector).find('.graphContainer').width() : graphWidth;
 
-                _.forEach(_this.histories(), function (history) {
-                    //var k = _.filter(history.getTests(), (item : SiteTesterTypes.TestInstance)  => {
-                    //    console.log("to current " + current.getData().url)
-                    //    console.log("to history " + item.getData().url)
-                    //    return item.getData().url == current.getData().url
-                    //});
-                    var k;
-                    _.forEach(history.getTests(), function (item) {
-                        if (item.getData().url == current.getData().url) {
-                            console.log("gotcha");
-                            k = item;
-                        }
-                    });
+            var graphDates = [];
+            var seriesData = [];
+            var metricData;
 
-                    data.dates.push(history.getDate());
+            _.forEach(_this.histories(), function (history) {
+                graphDates.push(history.getDate());
 
-                    if (k) {
-                        data.data.count.push(k.getData().offenders.jsErrors.length);
+                _.forEach(history.getTests(), function (item) {
+                    if (item.getData().url == current.getData().url) {
+                        _.forEach(_this.selectedMetrics(), function (metric) {
+                            metricData = item.getData().offenders[metric].length || 0;
+
+                            console.log(item);
+                            var myIndex = _.findIndex(seriesData, function (e) {
+                                return e.name == metric;
+                            });
+                            if (myIndex != -1) {
+                                seriesData[myIndex].data.push(metricData);
+                            } else {
+                                seriesData.push({ name: metric, data: [metricData] });
+                            }
+                        });
                     }
                 });
+            });
 
-                console.log(data.dates);
-                console.log(data.data.count);
-
-                $(divSelector).find('.graphContainer').highcharts({
+            console.log(graphWidth);
+            $(divSelector).find('.graphContainer').highcharts({
+                title: {
+                    text: current.getData().url
+                },
+                chart: {
+                    width: 1112
+                },
+                xAxis: {
+                    categories: graphDates
+                },
+                yAxis: {
                     title: {
-                        text: 'Javascript errors'
-                    },
-                    xAxis: {
-                        categories: ['simera', 'aurio', 'pio meta']
-                    },
-                    yAxis: {
-                        title: {
-                            text: 'jsErrors'
-                        }
-                    },
-                    series: [{
-                            name: current.getData().url,
-                            data: data.data.count
-                        }]
-                });
+                        text: 'metrics'
+                    }
+                },
+                series: seriesData
+            });
 
-                updateKOBindings(divSelector);
-            }
+            updateKOBindings(divSelector);
         });
     };
 

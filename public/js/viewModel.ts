@@ -33,7 +33,8 @@ class viewModel {
     private count: number;
     private currentData : KnockoutObservable<any>;
     private selectedMode : KnockoutObservable<string>;
-
+    private availableMetrics : KnockoutObservableArray<string>;
+    private selectedMetrics : KnockoutObservableArray<string>;
 
 
     constructor(private settings : SiteTesterTypes.SiteTesterSettings,  host : string) {
@@ -49,6 +50,8 @@ class viewModel {
         this.selectedHistory = ko.observable('');
         this.currentData = ko.observable({});
         this.selectedMode = ko.observable('numbers');
+        this.availableMetrics  = ko.observableArray([]);
+        this.selectedMetrics = ko.observableArray([]);
 
         var socket = io.connect(this.host());
         
@@ -62,7 +65,14 @@ class viewModel {
 
                 _.forEach(this.histories(), (item)=> {
                     if (item.getDate() == this.selectedHistory()) {
-                        data = {data: item.tests, date: item.testDate}
+                        data = {data: item.tests, date: item.testDate};
+
+                        _.forEach(item.tests, (val : any) => {
+                            var arr  = _.map(val.offenders, (v,i) => {return [i]});
+                            ko.utils.arrayPushAll(this.availableMetrics(), _.difference(arr, this.availableMetrics()));
+
+                        })
+
                     }
                 });
 
@@ -79,14 +89,21 @@ class viewModel {
 
                 _.forEach($('#historiesPicker').find('option'), (history) => {
                    var h = $(history).val();
-                     console.log("to h einai: " + h)
                     this.addToHistories(h);
                 });
 
 
-                this.makeTimelineGraph(new SiteTesterTypes.MetricData(SiteTesterTypes.MetricType.javascript_Error))
+
+                this.selectedMetrics.subscribe(() => {
+                    this.makeTimelineGraph();
+                    console.log('updatingGraph');
+                });
+
+                this.makeTimelineGraph();
+
             }
         });
+
 
         this.isValid = ko.computed(() => {
             var pattern = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
@@ -119,6 +136,12 @@ class viewModel {
 
     }
 
+
+    update() {
+        if (this.selectedMode() == 'timeline') {
+            this.makeTimelineGraph();
+        }
+    }
 
     add()  {
         if (! _.contains(this.urls(), this.newItem())) {
@@ -220,95 +243,114 @@ class viewModel {
             console.log('Skipping, already in list..')
         }
 
-
     }
 
 
-    makeTimelineGraph(metricType : SiteTesterTypes.MetricData) {
+    makeTimelineGraph() {
+
+
+
+        var graphWidth = 0;
 
         _.forEach(this.currentData().data, (current : SiteTesterTypes.TestInstance)=> {
-            var divId = viewModel.getValidDivId(current.getData().url, metricType.getCssClass());
-            var containerDiv = "<div id='" +  divId+ "'></div>";
+
+            var cssClass = '.graph';
+            var divId = viewModel.getValidDivId(current.getData().url, cssClass);
+            var divSelector = '#'  +divId;
+            var containerDiv = "<div class='col-md-10' id='" +  divId+ "'></div>";
             var docSelector = "*[data-url='" + current.getData().url + "']";
 
 
             // append the div to DOM and set visibility
 
-            var divSelector = '#'  +divId;
-
-            if (!$(divSelector).length) {
-                $(docSelector).find(metricType.getCssClass()).append(containerDiv);
+            if (!$(divSelector).length) { // prepare the DOM for the graph
+                $(docSelector).find(cssClass).append(containerDiv);
                 $(divSelector).attr('data-bind', "visible: selectedMode() == 'timeline'");
-
-
-
                 $(divSelector).append("<div class='graphContainer' style='width: 100%; height: 400px;'></div>");
 
+            }
+
+            // update the width of the graph
+
+                graphWidth = $(divSelector).find('.graphContainer').width() > graphWidth ? $(divSelector).find('.graphContainer').width(): graphWidth;
 
 
-                var data = {dates: [], url: current.getData().url, data: {name: metricType, count: []}}; // Data for graph
 
+
+
+            var graphDates = [];
+                var seriesData = [];
+                var metricData ;
 
                 _.forEach(this.histories(), (history : SiteTesterTypes.TestHistory) => {
 
-                    //var k = _.filter(history.getTests(), (item : SiteTesterTypes.TestInstance)  => {
-                    //    console.log("to current " + current.getData().url)
-                    //    console.log("to history " + item.getData().url)
-                    //    return item.getData().url == current.getData().url
-                    //});
+
+                    graphDates.push(history.getDate());
 
 
-                    var k;
                     _.forEach(history.getTests(), (item) => {
-                        if (item.getData().url == current.getData().url) {
-                            console.log("gotcha")
-                            k = item;
+                        if (item.getData().url == current.getData().url) { // Is this the current url ?
+
+
+
+                            _.forEach(this.selectedMetrics(), (metric) =>{ // Collect data for selected metrics
+
+                                metricData =  item.getData().offenders[metric].length || 0;
+
+                                console.log(item)
+                                var myIndex = _.findIndex(seriesData, (e) => {return e.name == metric});
+                                if (myIndex != -1) {
+
+                                    seriesData[myIndex].data.push(metricData);
+                                }
+
+                                else {
+
+                                    seriesData.push({name: metric, data: [metricData]})
+                                }
+                            });
+
                         }
                     });
 
 
-                    data.dates.push(history.getDate());
-
-
-                    if (k) {
-                        data.data.count.push(k.getData().offenders.jsErrors.length);
-                    }
 
                 });
 
 
 
 
-                console.log(data.dates)
-                console.log(data.data.count)
 
+
+
+
+            console.log(graphWidth);
                 $(divSelector).find('.graphContainer').highcharts({
 
-
                     title: {
-                        text: 'Javascript errors'
+                        text: current.getData().url
+                    },
+
+                    chart: {
+                      width: 1112
                     },
 
                     xAxis: {
-                        categories: ['simera', 'aurio', 'pio meta']
+                        categories: graphDates
                     },
                     yAxis: {
                         title: {
-                            text: 'jsErrors'
+                            text: 'metrics'
                         }
                     },
-                    series: [{
-                        name: current.getData().url,
-                        data: data.data.count
-                    }]
+                    series: seriesData
 
 
                 });
 
 
+               updateKOBindings(divSelector);
 
-                updateKOBindings(divSelector);
-            }
 
 
         });
@@ -321,9 +363,5 @@ class viewModel {
 
 
 }
-
-
-
-
 
 

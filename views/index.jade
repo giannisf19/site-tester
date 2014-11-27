@@ -24,15 +24,12 @@ html
 
                        .tab-content.top-buffer
                            // ko foreach: currentData
-                           .tab-pane.result-content(data-bind="css: {active: $index() == 0}, attr: {id: $index}")
-                               .tab-content.metric-tabs(data-bind="attr: {'data-url': $data.url}")
-                                   .tab-pane.summary.active
-                                       p(data-bind= "text: $data.metrics.gzipRequests")
+                           .tab-pane.result-content.col-md-12(data-bind="css: {active: $index() == 0}, attr: {id: $index}")
+                               .tab-content.metric-tabs.col-md-12(data-bind="attr: {'data-url': $data.url}")
+                                   .tab-pane.summary.active.graph
+                                       div.metric-selector.col-md-2
+                                           select.select(data-bind= "options: $root.availableMetrics, selectedOptions: $root.selectedMetrics", size=20, multiple='true')
 
-                                   .tab-pane.jserror
-                                     p jsErrosr
-                                   .tab-pane.notfound
-                                       p notFound(404)
                             // /ko
                    .col-md-1.top-buffer-2x
                         include partials/modes
