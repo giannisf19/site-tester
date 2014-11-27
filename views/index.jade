@@ -22,7 +22,7 @@ html
                            .btn-group
                                 include partials/metrics
 
-                       .tab-content.top-buffer
+                       .tab-content.top-buffer.col-md-12
                            // ko foreach: currentData
                            .tab-pane.result-content.col-md-12(data-bind="css: {active: $index() == 0}, attr: {id: $index}")
                                .tab-content.metric-tabs.col-md-12(data-bind="attr: {'data-url': $data.url}")

@@ -39,7 +39,13 @@ html
                     h4 Scheduler
                     #cron
                     span
-                        button.left-buffer.btn.btn-primary(data-bind= "css: { disabled: !canRun() }, click: runNow" ) Run Now
+
+                        button.left-buffer.btn.btn-primary(data-bind= "css: { disabled: !canRun() || scheduled() }, click: schedule" ) Schedule
+                            i.fa.fa-spin.fa-spinner(data-bind="visible: isRunning()")
+
+                        button.left-buffer.btn.btn-primary(data-bind= "css: { disabled: !scheduled() }, click: stopScheduler" ) Stop Scheduler
+
+                        button.btn.btn-primary(data-bind= "css: { disabled: !canRun() }, click: runNow" ) Run Now
                             i.fa.fa-spin.fa-spinner(data-bind="visible: isRunning()")
 
 

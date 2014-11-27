@@ -35,7 +35,7 @@ class viewModel {
     private selectedMode : KnockoutObservable<string>;
     private availableMetrics : KnockoutObservableArray<string>;
     private selectedMetrics : KnockoutObservableArray<string>;
-
+    private scheduled: KnockoutObservable<boolean>;
 
     constructor(private settings : SiteTesterTypes.SiteTesterSettings,  host : string) {
         
@@ -52,6 +52,7 @@ class viewModel {
         this.selectedMode = ko.observable('numbers');
         this.availableMetrics  = ko.observableArray([]);
         this.selectedMetrics = ko.observableArray([]);
+        this.scheduled = ko.observable(false);
 
         var socket = io.connect(this.host());
         
@@ -122,6 +123,12 @@ class viewModel {
         });
 
 
+        socket.on('SchedulerData', (data) => {
+
+            console.log('eeppp irth');
+            this.scheduled(data.data.isSet);
+        });
+
 
         if ($('#cron').length)
             $('#cron').cron({
@@ -137,10 +144,22 @@ class viewModel {
     }
 
 
-    update() {
-        if (this.selectedMode() == 'timeline') {
-            this.makeTimelineGraph();
-        }
+
+
+   schedule() {
+       $.ajax({
+           type: 'post',
+           data: ko.toJSON({cron:this.cron()}),
+           contentType: 'application/json',
+           url: this.host() + '/api/schedule'
+       });
+   }
+
+    stopScheduler() {
+        $.ajax({
+            type: 'post',
+            url: this.host() + '/api/stopSchedule'
+        });
     }
 
     add()  {
@@ -167,7 +186,7 @@ class viewModel {
     runNow() {
         $.ajax({
             type: 'post',
-            url: this.host() + '/runNow'
+            url: this.host() + '/api/runNow'
         });
     }
 
@@ -175,11 +194,13 @@ class viewModel {
         if (confirm('Are you sure ?')) {
             $.ajax({
                 type: 'post',
-                url: this.host() + '/deleteDb'
+                url: this.host() + '/api/deleteDb'
             });
         }
 
     }
+
+
 
 
      static shakeForm() {
@@ -195,7 +216,7 @@ class viewModel {
         console.log(this.screenshot());
         $.ajax({
             type: 'post',
-            url: this.host() + '/saveSettings',
+            url: this.host() + '/api/saveSettings',
             contentType: 'application/json',
             data: data
 
@@ -275,9 +296,6 @@ class viewModel {
                 graphWidth = $(divSelector).find('.graphContainer').width() > graphWidth ? $(divSelector).find('.graphContainer').width(): graphWidth;
 
 
-
-
-
             var graphDates = [];
                 var seriesData = [];
                 var metricData ;
@@ -319,13 +337,6 @@ class viewModel {
                 });
 
 
-
-
-
-
-
-
-            console.log(graphWidth);
                 $(divSelector).find('.graphContainer').highcharts({
 
                     title: {

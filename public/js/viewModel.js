@@ -21,6 +21,7 @@ var viewModel = (function () {
         this.selectedMode = ko.observable('numbers');
         this.availableMetrics = ko.observableArray([]);
         this.selectedMetrics = ko.observableArray([]);
+        this.scheduled = ko.observable(false);
 
         var socket = io.connect(this.host());
 
@@ -76,6 +77,11 @@ var viewModel = (function () {
             _this.isRunning(data.isRunning);
         });
 
+        socket.on('SchedulerData', function (data) {
+            console.log('eeppp irth');
+            _this.scheduled(data.data.isSet);
+        });
+
         if ($('#cron').length)
             $('#cron').cron({
                 initial: this.cron(),
@@ -86,10 +92,20 @@ var viewModel = (function () {
                 useGentleSelect: true
             });
     }
-    viewModel.prototype.update = function () {
-        if (this.selectedMode() == 'timeline') {
-            this.makeTimelineGraph();
-        }
+    viewModel.prototype.schedule = function () {
+        $.ajax({
+            type: 'post',
+            data: ko.toJSON({ cron: this.cron() }),
+            contentType: 'application/json',
+            url: this.host() + '/api/schedule'
+        });
+    };
+
+    viewModel.prototype.stopScheduler = function () {
+        $.ajax({
+            type: 'post',
+            url: this.host() + '/api/stopSchedule'
+        });
     };
 
     viewModel.prototype.add = function () {
@@ -116,7 +132,7 @@ var viewModel = (function () {
     viewModel.prototype.runNow = function () {
         $.ajax({
             type: 'post',
-            url: this.host() + '/runNow'
+            url: this.host() + '/api/runNow'
         });
     };
 
@@ -124,7 +140,7 @@ var viewModel = (function () {
         if (confirm('Are you sure ?')) {
             $.ajax({
                 type: 'post',
-                url: this.host() + '/deleteDb'
+                url: this.host() + '/api/deleteDb'
             });
         }
     };
@@ -140,7 +156,7 @@ var viewModel = (function () {
         console.log(this.screenshot());
         $.ajax({
             type: 'post',
-            url: this.host() + '/saveSettings',
+            url: this.host() + '/api/saveSettings',
             contentType: 'application/json',
             data: data
         });
@@ -230,7 +246,6 @@ var viewModel = (function () {
                 });
             });
 
-            console.log(graphWidth);
             $(divSelector).find('.graphContainer').highcharts({
                 title: {
                     text: current.getData().url

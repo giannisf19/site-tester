@@ -3,6 +3,7 @@
   "description": "Test sites for errors",
   "dependencies": {
     "body-parser": "^1.9.2",
+    "cron": "^1.0.5",
     "express": "^4.10.2",
     "jade": "^1.7.0",
     "lodash": "^2.4.1",
@@ -12,9 +13,8 @@
     "serve-index": "^1.5.0",
     "socket.io": "^1.2.0"
   },
-
-    "repository": {
-        "type": "git",
-        "url": "git@github.com:giannisf19/site-tester.git"
-    }
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:giannisf19/site-tester.git"
+  }
 }

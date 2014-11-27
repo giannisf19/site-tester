@@ -27,7 +27,7 @@ app.locals.pretty = true;
 
 
 
-
+var schedulerRunning = false;
 
 
 
@@ -69,18 +69,18 @@ app.get('/conf', function(req, res){
 });
 
 
-app.post('/saveSettings', function(req,res){
+app.post('/api/saveSettings', function(req,res){
     db.push('./settings', req.body.settings);
     res.send('Ok');
 });
 
 
 
-app.post('/runNow', function(req, res) {
+app.post('/api/runNow', function(req, res) {
     testEngine.runNow();
 });
 
-app.post('/deleteDb', function() {
+app.post('/api/deleteDb', function() {
     helper.ClearHistory();
 });
 
@@ -105,9 +105,14 @@ app.post('/api/GetHistoryByName', function(req, res) {
 });
 
 
+app.post('/api/schedule', function(req, res) {
+    testEngine.Schedule(req.body.cron)
+});
 
 
-
+app.post('/api/stopSchedule', function(req, res) {
+    testEngine.StopScheduler();
+});
 
 io.on('connection', function(socket) {
     globalSocket = socket;

@@ -18,6 +18,6 @@
                          each val in dates
                              option #{val}
 
-                 li.left-buffer
-                    span Some indicator button or image
-                        i.fa.fa-2x.fa-wrench
+             li.left-buffer
+                span(data-bind="text: scheduled() ? 'Next test will run automatically.' : 'Scheduler not started.'")
+                span(data-bind="visible: isRunning()") Test Running now..
