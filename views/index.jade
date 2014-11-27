@@ -9,6 +9,7 @@ html
        .container-fluid
             include partials/navbar
            .row.clearfix
+
                if !zero
                    .col-md-2#page-selector-menu
 
@@ -29,6 +30,8 @@ html
                                    .tab-pane.summary.active.graph
                                        div.metric-selector.col-md-2
                                            select(data-bind= "options: $root.availableMetrics, selectedOptions: $root.selectedMetrics", size=20, multiple='true')
+                               .loader.hide
+                                    p Loading..
 
                             // /ko
                    .col-md-1.top-buffer-2x
