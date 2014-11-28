@@ -53,12 +53,12 @@ html
                                                                 .modal-dialog
                                                                     .modal-content
                                                                         .modal-header
-                                                                            h4.modal-title Title
+                                                                            h4.modal-title
                                                                         .modal-body
                                                                             ul
-                                                                                // ko foreach: $data
+                                                                                // ko foreach: $data.values
                                                                                 li
-                                                                                    a sdf
+                                                                                    span(data-bind="text: $data")
                                                                                 // /ko
                                                      // /ko
 
