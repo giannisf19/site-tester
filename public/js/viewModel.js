@@ -22,7 +22,7 @@ var viewModel = (function () {
         this.availableMetrics = ko.observableArray([]);
         this.selectedMetrics = ko.observableArray([]);
         this.scheduled = ko.observable(false);
-        this.criticalErrors = ko.observableArray([]);
+        this.criticalErrors = ko.observableArray(['jsErrors', 'notFound']);
         this.analyzedCurrentData = ko.observableArray([]);
 
         var socket = io.connect(this.host());
@@ -66,6 +66,9 @@ var viewModel = (function () {
             }
         });
 
+        this.currentData.subscribe(function () {
+        });
+
         this.isValid = ko.computed(function () {
             var pattern = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
             return pattern.test(_this.newItem());
@@ -80,7 +83,6 @@ var viewModel = (function () {
         });
 
         socket.on('SchedulerData', function (data) {
-            console.log('eeppp irth');
             _this.scheduled(data.data.isSet);
         });
 
@@ -208,14 +210,14 @@ var viewModel = (function () {
             var cssClass = '.graph';
             var divId = viewModel.getValidDivId(current.getData().url, cssClass);
             var divSelector = '#' + divId;
-            var containerDiv = "<div class='col-md-10' id='" + divId + "'></div>";
+            var containerDiv = "<div class='col-md-10 no-margin' id='" + divId + "'></div>";
             var docSelector = "*[data-url='" + current.getData().url + "']";
 
             // append the div to DOM and set visibility
             if (!$(divSelector).length) {
                 $(docSelector).find(cssClass).append(containerDiv);
                 $(divSelector).attr('data-bind', "visible: selectedMode() == 'timeline'");
-                $(divSelector).append("<div class='graphContainer' style='width: 100%; height: 400px;'></div>");
+                $(divSelector).append("<div class='graphContainer' style='height: 600px; margin-left: 40px;'></div>");
             }
 
             // update the width of the graph

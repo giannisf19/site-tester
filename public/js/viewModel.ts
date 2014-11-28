@@ -55,7 +55,7 @@ class viewModel {
         this.availableMetrics  = ko.observableArray([]);
         this.selectedMetrics = ko.observableArray([]);
         this.scheduled = ko.observable(false);
-        this.criticalErrors = ko.observableArray([]);
+        this.criticalErrors = ko.observableArray(['jsErrors', 'notFound']);
         this.analyzedCurrentData = ko.observableArray([]);
 
         var socket = io.connect(this.host());
@@ -83,7 +83,6 @@ class viewModel {
 
                 this.currentData(data);
 
-
         });
 
         this.selectedMode.subscribe((mode) => {
@@ -110,6 +109,11 @@ class viewModel {
         });
 
 
+
+        this.currentData.subscribe(() => {
+
+        });
+
         this.isValid = ko.computed(() => {
             var pattern = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
             return pattern.test(this.newItem());
@@ -128,8 +132,6 @@ class viewModel {
 
 
         socket.on('SchedulerData', (data) => {
-
-            console.log('eeppp irth');
             this.scheduled(data.data.isSet);
         });
 
@@ -144,9 +146,7 @@ class viewModel {
                 },
                 useGentleSelect: true
             });
-
     }
-
 
    schedule() {
        $.ajax({
@@ -204,7 +204,6 @@ class viewModel {
 
 
 
-
      static shakeForm() {
         var l = 20;
         for( var i = 0; i < 10; i++ )
@@ -224,7 +223,6 @@ class viewModel {
 
         });
      }
-
 
     addToHistories(name: string) {
         var data = ko.toJSON({ 'name': name.trim() });
@@ -268,7 +266,6 @@ class viewModel {
 
     }
 
-
     makeTimelineGraph() {
 
         var graphWidth = 0;
@@ -278,7 +275,7 @@ class viewModel {
             var cssClass = '.graph';
             var divId = viewModel.getValidDivId(current.getData().url, cssClass);
             var divSelector = '#'  +divId;
-            var containerDiv = "<div class='col-md-10' id='" +  divId+ "'></div>";
+            var containerDiv = "<div class='col-md-10 no-margin' id='" +  divId+ "'></div>";
             var docSelector = "*[data-url='" + current.getData().url + "']";
 
 
@@ -287,12 +284,11 @@ class viewModel {
             if (!$(divSelector).length) { // prepare the DOM for the graph
                 $(docSelector).find(cssClass).append(containerDiv);
                 $(divSelector).attr('data-bind', "visible: selectedMode() == 'timeline'");
-                $(divSelector).append("<div class='graphContainer' style='width: 100%; height: 400px;'></div>");
+                $(divSelector).append("<div class='graphContainer' style='height: 600px; margin-left: 40px;'></div>");
 
             }
 
             // update the width of the graph
-
                 graphWidth = $(divSelector).find('.graphContainer').width() > graphWidth ? $(divSelector).find('.graphContainer').width(): graphWidth;
 
 

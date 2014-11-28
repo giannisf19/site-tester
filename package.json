@@ -16,5 +16,20 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:giannisf19/site-tester.git"
-  }
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "bugs": {
+    "url": "https://github.com/giannisf19/site-tester/issues"
+  },
+  "homepage": "https://github.com/giannisf19/site-tester",
+  "version": "0.0.5",
+  "devDependencies": {},
+  "keywords": [
+    "site",
+    "tester"
+  ],
+  "author": "Giannisf <giannisf@yandex.ru>",
+  "license": "MIT"
 }

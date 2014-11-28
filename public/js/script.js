@@ -3,11 +3,35 @@ $(function() {
 
 
 
+    jQuery.fn.filterByText = function(textbox) {
+        return this.each(function() {
+            var select = this;
+            var options = [];
+            $(select).find('option').each(function() {
+                options.push({value: $(this).val(), text: $(this).text()});
+            });
+            $(select).data('options', options);
+
+            $(textbox).bind('change keyup', function() {
+                var options = $(select).empty().data('options');
+                var search = $.trim($(this).val());
+                var regex = new RegExp(search,"gi");
+
+                $.each(options, function(i) {
+                    var option = options[i];
+                    if(option.text.match(regex) !== null) {
+                        $(select).append(
+                            $('<option>').text(option.text).val(option.value)
+                        );
+                    }
+                });
+            });
+        });
+    };
 
 
     $(document).on('click', 'ul.page-selector a', function (e) {
         e.preventDefault();
-
 
         //Get the clicked tab
         var selector = '.' + e.target.innerHTML.toLowerCase();
@@ -47,5 +71,18 @@ $(function() {
         }
 
     };
+
+
+
+    window.prepare = function(offenders) {
+
+        _.map(offenders, function(item, index) {return {'name' : index, 'data' : item}});
+    };
+
+
+    $('.metric-filter').on('keyup', function(e,data) {
+       var box = $(e.target).siblings().eq(0);
+        $(box).filterByText(e.target)
+    });
 
 });

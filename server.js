@@ -22,12 +22,10 @@ app.set('view engine', 'jade');
 app.set('views', __dirname + '/views');
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
+
+
+
 app.locals.pretty = true;
-
-
-
-
-var schedulerRunning = false;
 
 
 

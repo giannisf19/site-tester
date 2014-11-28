@@ -11,38 +11,62 @@ html
            .row.clearfix
 
                if !zero
-                   .col-md-2#page-selector-menu
+                   .col-xs-2#page-selector-menu
 
                            ul.nav.nav-tabs.tabs-left
                                // ko foreach: currentData
                                li(data-bind="css: {active: $index() == 0 }")
                                    a(data-toggle='tab' , data-bind= "text: $data.url, attr: {href: ('#' + $index())}")
                                // /ko
-                   .col-md-9
+                   .col-xs-9
                        .row.clearfix
                            .btn-group
                                 include partials/metrics
 
-                       .tab-content.top-buffer.col-md-12
+                       .tab-content.top-buffer.col-xs-12.no-margin
                            // ko foreach: currentData
-                           .tab-pane.result-content.col-md-12(data-bind="css: {active: $index() == 0}, attr: {id: $index}")
-                               .tab-content.metric-tabs.col-md-12(data-bind="attr: {'data-url': $data.url}")
-                                   .tab-pane.summary.active.graph
-                                       div.metric-selector.col-md-2
-                                           select(data-bind= "options: $root.availableMetrics, selectedOptions: $root.selectedMetrics, visible: $root.selectedMode() == 'timeline' || $root.selectedMode() == 'graph'", size=20, multiple='true')
+                           .tab-pane.result-content.col-xs-12.no-margin(data-bind="css: {active: $index() == 0}, attr: {id: $index}")
+                               .tab-content.metric-tabs.col-xs-12.no-margin(data-bind="attr: {'data-url': $data.url}")
+                                   .tab-pane.summary.active.graph.col-xs-12.no-margin
+                                       div(data-bind="visible: $root.selectedMode() == 'timeline' || $root.selectedMode() == 'graph'").metric-selector.col-xs-2.no-margin
+                                           input(type='text', placeholder='search').metric-filter.top-buffer
+                                           select(data-bind= "options: $root.availableMetrics, selectedOptions: $root.selectedMetrics", size=30, multiple='true')
 
-                                   div(data-bind="visible: $root.criticalErrors().length && $root.selectedMode() == 'numbers'")
-                                       p Warning
+                                       div(data-bind="visible: $root.selectedMode() == 'numbers'")
+                                           h1.text-center Result
+
+                                           table.table.table-hover
+                                                   tr
+                                                        th Offender
+                                                        th Count
+                                                        th More Info
+
+
+                                                   //ko foreach: _.map($data.offenders, function(item, index) {return {'name' : index, 'values' : item}})
+                                                   tr(data-bind="css {danger: _.contains($root.criticalErrors(),$data.name)}")
+                                                        td(data-bind= "text: $data.name")
+                                                        td(data-bind= "text: $data.values.length")
+                                                        td
+                                                            a(href='#')
+                                                                i.fa.fa-info.fa-2x
+                                                     // /ko
+
+
+
+
+
+
+
                                .loader
 
 
                             // /ko
-                   .col-md-1.top-buffer-2x
+                   .col-xs-1.top-buffer-2x
                         include partials/modes
 
 
                 else
-                    .cols-md-12
+                    .col-xs-12
                         p No Results yet.
 
         include partials/footer

@@ -94,3 +94,14 @@
     opacity: 0;
     transition: width 5s ease-in, opacity 1s 5s;
 }
+
+
+.no-margin {
+    margin-left: 0;
+    padding-left: 0;
+}
+
+.bottom-buffer {
+    margin-bottom: 20px;
+}
+
