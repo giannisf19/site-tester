@@ -22,7 +22,7 @@ app.set('view engine', 'jade');
 app.set('views', __dirname + '/views');
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
-
+app.disable('x-powered-by');
 
 
 app.locals.pretty = true;

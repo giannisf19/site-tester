@@ -35,7 +35,7 @@ html
                                        div(data-bind="visible: $root.selectedMode() == 'numbers'")
                                            h1.text-center Result
 
-                                           table.table.table-hover
+                                           table.table.table-hover.no-bg
                                                    tr
                                                         th Offender
                                                         th Count
@@ -47,8 +47,19 @@ html
                                                         td(data-bind= "text: $data.name")
                                                         td(data-bind= "text: $data.values.length")
                                                         td
-                                                            a(href='#')
+                                                            a(data-bind="attr: {'data-target': ('#' + $parent.url.split('//')[1].split('.')[0] + $index()) }", data-toggle="modal", href="#")
                                                                 i.fa.fa-info.fa-2x
+                                                            .modal.fade(data-bind="attr: {id: ( $parent.url.split('//')[1].split('.')[0] + $index()) }", role="dialog", aria-hidden='true')
+                                                                .modal-dialog
+                                                                    .modal-content
+                                                                        .modal-header
+                                                                            h4.modal-title Title
+                                                                        .modal-body
+                                                                            ul
+                                                                                // ko foreach: $data
+                                                                                li
+                                                                                    a sdf
+                                                                                // /ko
                                                      // /ko
 
 

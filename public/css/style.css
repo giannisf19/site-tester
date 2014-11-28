@@ -40,7 +40,6 @@
 
 .result-content {
     border: 1px solid;
-    background: wheat;
 }
 
 .nav-tabs {
@@ -105,3 +104,6 @@
     margin-bottom: 20px;
 }
 
+.no-bg {
+    background-color: white;
+}
