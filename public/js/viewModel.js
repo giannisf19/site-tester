@@ -22,6 +22,8 @@ var viewModel = (function () {
         this.availableMetrics = ko.observableArray([]);
         this.selectedMetrics = ko.observableArray([]);
         this.scheduled = ko.observable(false);
+        this.criticalErrors = ko.observableArray([]);
+        this.analyzedCurrentData = ko.observableArray([]);
 
         var socket = io.connect(this.host());
 
@@ -232,7 +234,6 @@ var viewModel = (function () {
                             var temp = item.getData().offenders[metric];
                             metricData = temp ? temp.length : 0;
 
-                            console.log(item);
                             var myIndex = _.findIndex(seriesData, function (e) {
                                 return e.name == metric;
                             });
@@ -266,6 +267,10 @@ var viewModel = (function () {
 
             updateKOBindings(divSelector);
         });
+    };
+
+    viewModel.prototype.analyzeCurrentData = function () {
+        // analyze and find critical errors
     };
 
     viewModel.getValidDivId = function (url, cssClass) {

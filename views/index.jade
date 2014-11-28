@@ -30,8 +30,11 @@ html
                                    .tab-pane.summary.active.graph
                                        div.metric-selector.col-md-2
                                            select(data-bind= "options: $root.availableMetrics, selectedOptions: $root.selectedMetrics, visible: $root.selectedMode() == 'timeline' || $root.selectedMode() == 'graph'", size=20, multiple='true')
-                               .loader.hide
-                                    p Loading..
+
+                                   div(data-bind="visible: $root.criticalErrors().length && $root.selectedMode() == 'numbers'")
+                                       p Warning
+                               .loader
+
 
                             // /ko
                    .col-md-1.top-buffer-2x

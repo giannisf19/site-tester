@@ -64,10 +64,33 @@
     height:18em;
     margin-top: -9em; /*set to a negative number 1/2 of your height*/
     margin-left: -15em; /*set to a negative number 1/2 of your width*/
-    border: 1px solid #ccc;
-    background-color: #f3f3f3;
+}
+
+.loader span {
+    display: block;
 }
 
 .hide {
     display: none;
+}
+
+
+.la-anim-7 {
+    position: fixed;
+    top: 50%;
+    bottom: 0;
+    left: 50%;
+    z-index: -1;
+    width: 0;
+    height: 100%;
+    background: rgba(0,0,0,0.1);
+    transform: translateX(-50%) translateY(-50%);
+    pointer-events: none;
+}
+
+.la-anim-7.la-animate {
+    z-index: 100;
+    width: 100%;
+    opacity: 0;
+    transition: width 5s ease-in, opacity 1s 5s;
 }

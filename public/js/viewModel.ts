@@ -15,8 +15,6 @@ interface JQuery  {
 }
 
 
-
-
 class viewModel {
 
     private host : KnockoutObservable<string>;
@@ -36,6 +34,10 @@ class viewModel {
     private availableMetrics : KnockoutObservableArray<string>;
     private selectedMetrics : KnockoutObservableArray<string>;
     private scheduled: KnockoutObservable<boolean>;
+    private analyzedCurrentData : KnockoutObservableArray<any>;
+
+    private criticalErrors : KnockoutObservableArray<string>; // remove this
+
 
     constructor(private settings : SiteTesterTypes.SiteTesterSettings,  host : string) {
         
@@ -53,6 +55,8 @@ class viewModel {
         this.availableMetrics  = ko.observableArray([]);
         this.selectedMetrics = ko.observableArray([]);
         this.scheduled = ko.observable(false);
+        this.criticalErrors = ko.observableArray([]);
+        this.analyzedCurrentData = ko.observableArray([]);
 
         var socket = io.connect(this.host());
         
@@ -142,8 +146,6 @@ class viewModel {
             });
 
     }
-
-
 
 
    schedule() {
@@ -269,8 +271,6 @@ class viewModel {
 
     makeTimelineGraph() {
 
-
-
         var graphWidth = 0;
 
         _.forEach(this.currentData().data, (current : SiteTesterTypes.TestInstance)=> {
@@ -309,14 +309,11 @@ class viewModel {
                     _.forEach(history.getTests(), (item) => {
                         if (item.getData().url == current.getData().url) { // Is this the current url ?
 
-
-
                             _.forEach(this.selectedMetrics(), (metric) =>{ // Collect data for selected metrics
 
                                 var temp = item.getData().offenders[metric];
-                                metricData =  temp ? temp.length  : 0
+                                metricData =  temp ? temp.length  : 0;
 
-                                console.log(item)
                                 var myIndex = _.findIndex(seriesData, (e) => {return e.name == metric});
                                 if (myIndex != -1) {
 
@@ -363,17 +360,18 @@ class viewModel {
 
                updateKOBindings(divSelector);
 
-
-
         });
     }
 
+    analyzeCurrentData() {
+
+        // analyze and find critical errors
+
+
+
+    }
 
     static getValidDivId(url : string, cssClass : string) {
         return url.split('//')[1].split('.')[0] + cssClass.split('.')[1];
     }
-
-
 }
-
-
