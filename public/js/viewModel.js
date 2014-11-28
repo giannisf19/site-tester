@@ -9,6 +9,12 @@ var viewModel = (function () {
     function viewModel(settings, host) {
         var _this = this;
         this.settings = settings;
+        this.availableHistoryNames = ko.computed(function () {
+            return _.map($('#historiesPicker').find('option'), function (item) {
+                return $(item).text();
+            });
+        });
+
         this.host = ko.observable('http://' + host);
         this.cron = ko.observable(settings.cron);
         this.screenshot = ko.observable(settings.screenshot);
@@ -24,7 +30,6 @@ var viewModel = (function () {
         this.scheduled = ko.observable(false);
         this.criticalErrors = ko.observableArray(['jsErrors', 'notFound']);
         this.analyzedCurrentData = ko.observableArray([]);
-
         var socket = io.connect(this.host());
 
         this.count = 0;
@@ -271,8 +276,13 @@ var viewModel = (function () {
         });
     };
 
-    viewModel.prototype.analyzeCurrentData = function () {
-        // analyze and find critical errors
+    viewModel.prototype.getHistoryNames = function () {
+        $.ajax({
+            type: 'post',
+            url: this.host() + '/api/getHistoryNames',
+            success: function (data) {
+            }
+        });
     };
 
     viewModel.getValidDivId = function (url, cssClass) {

@@ -34,14 +34,18 @@ class viewModel {
     private availableMetrics : KnockoutObservableArray<string>;
     private selectedMetrics : KnockoutObservableArray<string>;
     private scheduled: KnockoutObservable<boolean>;
-    private analyzedCurrentData : KnockoutObservableArray<any>;
+    private availableHistoryNames : KnockoutComputed<any>;
+    private analyzedCurrentData : KnockoutComputed<any>;
 
     private criticalErrors : KnockoutObservableArray<string>; // remove this
 
 
     constructor(private settings : SiteTesterTypes.SiteTesterSettings,  host : string) {
-        
-    	
+
+        this.availableHistoryNames  = ko.computed(() => {
+            return _.map($('#historiesPicker').find('option'), function(item) {return $(item).text()});
+        });
+
         this.host = ko.observable('http://' + host);
         this.cron  = ko.observable(settings.cron);
         this.screenshot = ko.observable(settings.screenshot);
@@ -57,7 +61,6 @@ class viewModel {
         this.scheduled = ko.observable(false);
         this.criticalErrors = ko.observableArray(['jsErrors', 'notFound']);
         this.analyzedCurrentData = ko.observableArray([]);
-
         var socket = io.connect(this.host());
         
 
@@ -359,9 +362,16 @@ class viewModel {
         });
     }
 
-    analyzeCurrentData() {
+    getHistoryNames() {
 
-        // analyze and find critical errors
+      $.ajax({
+          type: 'post',
+          url: this.host() + '/api/getHistoryNames',
+          success: (data)=> {
+
+          }
+
+      });
 
 
 

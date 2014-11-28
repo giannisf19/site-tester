@@ -33,7 +33,18 @@ html
 
 
                     span.display-block.left.bottom
-                        button.btn.btn-danger(data-bind="click: deleteDb") Delete history db
+                        button.btn.btn-danger(data-toggle='modal', data-target='#deleteModal') Delete history db
+                        .modal.fade#deleteModal(aria-hidden = 'true')
+                            .modal-dialog
+                                .modal-content
+                                    .modal-header
+                                        h4.modal-title Delete histories
+                                    .modal-body
+                                        ul(data-bind="foreach: availableHistoryNames()")
+                                            li(data-bind="text: $data")
+
+
+
 
                 .col-md-6
                     h4 Scheduler
