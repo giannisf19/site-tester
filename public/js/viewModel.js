@@ -9,11 +9,7 @@ var viewModel = (function () {
     function viewModel(settings, host) {
         var _this = this;
         this.settings = settings;
-        this.availableHistoryNames = ko.computed(function () {
-            return _.map($('#historiesPicker').find('option'), function (item) {
-                return $(item).text();
-            });
-        });
+        this.availableHistoryNames = ko.observableArray([]);
 
         this.host = ko.observable('http://' + host);
         this.cron = ko.observable(settings.cron);
@@ -22,19 +18,24 @@ var viewModel = (function () {
         this.urls = ko.observableArray(settings.urls);
         this.histories = ko.observableArray([]);
         this.isRunning = ko.observable(false);
-        this.selectedHistory = ko.observable('');
+        this.selectedHistory = ko.observable(' ');
         this.currentData = ko.observable({});
         this.selectedMode = ko.observable('numbers');
         this.availableMetrics = ko.observableArray([]);
         this.selectedMetrics = ko.observableArray([]);
         this.scheduled = ko.observable(false);
         this.criticalErrors = ko.observableArray(['jsErrors', 'notFound']);
-        this.analyzedCurrentData = ko.observableArray([]);
         var socket = io.connect(this.host());
+
+        // Get the history names
+        this.getHistoryNames();
 
         this.count = 0;
 
         this.selectedHistory.subscribe(function () {
+            if (!_this.selectedHistory())
+                return;
+
             _this.addToHistories(_this.selectedHistory());
             var data = {};
 
@@ -146,7 +147,7 @@ var viewModel = (function () {
     };
 
     viewModel.prototype.deleteDb = function () {
-        if (confirm('Are you sure ?')) {
+        if (confirm('This is irreversible. Delete ?')) {
             $.ajax({
                 type: 'post',
                 url: this.host() + '/api/deleteDb'
@@ -162,7 +163,6 @@ var viewModel = (function () {
 
     viewModel.prototype.pushSettingsToServer = function () {
         var data = ko.toJSON({ settings: { 'urls': this.urls(), 'screenshot': this.screenshot(), 'cron': this.cron() } });
-        console.log(this.screenshot());
         $.ajax({
             type: 'post',
             url: this.host() + '/api/saveSettings',
@@ -277,11 +277,24 @@ var viewModel = (function () {
     };
 
     viewModel.prototype.getHistoryNames = function () {
+        var _this = this;
         $.ajax({
             type: 'post',
             url: this.host() + '/api/getHistoryNames',
             success: function (data) {
+                _this.availableHistoryNames(JSON.parse(data));
             }
+        });
+    };
+
+    viewModel.prototype.deleteHistoryByName = function (name) {
+        console.log('Deleting.. ' + name);
+
+        $.ajax({
+            type: 'post',
+            contentType: 'application/json',
+            url: this.host() + '/api/deleteHistoryByName',
+            data: ko.toJSON({ name: name })
         });
     };
 

@@ -10,8 +10,8 @@ var express = require('express'),
     parser = require('./lib/parser'),
     _ = require('lodash');
 
-
 helper.Init();
+
 
 db = new Jsondb('./db/db.json', true, true);
 
@@ -28,13 +28,13 @@ app.disable('x-powered-by');
 app.locals.pretty = true;
 
 
-
+var dates = [];
 
 app.get('/', function(req, res) {
     db.reload();
     var results = db.getData('./history');
-    var dates = [];
     var urls = [];
+    dates = [];
 
     app.locals.activePage = 'main';
 
@@ -79,10 +79,14 @@ app.post('/api/runNow', function(req, res) {
 });
 
 app.post('/api/deleteDb', function() {
-    helper.ClearHistory();
+    parser.ClearHistory();
 });
 
 
+
+app.post('/api/getHistoryNames', function(req, res) {
+    res.json(JSON.stringify(dates));
+});
 
 
 app.post('/api/', function(req, res) {
@@ -110,6 +114,13 @@ app.post('/api/schedule', function(req, res) {
 
 app.post('/api/stopSchedule', function(req, res) {
     testEngine.StopScheduler();
+});
+
+
+
+app.post('/api/deleteHistoryByName', function(req, res) {
+
+    parser.DeleteHistoryByName(req.body.name)
 });
 
 io.on('connection', function(socket) {

@@ -34,7 +34,7 @@ class viewModel {
     private availableMetrics : KnockoutObservableArray<string>;
     private selectedMetrics : KnockoutObservableArray<string>;
     private scheduled: KnockoutObservable<boolean>;
-    private availableHistoryNames : KnockoutComputed<any>;
+    private availableHistoryNames : KnockoutObservableArray<string>;
     private analyzedCurrentData : KnockoutComputed<any>;
 
     private criticalErrors : KnockoutObservableArray<string>; // remove this
@@ -42,9 +42,7 @@ class viewModel {
 
     constructor(private settings : SiteTesterTypes.SiteTesterSettings,  host : string) {
 
-        this.availableHistoryNames  = ko.computed(() => {
-            return _.map($('#historiesPicker').find('option'), function(item) {return $(item).text()});
-        });
+        this.availableHistoryNames  = ko.observableArray([]);
 
         this.host = ko.observable('http://' + host);
         this.cron  = ko.observable(settings.cron);
@@ -53,20 +51,25 @@ class viewModel {
         this.urls = ko.observableArray(settings.urls);
         this.histories = ko.observableArray([]);
         this.isRunning = ko.observable(false);
-        this.selectedHistory = ko.observable('');
+        this.selectedHistory = ko.observable(' ');
         this.currentData = ko.observable({});
         this.selectedMode = ko.observable('numbers');
         this.availableMetrics  = ko.observableArray([]);
         this.selectedMetrics = ko.observableArray([]);
         this.scheduled = ko.observable(false);
         this.criticalErrors = ko.observableArray(['jsErrors', 'notFound']);
-        this.analyzedCurrentData = ko.observableArray([]);
         var socket = io.connect(this.host());
-        
+
+
+
+        // Get the history names
+        this.getHistoryNames();
 
         this.count = 0;
 
         this.selectedHistory.subscribe(() => {
+
+            if (!this.selectedHistory()) return; // if no history, get the hell out of here.
 
                 this.addToHistories(this.selectedHistory());
                 var data = {};
@@ -196,7 +199,7 @@ class viewModel {
     }
 
     deleteDb()  {
-        if (confirm('Are you sure ?')) {
+        if (confirm('This is irreversible. Delete ?')) {
             $.ajax({
                 type: 'post',
                 url: this.host() + '/api/deleteDb'
@@ -217,7 +220,6 @@ class viewModel {
      pushSettingsToServer() {
 
         var data = ko.toJSON({settings :{'urls' : this.urls(), 'screenshot' : this.screenshot(), 'cron' : this.cron()}}) ;
-        console.log(this.screenshot());
         $.ajax({
             type: 'post',
             url: this.host() + '/api/saveSettings',
@@ -368,12 +370,23 @@ class viewModel {
           type: 'post',
           url: this.host() + '/api/getHistoryNames',
           success: (data)=> {
-
+               this.availableHistoryNames(JSON.parse(data));
           }
 
       });
+    }
 
 
+    deleteHistoryByName(name) {
+
+        console.log('Deleting.. ' +  name)
+
+        $.ajax({
+            type: 'post',
+            contentType: 'application/json',
+            url: this.host() + '/api/deleteHistoryByName',
+            data: ko.toJSON({name: name})
+        })
 
     }
 
