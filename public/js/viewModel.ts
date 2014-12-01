@@ -94,7 +94,6 @@ class viewModel {
         this.selectedMode.subscribe((mode) => {
             if (mode == 'timeline') {
 
-
                 // to make a timeline graph we need all run histories
 
                 _.forEach($('#historiesPicker').find('option'), (history) => {
@@ -111,6 +110,14 @@ class viewModel {
 
                 this.makeTimelineGraph();
 
+            }
+
+
+            if (mode == 'graph') {
+                this.selectedMetrics.subscribe(() => {
+                    this.makeGraph();
+                    console.log('updatingGraph');
+                });
             }
         });
 
@@ -278,7 +285,7 @@ class viewModel {
         _.forEach(this.currentData().data, (current : SiteTesterTypes.TestInstance)=> {
 
             var cssClass = '.graph';
-            var divId = viewModel.getValidDivId(current.getData().url, cssClass);
+            var divId = viewModel.getValidDivId(current.getData().url, cssClass, 'timeline');
             var divSelector = '#'  +divId;
             var containerDiv = "<div class='col-md-10 no-margin' id='" +  divId+ "'></div>";
             var docSelector = "*[data-url='" + current.getData().url + "']";
@@ -305,7 +312,6 @@ class viewModel {
 
 
                     graphDates.push(history.getDate());
-
 
                     _.forEach(history.getTests(), (item) => {
                         if (item.getData().url == current.getData().url) { // Is this the current url ?
@@ -342,7 +348,7 @@ class viewModel {
                     },
 
                     chart: {
-                      width: 1112
+                      width: graphWidth
                     },
 
                     xAxis: {
@@ -364,6 +370,82 @@ class viewModel {
         });
     }
 
+
+    makeGraph()  {
+
+        _.forEach(this.currentData().data, (testInstance : SiteTesterTypes.TestInstance) => {
+
+            var cssClass = '.graph';
+            var divId = viewModel.getValidDivId(testInstance.getData().url, cssClass, 'normal');
+            var divSelector = '#'  +divId;
+            var containerDiv = "<div class='col-md-10 no-margin' id='" +  divId+ "'></div>";
+            var docSelector = "*[data-url='" + testInstance.getData().url + "']";
+
+
+            if (!$(divSelector).length) { // prepare the DOM for the graph
+
+                $(docSelector).find(cssClass).append(containerDiv);
+                $(divSelector).attr('data-bind', "visible: selectedMode() == 'graph'");
+                $(divSelector).append("<div class='graphContainer' style='height: 600px; margin-left: 40px;'></div>");
+
+            }
+
+
+            var metrics = [];
+            var data = [];
+            var metricData ;
+
+            _.forEach(this.selectedMetrics(), (metric) => {
+
+
+                var temp = testInstance.getData().offenders[metric];
+                metricData =  temp ? temp.length  : 0;
+
+                var myIndex = _.findIndex(data, (e) => {return e.name == metric});
+                if (myIndex != -1) {
+
+                    data[myIndex].data.push(metricData);
+                }
+
+                else {
+
+                    data.push({name: metric, data: [metricData]})
+                }
+
+            });
+
+            $(divSelector).find('.graphContainer').highcharts({
+
+                title: {
+                    text: testInstance.getData().url
+                },
+
+                chart: {
+                    width: 1112,
+                    type: 'column'
+                },
+
+                xAxis: {
+                    categories: metrics
+                },
+                yAxis: {
+                    title: {
+                        text: 'count'
+                    }
+                },
+                series: data
+
+
+            });
+
+
+            updateKOBindings(divSelector);
+
+
+        });
+
+}
+
     getHistoryNames() {
 
       $.ajax({
@@ -379,7 +461,7 @@ class viewModel {
 
     deleteHistoryByName(name) {
 
-        console.log('Deleting.. ' +  name)
+        console.log('Deleting.. ' +  name);
 
         $.ajax({
             type: 'post',
@@ -390,7 +472,7 @@ class viewModel {
 
     }
 
-    static getValidDivId(url : string, cssClass : string) {
-        return url.split('//')[1].split('.')[0] + cssClass.split('.')[1];
+    static getValidDivId(url : string, cssClass : string, type  :string) {
+        return url.split('//')[1].split('.')[0] + cssClass.split('.')[1] + type;
     }
 }

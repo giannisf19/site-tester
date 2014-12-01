@@ -70,6 +70,13 @@ var viewModel = (function () {
 
                 _this.makeTimelineGraph();
             }
+
+            if (mode == 'graph') {
+                _this.selectedMetrics.subscribe(function () {
+                    _this.makeGraph();
+                    console.log('updatingGraph');
+                });
+            }
         });
 
         this.currentData.subscribe(function () {
@@ -213,7 +220,7 @@ var viewModel = (function () {
 
         _.forEach(this.currentData().data, function (current) {
             var cssClass = '.graph';
-            var divId = viewModel.getValidDivId(current.getData().url, cssClass);
+            var divId = viewModel.getValidDivId(current.getData().url, cssClass, 'timeline');
             var divSelector = '#' + divId;
             var containerDiv = "<div class='col-md-10 no-margin' id='" + divId + "'></div>";
             var docSelector = "*[data-url='" + current.getData().url + "']";
@@ -259,7 +266,7 @@ var viewModel = (function () {
                     text: current.getData().url
                 },
                 chart: {
-                    width: 1112
+                    width: graphWidth
                 },
                 xAxis: {
                     categories: graphDates
@@ -270,6 +277,62 @@ var viewModel = (function () {
                     }
                 },
                 series: seriesData
+            });
+
+            updateKOBindings(divSelector);
+        });
+    };
+
+    viewModel.prototype.makeGraph = function () {
+        var _this = this;
+        _.forEach(this.currentData().data, function (testInstance) {
+            var cssClass = '.graph';
+            var divId = viewModel.getValidDivId(testInstance.getData().url, cssClass, 'normal');
+            var divSelector = '#' + divId;
+            var containerDiv = "<div class='col-md-10 no-margin' id='" + divId + "'></div>";
+            var docSelector = "*[data-url='" + testInstance.getData().url + "']";
+
+            if (!$(divSelector).length) {
+                $(docSelector).find(cssClass).append(containerDiv);
+                $(divSelector).attr('data-bind', "visible: selectedMode() == 'graph'");
+                $(divSelector).append("<div class='graphContainer' style='height: 600px; margin-left: 40px;'></div>");
+            }
+
+            var metrics = [];
+            var data = [];
+            var metricData;
+
+            _.forEach(_this.selectedMetrics(), function (metric) {
+                var temp = testInstance.getData().offenders[metric];
+                metricData = temp ? temp.length : 0;
+
+                var myIndex = _.findIndex(data, function (e) {
+                    return e.name == metric;
+                });
+                if (myIndex != -1) {
+                    data[myIndex].data.push(metricData);
+                } else {
+                    data.push({ name: metric, data: [metricData] });
+                }
+            });
+
+            $(divSelector).find('.graphContainer').highcharts({
+                title: {
+                    text: testInstance.getData().url
+                },
+                chart: {
+                    width: 1112,
+                    type: 'column'
+                },
+                xAxis: {
+                    categories: metrics
+                },
+                yAxis: {
+                    title: {
+                        text: 'count'
+                    }
+                },
+                series: data
             });
 
             updateKOBindings(divSelector);
@@ -298,8 +361,8 @@ var viewModel = (function () {
         });
     };
 
-    viewModel.getValidDivId = function (url, cssClass) {
-        return url.split('//')[1].split('.')[0] + cssClass.split('.')[1];
+    viewModel.getValidDivId = function (url, cssClass, type) {
+        return url.split('//')[1].split('.')[0] + cssClass.split('.')[1] + type;
     };
     return viewModel;
 })();
