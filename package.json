@@ -1,5 +1,5 @@
 {
-  "name": "Site-Tester",
+  "name": "site-tester",
   "description": "Test sites for errors",
   "dependencies": {
     "body-parser": "^1.9.2",
