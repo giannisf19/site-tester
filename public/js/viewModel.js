@@ -154,10 +154,14 @@ var viewModel = (function () {
     };
 
     viewModel.prototype.deleteDb = function () {
+        var _this = this;
         if (confirm('This is irreversible. Delete ?')) {
             $.ajax({
                 type: 'post',
-                url: this.host() + '/api/deleteDb'
+                url: this.host() + '/api/deleteDb',
+                success: function () {
+                    _this.availableHistoryNames([]);
+                }
             });
         }
     };
@@ -351,13 +355,17 @@ var viewModel = (function () {
     };
 
     viewModel.prototype.deleteHistoryByName = function (name) {
+        var _this = this;
         console.log('Deleting.. ' + name);
 
         $.ajax({
             type: 'post',
             contentType: 'application/json',
             url: this.host() + '/api/deleteHistoryByName',
-            data: ko.toJSON({ name: name })
+            data: ko.toJSON({ name: name }),
+            success: function () {
+                _this.availableHistoryNames.remove(name);
+            }
         });
     };
 

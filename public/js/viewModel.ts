@@ -209,7 +209,10 @@ class viewModel {
         if (confirm('This is irreversible. Delete ?')) {
             $.ajax({
                 type: 'post',
-                url: this.host() + '/api/deleteDb'
+                url: this.host() + '/api/deleteDb',
+                success: ()=> {
+                    this.availableHistoryNames([]);
+                }
             });
         }
 
@@ -467,7 +470,10 @@ class viewModel {
             type: 'post',
             contentType: 'application/json',
             url: this.host() + '/api/deleteHistoryByName',
-            data: ko.toJSON({name: name})
+            data: ko.toJSON({name: name}),
+            success: () =>{
+                this.availableHistoryNames.remove(name);
+        }
         })
 
     }

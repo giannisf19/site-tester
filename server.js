@@ -78,8 +78,9 @@ app.post('/api/runNow', function(req, res) {
     testEngine.runNow();
 });
 
-app.post('/api/deleteDb', function() {
+app.post('/api/deleteDb', function(req,res) {
     parser.ClearHistory();
+    res.json(JSON.stringify({message: 'ok'}));
 });
 
 
@@ -120,7 +121,10 @@ app.post('/api/stopSchedule', function(req, res) {
 
 app.post('/api/deleteHistoryByName', function(req, res) {
 
-    parser.DeleteHistoryByName(req.body.name)
+    parser.DeleteHistoryByName(req.body.name);
+    res.json(JSON.stringify({message: 'ok'}))
+
+
 });
 
 io.on('connection', function(socket) {
