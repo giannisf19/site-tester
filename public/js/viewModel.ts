@@ -35,7 +35,7 @@ class viewModel {
     private selectedMetrics : KnockoutObservableArray<string>;
     private scheduled: KnockoutObservable<boolean>;
     private availableHistoryNames : KnockoutObservableArray<string>;
-    private analyzedCurrentData : KnockoutComputed<any>;
+
 
     private criticalErrors : KnockoutObservableArray<string>; // remove this
 
@@ -58,6 +58,7 @@ class viewModel {
         this.selectedMetrics = ko.observableArray([]);
         this.scheduled = ko.observable(false);
         this.criticalErrors = ko.observableArray(['jsErrors', 'notFound']);
+
         var socket = io.connect(this.host());
 
 
@@ -105,7 +106,6 @@ class viewModel {
 
                 this.selectedMetrics.subscribe(() => {
                     this.makeTimelineGraph();
-                    console.log('updatingGraph');
                 });
 
                 this.makeTimelineGraph();
@@ -116,16 +116,11 @@ class viewModel {
             if (mode == 'graph') {
                 this.selectedMetrics.subscribe(() => {
                     this.makeGraph();
-                    console.log('updatingGraph');
                 });
             }
         });
 
 
-
-        this.currentData.subscribe(() => {
-
-        });
 
         this.isValid = ko.computed(() => {
             var pattern = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
@@ -141,6 +136,7 @@ class viewModel {
 
         socket.on('isRunning',  (data) => {
             this.isRunning(data.isRunning);
+
         });
 
 

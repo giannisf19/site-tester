@@ -25,6 +25,7 @@ var viewModel = (function () {
         this.selectedMetrics = ko.observableArray([]);
         this.scheduled = ko.observable(false);
         this.criticalErrors = ko.observableArray(['jsErrors', 'notFound']);
+
         var socket = io.connect(this.host());
 
         // Get the history names
@@ -65,7 +66,6 @@ var viewModel = (function () {
 
                 _this.selectedMetrics.subscribe(function () {
                     _this.makeTimelineGraph();
-                    console.log('updatingGraph');
                 });
 
                 _this.makeTimelineGraph();
@@ -74,12 +74,8 @@ var viewModel = (function () {
             if (mode == 'graph') {
                 _this.selectedMetrics.subscribe(function () {
                     _this.makeGraph();
-                    console.log('updatingGraph');
                 });
             }
-        });
-
-        this.currentData.subscribe(function () {
         });
 
         this.isValid = ko.computed(function () {
