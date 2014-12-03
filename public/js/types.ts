@@ -57,11 +57,13 @@
         private offenders  : any;
         private metrics : any;
         private url : string;
+        private screen : string;
 
-        constructor(offenders, metrics, url) {
+        constructor(offenders, metrics, url, screen) {
             this.offenders = offenders;
             this.metrics = metrics;
             this.url = url;
+            this.screen = screen;
         }
 
         getData() {

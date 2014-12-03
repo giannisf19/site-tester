@@ -262,7 +262,7 @@ class viewModel {
                             var offenders = test.result.offenders || {};
                             var metrics = test.result.metrics || {};
 
-                            toAdd.push(new SiteTesterTypes.TestInstance(offenders, metrics, test.url));
+                            toAdd.push(new SiteTesterTypes.TestInstance(offenders, metrics, test.url, test.screen.split('/').pop()));
                         }
 
                     });

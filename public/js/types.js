@@ -34,10 +34,11 @@ var SiteTesterTypes;
     SiteTesterTypes.TestHistory = TestHistory;
 
     var TestInstance = (function () {
-        function TestInstance(offenders, metrics, url) {
+        function TestInstance(offenders, metrics, url, screen) {
             this.offenders = offenders;
             this.metrics = metrics;
             this.url = url;
+            this.screen = screen;
         }
         TestInstance.prototype.getData = function () {
             return { url: this.url, metrics: this.metrics, offenders: this.offenders };
