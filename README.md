@@ -7,6 +7,8 @@ Test websites for errors
 
 Run
 
+clone this repo and
+
 ```javascript
 
 sudo npm install
