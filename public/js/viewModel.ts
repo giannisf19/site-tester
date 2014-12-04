@@ -9,6 +9,7 @@
 
 declare var io: any;
 declare var updateKOBindings : any ;
+declare var parseUri : any;
 
 interface JQuery  {
     cron : any;
@@ -36,7 +37,7 @@ class viewModel {
     private selectedMetrics : KnockoutObservableArray<string>;
     private scheduled: KnockoutObservable<boolean>;
     private availableHistoryNames : KnockoutObservableArray<string>;
-
+    private currentDataByDomain : KnockoutObservableArray<any>;
 
     private criticalErrors : KnockoutObservableArray<string>; // remove this
 
@@ -59,6 +60,7 @@ class viewModel {
         this.selectedMetrics = ko.observableArray([]);
         this.scheduled = ko.observable(false);
         this.criticalErrors = ko.observableArray(['jsErrors', 'notFound']);
+        this.currentDataByDomain = ko.observableArray([]);
 
         var socket = io.connect(this.host());
 
@@ -122,12 +124,33 @@ class viewModel {
         });
 
         this.newItem.subscribe(()=> {
-           if (! this.newItem().match(/^(http+)/)) {
-               this.newItem('http://' + this.newItem());
-           }
 
         });
 
+
+        this.currentData.subscribe(() =>{
+
+            var domains = [];
+            var toAdd : SiteTesterTypes.DomainWithTests[] = [];
+
+            _.forEach(this.currentData().data, (item : SiteTesterTypes.TestInstance) => {
+
+               var host = parseUri(item.getData().url).host;
+
+                if (! _.contains(domains, host))  {
+                    domains.push(host);
+                    toAdd.push({domain : host, tests: [item.getData()]})
+                }
+
+                else {
+                   var indexOfItem = _.findIndex(toAdd, (i) =>  {return i.domain == host});
+                    toAdd[indexOfItem].tests.push(item.getData());
+                }
+            });
+
+           this.currentDataByDomain(toAdd);
+
+        });
 
 
 
@@ -166,6 +189,8 @@ class viewModel {
                 useGentleSelect: true
             });
     }
+
+
 
    schedule() {
        $.ajax({
@@ -381,7 +406,6 @@ class viewModel {
         });
     }
 
-
     makeGraph()  {
 
         _.forEach(this.currentData().data, (testInstance : SiteTesterTypes.TestInstance) => {
@@ -488,5 +512,18 @@ class viewModel {
 
     static getValidDivId(url : string, cssClass : string, type  :string) {
         return url.split('//')[1].split('.')[0] + cssClass.split('.')[1] + type;
+    }
+
+    makeValidIdFromUrl(url, index) {
+
+        var parsedUrl = parseUri(url);
+        url = parsedUrl.host;
+        var temp = url.split('www');
+        var a = temp[0].length > 0 ? temp[0] : temp[1];
+        var b = a.split('.');
+        var toReturn = b[0].length > 0 ?  b[0] : b[1];
+
+        return toReturn + parsedUrl.directory.split('/').join('');
+
     }
 }

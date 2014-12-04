@@ -1,6 +1,5 @@
 - var zero = urls.length == 0;
 
-
 doctype html
 html
     head
@@ -12,12 +11,16 @@ html
 
                if !zero
                    .col-xs-2#page-selector-menu
-
-                           ul.nav.nav-tabs.tabs-left
-                               // ko foreach: currentData
-                               li(data-bind="css: {active: $index() == 0 }")
-                                   a(data-toggle='tab' , data-bind= "text: $data.url, attr: {href: ('#' + $index())}")
-                               // /ko
+                          .st-accordion#st-accordion
+                              ul
+                                  // ko foreach: currentDataByDomain
+                                  li
+                                       a(href='#' data-bind="text: $data.domain")
+                                           span.st-arrow Open or Close
+                                       .st-content(data-bind="foreach: $data.tests")
+                                              span.url-page(data-bind="css: {'cl-effect-6': ($index() == 0) && ($parentContext.$index() == 0)  }")
+                                                  a(data-toggle='tab' , data-bind= "text: $data.url, attr: {href: '#' + $root.makeValidIdFromUrl($data.url)  }")
+                                  // /ko
                    .col-xs-9
                        .row.clearfix
                            .btn-group
@@ -25,7 +28,7 @@ html
 
                        .tab-content.top-buffer.col-xs-12.no-margin
                            // ko foreach: currentData
-                           .tab-pane.result-content.col-xs-12.no-margin(data-bind="css: {active: $index() == 0}, attr: {id: $index}")
+                           .tab-pane.result-content.col-xs-12.no-margin(data-bind="css: {active: $index() == 0}, attr: {id: $root.makeValidIdFromUrl($data.url)} ")
                                .tab-content.metric-tabs.col-xs-12.no-margin(data-bind="attr: {'data-url': $data.url}")
                                    .tab-pane.summary.active.graph.col-xs-12.no-margin
                                        div(data-bind="visible: $root.selectedMode() == 'timeline' || $root.selectedMode() == 'graph'").metric-selector.col-xs-2.no-margin

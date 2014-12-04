@@ -33,14 +33,14 @@ html
 
 
                     span.display-block.left.bottom
-                        button.btn.btn-danger(data-toggle='modal', data-target='#deleteModal') Delete history db
+                        button.btn.btn-info(data-toggle='modal', data-target='#deleteModal') Histories
                         .modal.fade#deleteModal(aria-hidden = 'true')
                             .modal-dialog
                                 .modal-content
                                     .modal-header
                                         h4.modal-title Delete histories
                                     .modal-body
-                                        button.form-control.bottom-buffer.btn.btn-danger(data-bind="click: deleteDb, css: {disabled: !availableHistoryNames().length}") All
+                                        button.form-control.bottom-buffer.btn.btn-danger(data-bind="click: deleteDb, css: {disabled: !availableHistoryNames().length}") Delete all
                                         ul(data-bind="foreach: availableHistoryNames")
                                             li
                                                 span(data-bind="text: $data")

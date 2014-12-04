@@ -26,6 +26,7 @@ var viewModel = (function () {
         this.selectedMetrics = ko.observableArray([]);
         this.scheduled = ko.observable(false);
         this.criticalErrors = ko.observableArray(['jsErrors', 'notFound']);
+        this.currentDataByDomain = ko.observableArray([]);
 
         var socket = io.connect(this.host());
 
@@ -80,9 +81,27 @@ var viewModel = (function () {
         });
 
         this.newItem.subscribe(function () {
-            if (!_this.newItem().match(/^(http+)/)) {
-                _this.newItem('http://' + _this.newItem());
-            }
+        });
+
+        this.currentData.subscribe(function () {
+            var domains = [];
+            var toAdd = [];
+
+            _.forEach(_this.currentData().data, function (item) {
+                var host = parseUri(item.getData().url).host;
+
+                if (!_.contains(domains, host)) {
+                    domains.push(host);
+                    toAdd.push({ domain: host, tests: [item.getData()] });
+                } else {
+                    var indexOfItem = _.findIndex(toAdd, function (i) {
+                        return i.domain == host;
+                    });
+                    toAdd[indexOfItem].tests.push(item.getData());
+                }
+            });
+
+            _this.currentDataByDomain(toAdd);
         });
 
         this.isValid = ko.computed(function () {
@@ -376,6 +395,17 @@ var viewModel = (function () {
 
     viewModel.getValidDivId = function (url, cssClass, type) {
         return url.split('//')[1].split('.')[0] + cssClass.split('.')[1] + type;
+    };
+
+    viewModel.prototype.makeValidIdFromUrl = function (url, index) {
+        var parsedUrl = parseUri(url);
+        url = parsedUrl.host;
+        var temp = url.split('www');
+        var a = temp[0].length > 0 ? temp[0] : temp[1];
+        var b = a.split('.');
+        var toReturn = b[0].length > 0 ? b[0] : b[1];
+
+        return toReturn + parsedUrl.directory.split('/').join('');
     };
     return viewModel;
 })();

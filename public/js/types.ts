@@ -30,6 +30,10 @@
     }
 
 
+     export interface DomainWithTests {
+         domain: string;
+         tests: any[];
+     }
 
 
     export class TestHistory  {
