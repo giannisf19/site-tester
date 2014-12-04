@@ -14,7 +14,7 @@ var viewModel = (function () {
         this.host = ko.observable('http://' + host);
         this.cron = ko.observable(settings.cron);
         this.screenshot = ko.observable(settings.screenshot);
-        this.newItem = ko.observable('http://');
+        this.newItem = ko.observable('');
         this.urls = ko.observableArray(settings.urls);
         this.histories = ko.observableArray([]);
         this.isRunning = ko.observable(false);
@@ -78,6 +78,12 @@ var viewModel = (function () {
             }
         });
 
+        this.newItem.subscribe(function () {
+            if (!_this.newItem().match(/^(http+)/)) {
+                _this.newItem('http://' + _this.newItem());
+            }
+        });
+
         this.isValid = ko.computed(function () {
             var pattern = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
             return pattern.test(_this.newItem());
@@ -124,7 +130,7 @@ var viewModel = (function () {
     viewModel.prototype.add = function () {
         if (!_.contains(this.urls(), this.newItem())) {
             this.urls.unshift(this.newItem());
-            this.newItem('http://');
+            this.newItem('');
             this.pushSettingsToServer();
             return;
         }

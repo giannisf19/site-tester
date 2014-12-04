@@ -47,7 +47,7 @@ class viewModel {
         this.host = ko.observable('http://' + host);
         this.cron  = ko.observable(settings.cron);
         this.screenshot = ko.observable(settings.screenshot);
-        this.newItem  = ko.observable('http://');
+        this.newItem  = ko.observable('');
         this.urls = ko.observableArray(settings.urls);
         this.histories = ko.observableArray([]);
         this.isRunning = ko.observable(false);
@@ -120,6 +120,15 @@ class viewModel {
             }
         });
 
+        this.newItem.subscribe(()=> {
+           if (! this.newItem().match(/^(http+)/)) {
+               this.newItem('http://' + this.newItem());
+           }
+
+        });
+
+
+
 
 
         this.isValid = ko.computed(() => {
@@ -175,8 +184,9 @@ class viewModel {
 
     add()  {
         if (! _.contains(this.urls(), this.newItem())) {
+
             this.urls.unshift(this.newItem());
-            this.newItem('http://');
+            this.newItem('');
             this.pushSettingsToServer();
             return;
         }
