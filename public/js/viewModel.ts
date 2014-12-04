@@ -3,6 +3,7 @@
 /// <reference path="../../typings/socket.io/socket.io.d.ts"/>
 /// <reference path="../../typings/lodash/lodash.d.ts"/>
 /// <reference path="../../typings/toastr/toastr.d.ts"/>
+/// <reference path="../../typings/alertify/alertify.d.ts"/>
 /// <reference path="types.ts"/>
 
 
@@ -212,16 +213,17 @@ class viewModel {
     }
 
     deleteDb()  {
-        if (confirm('This is irreversible. Delete ?')) {
-            $.ajax({
-                type: 'post',
-                url: this.host() + '/api/deleteDb',
-                success: ()=> {
-                    this.availableHistoryNames([]);
-                }
-            });
-        }
-
+       alertify.confirm('This is irreversible. Delete?', (e) =>{
+          if (e) {
+              $.ajax({
+                  type: 'post',
+                  url: this.host() + '/api/deleteDb',
+                  success: ()=> {
+                      this.availableHistoryNames([]);
+                  }
+              });
+          }
+       })
     }
 
 
