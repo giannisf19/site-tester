@@ -1,7 +1,6 @@
 $(function() {
 
 
-   $('#st-accordion').accordion({open: 0});
 
 
     $(document).on('click', '.url-page > a', function(e) {
@@ -107,5 +106,8 @@ $(function() {
        var box = $(e.target).siblings().eq(0);
         $(box).filterByText(e.target)
     });
+
+
+
 
 });

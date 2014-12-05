@@ -11,14 +11,14 @@ html
 
                if !zero
                    .col-xs-2#page-selector-menu
-                          .st-accordion#st-accordion
-                              ul
+                          section.ac-container
                                   // ko foreach: currentDataByDomain
-                                  li
-                                       a(href='#' data-bind="text: $data.domain")
-                                           span.st-arrow Open or Close
-                                       .st-content(data-bind="foreach: $data.tests")
-                                              span.url-page(data-bind="css: {'cl-effect-6': ($index() == 0) && ($parentContext.$index() == 0)  }")
+                                  div
+                                      input(data-bind="attr: {id: $index}", type='checkbox')
+                                      label(href='#' data-bind="text: $data.domain, attr: {for: $index}")
+                                           span Open or Close
+                                       article.ac-small(data-bind="foreach: $data.tests")
+                                              span.url-page(data-bind="css: {'selected-page': ($index() == 0) && ($parentContext.$index() == 0)  }")
                                                   a(data-toggle='tab' , data-bind= "text: $data.url, attr: {href: '#' + $root.makeValidIdFromUrl($data.url)  }")
                                   // /ko
                    .col-xs-9

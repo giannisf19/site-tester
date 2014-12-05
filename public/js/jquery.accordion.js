@@ -201,6 +201,10 @@
 		}
 		
 	};
+
+	update = function() {
+
+	};
 	
 	$.fn.accordion 				= function( options ) {
 	

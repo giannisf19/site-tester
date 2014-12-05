@@ -14,6 +14,7 @@ declare var parseUri : any;
 interface JQuery  {
     cron : any;
     highcharts : any;
+    accordion : any;
 }
 
 
@@ -150,9 +151,8 @@ class viewModel {
 
            this.currentDataByDomain(toAdd);
 
+
         });
-
-
 
 
         this.isValid = ko.computed(() => {
