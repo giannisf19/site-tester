@@ -19,7 +19,7 @@ var viewModel = (function () {
         this.urls = ko.observableArray(settings.urls);
         this.histories = ko.observableArray([]);
         this.isRunning = ko.observable(false);
-        this.selectedHistory = ko.observable(' ');
+        this.selectedHistory = ko.observable('');
         this.currentData = ko.observable({});
         this.selectedMode = ko.observable('numbers');
         this.availableMetrics = ko.observableArray([]);
@@ -27,6 +27,7 @@ var viewModel = (function () {
         this.scheduled = ko.observable(false);
         this.criticalErrors = ko.observableArray(['jsErrors', 'notFound']);
         this.currentDataByDomain = ko.observableArray([]);
+        this.isLoading = ko.observable(false);
 
         var socket = io.connect(this.host());
 
@@ -36,6 +37,9 @@ var viewModel = (function () {
         this.count = 0;
 
         this.selectedHistory.subscribe(function () {
+            _this.isLoading(true);
+            console.log('Dafuq');
+
             if (!_this.selectedHistory())
                 return;
 
@@ -55,7 +59,9 @@ var viewModel = (function () {
                 }
             });
 
+            _this.currentData({});
             _this.currentData(data);
+            _this.isLoading(false);
         });
 
         this.selectedMode.subscribe(function (mode) {
@@ -84,6 +90,10 @@ var viewModel = (function () {
         });
 
         this.currentData.subscribe(function () {
+            if (!_this.currentData()) {
+                console.log('figame');
+                console.log(_this.currentData());
+            }
             var domains = [];
             var toAdd = [];
 
@@ -214,6 +224,8 @@ var viewModel = (function () {
         });
 
         if (!exists) {
+            this.isLoading(true);
+
             $.ajax({
                 type: 'post',
                 async: false,
@@ -235,6 +247,7 @@ var viewModel = (function () {
 
                     console.log('Adding to histories..');
                     _this.histories.push(new SiteTesterTypes.TestHistory(name, toAdd));
+                    _this.isLoading(false);
                 }
             });
         } else {
@@ -244,6 +257,7 @@ var viewModel = (function () {
 
     viewModel.prototype.makeTimelineGraph = function () {
         var _this = this;
+        this.isLoading(true);
         var graphWidth = 0;
 
         _.forEach(this.currentData().data, function (current) {
@@ -309,10 +323,13 @@ var viewModel = (function () {
 
             updateKOBindings(divSelector);
         });
+
+        this.isLoading(false);
     };
 
     viewModel.prototype.makeGraph = function () {
         var _this = this;
+        this.isLoading(true);
         _.forEach(this.currentData().data, function (testInstance) {
             var cssClass = '.graph';
             var divId = viewModel.getValidDivId(testInstance.getData().url, cssClass, 'normal');
@@ -365,6 +382,8 @@ var viewModel = (function () {
 
             updateKOBindings(divSelector);
         });
+
+        this.isLoading(false);
     };
 
     viewModel.prototype.getHistoryNames = function () {
@@ -394,18 +413,11 @@ var viewModel = (function () {
     };
 
     viewModel.getValidDivId = function (url, cssClass, type) {
-        return url.split('//')[1].split('.')[0] + cssClass.split('.')[1] + type;
+        return url.replace(/\//g, '').replace(/\./g, '').replace(/\:/g, '') + cssClass.split('.')[1] + type;
     };
 
     viewModel.prototype.makeValidIdFromUrl = function (url, index) {
-        var parsedUrl = parseUri(url);
-        url = parsedUrl.host;
-        var temp = url.split('www');
-        var a = temp[0].length > 0 ? temp[0] : temp[1];
-        var b = a.split('.');
-        var toReturn = b[0].length > 0 ? b[0] : b[1];
-
-        return toReturn + parsedUrl.directory.split('/').join('');
+        return url.replace(/\//g, '').replace(/\./g, '').replace(/\:/g, '');
     };
     return viewModel;
 })();

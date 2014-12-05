@@ -39,9 +39,8 @@ class viewModel {
     private scheduled: KnockoutObservable<boolean>;
     private availableHistoryNames : KnockoutObservableArray<string>;
     private currentDataByDomain : KnockoutObservableArray<any>;
-
     private criticalErrors : KnockoutObservableArray<string>; // remove this
-
+    private isLoading : KnockoutObservable<boolean>;
 
     constructor(private settings : SiteTesterTypes.SiteTesterSettings,  host : string) {
 
@@ -54,7 +53,7 @@ class viewModel {
         this.urls = ko.observableArray(settings.urls);
         this.histories = ko.observableArray([]);
         this.isRunning = ko.observable(false);
-        this.selectedHistory = ko.observable(' ');
+        this.selectedHistory = ko.observable('');
         this.currentData = ko.observable({});
         this.selectedMode = ko.observable('numbers');
         this.availableMetrics  = ko.observableArray([]);
@@ -62,6 +61,8 @@ class viewModel {
         this.scheduled = ko.observable(false);
         this.criticalErrors = ko.observableArray(['jsErrors', 'notFound']);
         this.currentDataByDomain = ko.observableArray([]);
+        this.isLoading = ko.observable(false);
+
 
         var socket = io.connect(this.host());
 
@@ -74,10 +75,15 @@ class viewModel {
 
         this.selectedHistory.subscribe(() => {
 
+            this.isLoading(true);
+            console.log('Dafuq')
+
+
             if (!this.selectedHistory()) return; // if no history, get the hell out of here.
 
                 this.addToHistories(this.selectedHistory());
                 var data = {};
+
 
                 _.forEach(this.histories(), (item)=> {
                     if (item.getDate() == this.selectedHistory()) {
@@ -92,8 +98,10 @@ class viewModel {
                     }
                 });
 
-                this.currentData(data);
 
+                this.currentData({});
+                this.currentData(data);
+                this.isLoading(false);
         });
 
         this.selectedMode.subscribe((mode) => {
@@ -131,6 +139,12 @@ class viewModel {
 
         this.currentData.subscribe(() =>{
 
+
+            if (!this.currentData()) {
+                console.log('figame');
+                console.log(this.currentData())
+
+            }
             var domains = [];
             var toAdd : SiteTesterTypes.DomainWithTests[] = [];
 
@@ -150,7 +164,6 @@ class viewModel {
             });
 
            this.currentDataByDomain(toAdd);
-
 
         });
 
@@ -278,6 +291,8 @@ class viewModel {
 
         if ( !exists) {
 
+            this.isLoading(true);
+
             $.ajax({
                 type: 'post',
                 async: false,
@@ -302,6 +317,7 @@ class viewModel {
 
                     console.log('Adding to histories..');
                     this.histories.push(new SiteTesterTypes.TestHistory(name, toAdd))
+                    this.isLoading(false);
                 }
 
             });
@@ -316,6 +332,7 @@ class viewModel {
 
     makeTimelineGraph() {
 
+        this.isLoading(true);
         var graphWidth = 0;
 
         _.forEach(this.currentData().data, (current : SiteTesterTypes.TestInstance)=> {
@@ -404,10 +421,13 @@ class viewModel {
                updateKOBindings(divSelector);
 
         });
+
+        this.isLoading(false);
     }
 
     makeGraph()  {
 
+        this.isLoading(true);
         _.forEach(this.currentData().data, (testInstance : SiteTesterTypes.TestInstance) => {
 
             var cssClass = '.graph';
@@ -479,6 +499,8 @@ class viewModel {
 
         });
 
+        this.isLoading(false);
+
 }
 
     getHistoryNames() {
@@ -511,19 +533,12 @@ class viewModel {
     }
 
     static getValidDivId(url : string, cssClass : string, type  :string) {
-        return url.split('//')[1].split('.')[0] + cssClass.split('.')[1] + type;
+        return url.replace(/\//g, '').replace(/\./g, '').replace(/\:/g, '') + cssClass.split('.')[1] + type;
     }
 
     makeValidIdFromUrl(url, index) {
 
-        var parsedUrl = parseUri(url);
-        url = parsedUrl.host;
-        var temp = url.split('www');
-        var a = temp[0].length > 0 ? temp[0] : temp[1];
-        var b = a.split('.');
-        var toReturn = b[0].length > 0 ?  b[0] : b[1];
-
-        return toReturn + parsedUrl.directory.split('/').join('');
+        return url.replace(/\//g, '').replace(/\./g, '').replace(/\:/g, '');
 
     }
 }
