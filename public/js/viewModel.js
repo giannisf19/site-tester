@@ -150,7 +150,10 @@ var viewModel = (function () {
         if (confirm('This is irreversible. Delete ?')) {
             $.ajax({
                 type: 'post',
-                url: this.host() + '/api/deleteDb'
+                url: this.host() + '/api/deleteDb',
+                success: function (data, status) {
+                    console.log(status);
+                }
             });
         }
     };

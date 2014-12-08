@@ -61,7 +61,6 @@ class viewModel {
         var socket = io.connect(this.host());
 
 
-
         // Get the history names
         this.getHistoryNames();
 
@@ -202,12 +201,14 @@ class viewModel {
         if (confirm('This is irreversible. Delete ?')) {
             $.ajax({
                 type: 'post',
-                url: this.host() + '/api/deleteDb'
+                url: this.host() + '/api/deleteDb',
+                success: function(data,status) {
+                    console.log(status)
+                }
             });
         }
 
     }
-
 
 
      static shakeForm() {

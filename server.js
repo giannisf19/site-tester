@@ -78,8 +78,9 @@ app.post('/api/runNow', function(req, res) {
     testEngine.runNow();
 });
 
-app.post('/api/deleteDb', function() {
+app.post('/api/deleteDb', function(req,res) {
     parser.ClearHistory();
+    res.send('ok')
 });
 
 
@@ -94,8 +95,6 @@ app.post('/api/', function(req, res) {
         message: "Site tester api"
     }) ;
 });
-
-
 
 
 
