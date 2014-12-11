@@ -4,5 +4,9 @@
   "ref": "master",
   "path": "typings",
   "bundle": "typings/tsd.d.ts",
-  "installed": {}
+  "installed": {
+    "alertify/alertify.d.ts": {
+      "commit": "bd0833a22eb1c4e4a963068d4e2550fe866399d1"
+    }
+  }
 }

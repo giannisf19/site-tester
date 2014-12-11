@@ -57,8 +57,8 @@
 
 .loader {
     position:fixed;
-    top: 50%;
-    left: 50%;
+    top: 61%;
+    left: 54%;
     width:30em;
     height:18em;
     margin-top: -9em; /*set to a negative number 1/2 of your height*/
@@ -107,3 +107,36 @@
 .no-bg {
     background-color: white;
 }
+.url-page {
+
+}
+
+.url-page a{
+    display: block;
+    margin-bottom: 2px;
+    font-size: 14px;
+}
+
+.url-page a:hover {
+
+}
+
+
+
+
+
+
+
+
+
+
+.selected-page a{
+    background-color: black;
+    color: white;
+
+    display: inline;
+    padding-left: 6px;
+    padding-right: 6px;
+}
+
+

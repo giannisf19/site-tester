@@ -3,6 +3,25 @@ $(function() {
 
 
 
+    $(document).on('click', '.url-page > a', function(e) {
+        e.preventDefault();
+
+        var target = $(e.target);
+
+        _.forEach($('.url-page'), function(i) {
+
+            i = $(i);
+            if (i.hasClass('selected-page')) {
+                i.removeClass('selected-page');
+            }
+        });
+
+
+        target.parent().addClass('selected-page');
+
+    });
+
+
     jQuery.fn.filterByText = function(textbox) {
         return this.each(function() {
             var select = this;
@@ -80,9 +99,15 @@ $(function() {
     };
 
 
+
+
+
     $('.metric-filter').on('keyup', function(e,data) {
        var box = $(e.target).siblings().eq(0);
         $(box).filterByText(e.target)
     });
+
+
+
 
 });

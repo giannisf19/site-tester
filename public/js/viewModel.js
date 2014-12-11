@@ -3,6 +3,7 @@
 /// <reference path="../../typings/socket.io/socket.io.d.ts"/>
 /// <reference path="../../typings/lodash/lodash.d.ts"/>
 /// <reference path="../../typings/toastr/toastr.d.ts"/>
+/// <reference path="../../typings/alertify/alertify.d.ts"/>
 /// <reference path="types.ts"/>
 
 var viewModel = (function () {
@@ -14,17 +15,20 @@ var viewModel = (function () {
         this.host = ko.observable('http://' + host);
         this.cron = ko.observable(settings.cron);
         this.screenshot = ko.observable(settings.screenshot);
-        this.newItem = ko.observable('http://');
+        this.newItem = ko.observable('');
         this.urls = ko.observableArray(settings.urls);
         this.histories = ko.observableArray([]);
         this.isRunning = ko.observable(false);
-        this.selectedHistory = ko.observable(' ');
+        this.selectedHistory = ko.observable('');
         this.currentData = ko.observable({});
         this.selectedMode = ko.observable('numbers');
         this.availableMetrics = ko.observableArray([]);
         this.selectedMetrics = ko.observableArray([]);
         this.scheduled = ko.observable(false);
         this.criticalErrors = ko.observableArray(['jsErrors', 'notFound']);
+        this.currentDataByDomain = ko.observableArray([]);
+        this.isLoading = ko.observable(false);
+
         var socket = io.connect(this.host());
 
         // Get the history names
@@ -33,6 +37,9 @@ var viewModel = (function () {
         this.count = 0;
 
         this.selectedHistory.subscribe(function () {
+            _this.isLoading(true);
+            console.log('Dafuq');
+
             if (!_this.selectedHistory())
                 return;
 
@@ -52,7 +59,9 @@ var viewModel = (function () {
                 }
             });
 
+            _this.currentData({});
             _this.currentData(data);
+            _this.isLoading(false);
         });
 
         this.selectedMode.subscribe(function (mode) {
@@ -65,14 +74,44 @@ var viewModel = (function () {
 
                 _this.selectedMetrics.subscribe(function () {
                     _this.makeTimelineGraph();
-                    console.log('updatingGraph');
                 });
 
                 _this.makeTimelineGraph();
             }
+
+            if (mode == 'graph') {
+                _this.selectedMetrics.subscribe(function () {
+                    _this.makeGraph();
+                });
+            }
+        });
+
+        this.newItem.subscribe(function () {
         });
 
         this.currentData.subscribe(function () {
+            if (!_this.currentData()) {
+                console.log('figame');
+                console.log(_this.currentData());
+            }
+            var domains = [];
+            var toAdd = [];
+
+            _.forEach(_this.currentData().data, function (item) {
+                var host = parseUri(item.getData().url).host;
+
+                if (!_.contains(domains, host)) {
+                    domains.push(host);
+                    toAdd.push({ domain: host, tests: [item.getData()] });
+                } else {
+                    var indexOfItem = _.findIndex(toAdd, function (i) {
+                        return i.domain == host;
+                    });
+                    toAdd[indexOfItem].tests.push(item.getData());
+                }
+            });
+
+            _this.currentDataByDomain(toAdd);
         });
 
         this.isValid = ko.computed(function () {
@@ -121,7 +160,7 @@ var viewModel = (function () {
     viewModel.prototype.add = function () {
         if (!_.contains(this.urls(), this.newItem())) {
             this.urls.unshift(this.newItem());
-            this.newItem('http://');
+            this.newItem('');
             this.pushSettingsToServer();
             return;
         }
@@ -147,15 +186,18 @@ var viewModel = (function () {
     };
 
     viewModel.prototype.deleteDb = function () {
-        if (confirm('This is irreversible. Delete ?')) {
-            $.ajax({
-                type: 'post',
-                url: this.host() + '/api/deleteDb',
-                success: function (data, status) {
-                    console.log(status);
-                }
-            });
-        }
+        var _this = this;
+        alertify.confirm('This is irreversible. Delete?', function (e) {
+            if (e) {
+                $.ajax({
+                    type: 'post',
+                    url: _this.host() + '/api/deleteDb',
+                    success: function () {
+                        _this.availableHistoryNames([]);
+                    }
+                });
+            }
+        });
     };
 
     viewModel.shakeForm = function () {
@@ -182,6 +224,8 @@ var viewModel = (function () {
         });
 
         if (!exists) {
+            this.isLoading(true);
+
             $.ajax({
                 type: 'post',
                 async: false,
@@ -197,12 +241,13 @@ var viewModel = (function () {
                             var offenders = test.result.offenders || {};
                             var metrics = test.result.metrics || {};
 
-                            toAdd.push(new SiteTesterTypes.TestInstance(offenders, metrics, test.url));
+                            toAdd.push(new SiteTesterTypes.TestInstance(offenders, metrics, test.url, test.screen.split('/').pop()));
                         }
                     });
 
                     console.log('Adding to histories..');
                     _this.histories.push(new SiteTesterTypes.TestHistory(name, toAdd));
+                    _this.isLoading(false);
                 }
             });
         } else {
@@ -212,11 +257,12 @@ var viewModel = (function () {
 
     viewModel.prototype.makeTimelineGraph = function () {
         var _this = this;
+        this.isLoading(true);
         var graphWidth = 0;
 
         _.forEach(this.currentData().data, function (current) {
             var cssClass = '.graph';
-            var divId = viewModel.getValidDivId(current.getData().url, cssClass);
+            var divId = viewModel.getValidDivId(current.getData().url, cssClass, 'timeline');
             var divSelector = '#' + divId;
             var containerDiv = "<div class='col-md-10 no-margin' id='" + divId + "'></div>";
             var docSelector = "*[data-url='" + current.getData().url + "']";
@@ -262,7 +308,7 @@ var viewModel = (function () {
                     text: current.getData().url
                 },
                 chart: {
-                    width: 1112
+                    width: graphWidth
                 },
                 xAxis: {
                     categories: graphDates
@@ -277,6 +323,67 @@ var viewModel = (function () {
 
             updateKOBindings(divSelector);
         });
+
+        this.isLoading(false);
+    };
+
+    viewModel.prototype.makeGraph = function () {
+        var _this = this;
+        this.isLoading(true);
+        _.forEach(this.currentData().data, function (testInstance) {
+            var cssClass = '.graph';
+            var divId = viewModel.getValidDivId(testInstance.getData().url, cssClass, 'normal');
+            var divSelector = '#' + divId;
+            var containerDiv = "<div class='col-md-10 no-margin' id='" + divId + "'></div>";
+            var docSelector = "*[data-url='" + testInstance.getData().url + "']";
+
+            if (!$(divSelector).length) {
+                $(docSelector).find(cssClass).append(containerDiv);
+                $(divSelector).attr('data-bind', "visible: selectedMode() == 'graph'");
+                $(divSelector).append("<div class='graphContainer' style='height: 600px; margin-left: 40px;'></div>");
+            }
+
+            var metrics = [];
+            var data = [];
+            var metricData;
+
+            _.forEach(_this.selectedMetrics(), function (metric) {
+                var temp = testInstance.getData().offenders[metric];
+                metricData = temp ? temp.length : 0;
+
+                var myIndex = _.findIndex(data, function (e) {
+                    return e.name == metric;
+                });
+                if (myIndex != -1) {
+                    data[myIndex].data.push(metricData);
+                } else {
+                    data.push({ name: metric, data: [metricData] });
+                }
+            });
+
+            $(divSelector).find('.graphContainer').highcharts({
+                title: {
+                    text: testInstance.getData().url
+                },
+                chart: {
+                    width: 1112,
+                    type: 'column'
+                },
+                xAxis: {
+                    categories: metrics
+                },
+                yAxis: {
+                    title: {
+                        text: 'count'
+                    }
+                },
+                series: data
+            });
+
+            updateKOBindings(divSelector);
+        });
+
+        this.isLoading(false);
     };
 
     viewModel.prototype.getHistoryNames = function () {
@@ -291,18 +398,26 @@ var viewModel = (function () {
     };
 
     viewModel.prototype.deleteHistoryByName = function (name) {
+        var _this = this;
         console.log('Deleting.. ' + name);
 
         $.ajax({
             type: 'post',
             contentType: 'application/json',
             url: this.host() + '/api/deleteHistoryByName',
-            data: ko.toJSON({ name: name })
+            data: ko.toJSON({ name: name }),
+            success: function () {
+                _this.availableHistoryNames.remove(name);
+            }
         });
     };
 
-    viewModel.getValidDivId = function (url, cssClass) {
-        return url.split('//')[1].split('.')[0] + cssClass.split('.')[1];
+    viewModel.getValidDivId = function (url, cssClass, type) {
+        return url.replace(/\//g, '').replace(/\./g, '').replace(/\:/g, '') + cssClass.split('.')[1] + type;
+    };
+
+    viewModel.prototype.makeValidIdFromUrl = function (url, index) {
+        return url.replace(/\//g, '').replace(/\./g, '').replace(/\:/g, '');
     };
     return viewModel;
 })();

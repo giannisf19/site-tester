@@ -1,6 +1,5 @@
 - var zero = urls.length == 0;
 
-
 doctype html
 html
     head
@@ -12,12 +11,16 @@ html
 
                if !zero
                    .col-xs-2#page-selector-menu
-
-                           ul.nav.nav-tabs.tabs-left
-                               // ko foreach: currentData
-                               li(data-bind="css: {active: $index() == 0 }")
-                                   a(data-toggle='tab' , data-bind= "text: $data.url, attr: {href: ('#' + $index())}")
-                               // /ko
+                          section.ac-container
+                                  // ko foreach: currentDataByDomain
+                                  div
+                                      input(data-bind="attr: {id: $index}", type='checkbox')
+                                      label(href='#' data-bind="text: $data.domain, attr: {for: $index}")
+                                           span Open or Close
+                                       article.ac-small(data-bind="foreach: $data.tests")
+                                              span.url-page(data-bind="css: {'selected-page': ($index() == 0) && ($parentContext.$index() == 0)  }")
+                                                  a(data-toggle='tab' , data-bind= "text: $data.url, attr: {href: '#' + $root.makeValidIdFromUrl($data.url)  }")
+                                  // /ko
                    .col-xs-9
                        .row.clearfix
                            .btn-group
@@ -25,7 +28,7 @@ html
 
                        .tab-content.top-buffer.col-xs-12.no-margin
                            // ko foreach: currentData
-                           .tab-pane.result-content.col-xs-12.no-margin(data-bind="css: {active: $index() == 0}, attr: {id: $index}")
+                           .tab-pane.result-content.col-xs-12.no-margin(data-bind="css: {active: $index() == 0}, attr: {id: $root.makeValidIdFromUrl($data.url)} ")
                                .tab-content.metric-tabs.col-xs-12.no-margin(data-bind="attr: {'data-url': $data.url}")
                                    .tab-pane.summary.active.graph.col-xs-12.no-margin
                                        div(data-bind="visible: $root.selectedMode() == 'timeline' || $root.selectedMode() == 'graph'").metric-selector.col-xs-2.no-margin
@@ -47,9 +50,9 @@ html
                                                         td(data-bind= "text: $data.name")
                                                         td(data-bind= "text: $data.values.length")
                                                         td
-                                                            a(data-bind="attr: {'data-target': ('#' + $parent.url.split('//')[1].split('.')[0] + $index()) }", data-toggle="modal", href="#")
+                                                            a(data-bind="attr: {'data-target': ('#' + ($root.makeValidIdFromUrl($parent.url) + $index())) }", data-toggle="modal", href="#")
                                                                 i.fa.fa-info.fa-2x
-                                                            .modal.fade(data-bind="attr: {id: ( $parent.url.split('//')[1].split('.')[0] + $index()) }", role="dialog", aria-hidden='true')
+                                                            .modal.fade(data-bind="attr: {id:  ($root.makeValidIdFromUrl($parent.url) + $index()) }", role="dialog", aria-hidden='true')
                                                                 .modal-dialog
                                                                     .modal-content
                                                                         .modal-header
@@ -65,13 +68,12 @@ html
 
 
 
-
-
-
-                               .loader
-
-
+                                   .tab-pane.screenshot
+                                      img(data-bind="attr: {src: 'screens/' + $data.screen}")
                             // /ko
+
+                           .loader(data-bind="visible: isLoading()")
+                               i.fa.fa-spin.fa-spinner.fa-5x
                    .col-xs-1.top-buffer-2x
                         include partials/modes
 

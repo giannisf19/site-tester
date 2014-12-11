@@ -3,15 +3,18 @@
 /// <reference path="../../typings/socket.io/socket.io.d.ts"/>
 /// <reference path="../../typings/lodash/lodash.d.ts"/>
 /// <reference path="../../typings/toastr/toastr.d.ts"/>
+/// <reference path="../../typings/alertify/alertify.d.ts"/>
 /// <reference path="types.ts"/>
 
 
 declare var io: any;
 declare var updateKOBindings : any ;
+declare var parseUri : any;
 
 interface JQuery  {
     cron : any;
     highcharts : any;
+    accordion : any;
 }
 
 
@@ -35,10 +38,9 @@ class viewModel {
     private selectedMetrics : KnockoutObservableArray<string>;
     private scheduled: KnockoutObservable<boolean>;
     private availableHistoryNames : KnockoutObservableArray<string>;
-    private analyzedCurrentData : KnockoutComputed<any>;
-
+    private currentDataByDomain : KnockoutObservableArray<any>;
     private criticalErrors : KnockoutObservableArray<string>; // remove this
-
+    private isLoading : KnockoutObservable<boolean>;
 
     constructor(private settings : SiteTesterTypes.SiteTesterSettings,  host : string) {
 
@@ -47,18 +49,23 @@ class viewModel {
         this.host = ko.observable('http://' + host);
         this.cron  = ko.observable(settings.cron);
         this.screenshot = ko.observable(settings.screenshot);
-        this.newItem  = ko.observable('http://');
+        this.newItem  = ko.observable('');
         this.urls = ko.observableArray(settings.urls);
         this.histories = ko.observableArray([]);
         this.isRunning = ko.observable(false);
-        this.selectedHistory = ko.observable(' ');
+        this.selectedHistory = ko.observable('');
         this.currentData = ko.observable({});
         this.selectedMode = ko.observable('numbers');
         this.availableMetrics  = ko.observableArray([]);
         this.selectedMetrics = ko.observableArray([]);
         this.scheduled = ko.observable(false);
         this.criticalErrors = ko.observableArray(['jsErrors', 'notFound']);
+        this.currentDataByDomain = ko.observableArray([]);
+        this.isLoading = ko.observable(false);
+
+
         var socket = io.connect(this.host());
+
 
 
         // Get the history names
@@ -68,10 +75,15 @@ class viewModel {
 
         this.selectedHistory.subscribe(() => {
 
+            this.isLoading(true);
+            console.log('Dafuq')
+
+
             if (!this.selectedHistory()) return; // if no history, get the hell out of here.
 
                 this.addToHistories(this.selectedHistory());
                 var data = {};
+
 
                 _.forEach(this.histories(), (item)=> {
                     if (item.getDate() == this.selectedHistory()) {
@@ -86,13 +98,14 @@ class viewModel {
                     }
                 });
 
-                this.currentData(data);
 
+                this.currentData({});
+                this.currentData(data);
+                this.isLoading(false);
         });
 
         this.selectedMode.subscribe((mode) => {
             if (mode == 'timeline') {
-
 
                 // to make a timeline graph we need all run histories
 
@@ -105,19 +118,55 @@ class viewModel {
 
                 this.selectedMetrics.subscribe(() => {
                     this.makeTimelineGraph();
-                    console.log('updatingGraph');
                 });
 
                 this.makeTimelineGraph();
 
             }
+
+
+            if (mode == 'graph') {
+                this.selectedMetrics.subscribe(() => {
+                    this.makeGraph();
+                });
+            }
+        });
+
+        this.newItem.subscribe(()=> {
+
         });
 
 
+        this.currentData.subscribe(() =>{
 
-        this.currentData.subscribe(() => {
+
+            if (!this.currentData()) {
+                console.log('figame');
+                console.log(this.currentData())
+
+            }
+            var domains = [];
+            var toAdd : SiteTesterTypes.DomainWithTests[] = [];
+
+            _.forEach(this.currentData().data, (item : SiteTesterTypes.TestInstance) => {
+
+               var host = parseUri(item.getData().url).host;
+
+                if (! _.contains(domains, host))  {
+                    domains.push(host);
+                    toAdd.push({domain : host, tests: [item.getData()]})
+                }
+
+                else {
+                   var indexOfItem = _.findIndex(toAdd, (i) =>  {return i.domain == host});
+                    toAdd[indexOfItem].tests.push(item.getData());
+                }
+            });
+
+           this.currentDataByDomain(toAdd);
 
         });
+
 
         this.isValid = ko.computed(() => {
             var pattern = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
@@ -133,6 +182,7 @@ class viewModel {
 
         socket.on('isRunning',  (data) => {
             this.isRunning(data.isRunning);
+
         });
 
 
@@ -153,6 +203,8 @@ class viewModel {
             });
     }
 
+
+
    schedule() {
        $.ajax({
            type: 'post',
@@ -171,8 +223,9 @@ class viewModel {
 
     add()  {
         if (! _.contains(this.urls(), this.newItem())) {
+
             this.urls.unshift(this.newItem());
-            this.newItem('http://');
+            this.newItem('');
             this.pushSettingsToServer();
             return;
         }
@@ -198,17 +251,19 @@ class viewModel {
     }
 
     deleteDb()  {
-        if (confirm('This is irreversible. Delete ?')) {
-            $.ajax({
-                type: 'post',
-                url: this.host() + '/api/deleteDb',
-                success: function(data,status) {
-                    console.log(status)
-                }
-            });
-        }
-
+       alertify.confirm('This is irreversible. Delete?', (e) =>{
+          if (e) {
+              $.ajax({
+                  type: 'post',
+                  url: this.host() + '/api/deleteDb',
+                  success: ()=> {
+                      this.availableHistoryNames([]);
+                  }
+              });
+          }
+       })
     }
+
 
 
      static shakeForm() {
@@ -236,6 +291,8 @@ class viewModel {
 
         if ( !exists) {
 
+            this.isLoading(true);
+
             $.ajax({
                 type: 'post',
                 async: false,
@@ -253,13 +310,14 @@ class viewModel {
                             var offenders = test.result.offenders || {};
                             var metrics = test.result.metrics || {};
 
-                            toAdd.push(new SiteTesterTypes.TestInstance(offenders, metrics, test.url));
+                            toAdd.push(new SiteTesterTypes.TestInstance(offenders, metrics, test.url, test.screen.split('/').pop()));
                         }
 
                     });
 
                     console.log('Adding to histories..');
                     this.histories.push(new SiteTesterTypes.TestHistory(name, toAdd))
+                    this.isLoading(false);
                 }
 
             });
@@ -274,12 +332,13 @@ class viewModel {
 
     makeTimelineGraph() {
 
+        this.isLoading(true);
         var graphWidth = 0;
 
         _.forEach(this.currentData().data, (current : SiteTesterTypes.TestInstance)=> {
 
             var cssClass = '.graph';
-            var divId = viewModel.getValidDivId(current.getData().url, cssClass);
+            var divId = viewModel.getValidDivId(current.getData().url, cssClass, 'timeline');
             var divSelector = '#'  +divId;
             var containerDiv = "<div class='col-md-10 no-margin' id='" +  divId+ "'></div>";
             var docSelector = "*[data-url='" + current.getData().url + "']";
@@ -306,7 +365,6 @@ class viewModel {
 
 
                     graphDates.push(history.getDate());
-
 
                     _.forEach(history.getTests(), (item) => {
                         if (item.getData().url == current.getData().url) { // Is this the current url ?
@@ -343,7 +401,7 @@ class viewModel {
                     },
 
                     chart: {
-                      width: 1112
+                      width: graphWidth
                     },
 
                     xAxis: {
@@ -363,7 +421,87 @@ class viewModel {
                updateKOBindings(divSelector);
 
         });
+
+        this.isLoading(false);
     }
+
+    makeGraph()  {
+
+        this.isLoading(true);
+        _.forEach(this.currentData().data, (testInstance : SiteTesterTypes.TestInstance) => {
+
+            var cssClass = '.graph';
+            var divId = viewModel.getValidDivId(testInstance.getData().url, cssClass, 'normal');
+            var divSelector = '#'  +divId;
+            var containerDiv = "<div class='col-md-10 no-margin' id='" +  divId+ "'></div>";
+            var docSelector = "*[data-url='" + testInstance.getData().url + "']";
+
+
+            if (!$(divSelector).length) { // prepare the DOM for the graph
+
+                $(docSelector).find(cssClass).append(containerDiv);
+                $(divSelector).attr('data-bind', "visible: selectedMode() == 'graph'");
+                $(divSelector).append("<div class='graphContainer' style='height: 600px; margin-left: 40px;'></div>");
+
+            }
+
+
+            var metrics = [];
+            var data = [];
+            var metricData ;
+
+            _.forEach(this.selectedMetrics(), (metric) => {
+
+
+                var temp = testInstance.getData().offenders[metric];
+                metricData =  temp ? temp.length  : 0;
+
+                var myIndex = _.findIndex(data, (e) => {return e.name == metric});
+                if (myIndex != -1) {
+
+                    data[myIndex].data.push(metricData);
+                }
+
+                else {
+
+                    data.push({name: metric, data: [metricData]})
+                }
+
+            });
+
+            $(divSelector).find('.graphContainer').highcharts({
+
+                title: {
+                    text: testInstance.getData().url
+                },
+
+                chart: {
+                    width: 1112,
+                    type: 'column'
+                },
+
+                xAxis: {
+                    categories: metrics
+                },
+                yAxis: {
+                    title: {
+                        text: 'count'
+                    }
+                },
+                series: data
+
+
+            });
+
+
+            updateKOBindings(divSelector);
+
+
+        });
+
+        this.isLoading(false);
+
+}
 
     getHistoryNames() {
 
@@ -380,18 +518,27 @@ class viewModel {
 
     deleteHistoryByName(name) {
 
-        console.log('Deleting.. ' +  name)
+        console.log('Deleting.. ' +  name);
 
         $.ajax({
             type: 'post',
             contentType: 'application/json',
             url: this.host() + '/api/deleteHistoryByName',
-            data: ko.toJSON({name: name})
+            data: ko.toJSON({name: name}),
+            success: () =>{
+                this.availableHistoryNames.remove(name);
+        }
         })
 
     }
 
-    static getValidDivId(url : string, cssClass : string) {
-        return url.split('//')[1].split('.')[0] + cssClass.split('.')[1];
+    static getValidDivId(url : string, cssClass : string, type  :string) {
+        return url.replace(/\//g, '').replace(/\./g, '').replace(/\:/g, '') + cssClass.split('.')[1] + type;
+    }
+
+    makeValidIdFromUrl(url, index) {
+
+        return url.replace(/\//g, '').replace(/\./g, '').replace(/\:/g, '');
+
     }
 }
