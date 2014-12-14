@@ -6,7 +6,7 @@
   "bundle": "typings/tsd.d.ts",
   "installed": {
     "alertify/alertify.d.ts": {
-      "commit": "bd0833a22eb1c4e4a963068d4e2550fe866399d1"
+      "commit": "1fb0d8c3e30156e69a86271d0532d68d71e0735c"
     }
   }
 }

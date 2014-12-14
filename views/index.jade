@@ -35,7 +35,7 @@ html
                                            input(type='text', placeholder='search').metric-filter.top-buffer
                                            select(data-bind= "options: $root.availableMetrics, selectedOptions: $root.selectedMetrics", size=30, multiple='true')
 
-                                       div(data-bind="visible: $root.selectedMode() == 'numbers'")
+                                       div(data-bind="visible: $root.selectedMode() == 'numbers'")#default-view
                                            h1.text-center Result
 
                                            table.table.table-hover.no-bg

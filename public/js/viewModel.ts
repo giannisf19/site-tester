@@ -76,8 +76,6 @@ class viewModel {
         this.selectedHistory.subscribe(() => {
 
             this.isLoading(true);
-            console.log('Dafuq')
-
 
             if (!this.selectedHistory()) return; // if no history, get the hell out of here.
 
@@ -97,6 +95,8 @@ class viewModel {
 
                     }
                 });
+
+
 
 
                 this.currentData({});
@@ -120,8 +120,6 @@ class viewModel {
                     this.makeTimelineGraph();
                 });
 
-                this.makeTimelineGraph();
-
             }
 
 
@@ -139,12 +137,6 @@ class viewModel {
 
         this.currentData.subscribe(() =>{
 
-
-            if (!this.currentData()) {
-                console.log('figame');
-                console.log(this.currentData())
-
-            }
             var domains = [];
             var toAdd : SiteTesterTypes.DomainWithTests[] = [];
 

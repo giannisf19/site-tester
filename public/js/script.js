@@ -79,15 +79,23 @@ $(function() {
 
     window.updateKOBindings = function(newElement) {
 
-        var toAdd = $(newElement)[0];
-
-       try {
-           ko.applyBindings(vm, toAdd)
+       if (!newElement) {
+           ko.applyBindings(vm);
        }
 
-        catch(ex) {
-            console.log(ex);
-        }
+        else {
+           var toAdd = $(newElement)[0];
+
+           try {
+               ko.applyBindings(vm, toAdd)
+           }
+
+           catch(ex) {
+
+           }
+       }
+
+
 
     };
 

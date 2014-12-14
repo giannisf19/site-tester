@@ -38,7 +38,6 @@ var viewModel = (function () {
 
         this.selectedHistory.subscribe(function () {
             _this.isLoading(true);
-            console.log('Dafuq');
 
             if (!_this.selectedHistory())
                 return;
@@ -75,8 +74,6 @@ var viewModel = (function () {
                 _this.selectedMetrics.subscribe(function () {
                     _this.makeTimelineGraph();
                 });
-
-                _this.makeTimelineGraph();
             }
 
             if (mode == 'graph') {
@@ -90,10 +87,6 @@ var viewModel = (function () {
         });
 
         this.currentData.subscribe(function () {
-            if (!_this.currentData()) {
-                console.log('figame');
-                console.log(_this.currentData());
-            }
             var domains = [];
             var toAdd = [];
 
