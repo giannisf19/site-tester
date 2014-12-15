@@ -26,7 +26,7 @@ html
                            .btn-group
                                 include partials/metrics
 
-                       .tab-content.top-buffer.col-xs-12.no-margin
+                       .tab-content.top-buffer.col-xs-12.no-margin#content-wrap
                            // ko foreach: currentData
                            .tab-pane.result-content.col-xs-12.no-margin(data-bind="css: {active: $index() == 0}, attr: {id: $root.makeValidIdFromUrl($data.url)} ")
                                .tab-content.metric-tabs.col-xs-12.no-margin(data-bind="attr: {'data-url': $data.url}")
@@ -72,8 +72,9 @@ html
                                       img(data-bind="attr: {src: 'screens/' + $data.screen}")
                             // /ko
 
-                           .loader(data-bind="visible: isLoading()")
-                               i.fa.fa-spin.fa-spinner.fa-5x
+                   .loader(data-bind="visible: isLoading()")
+                        i.fa.fa-spin.fa-spinner.fa-5x
+
                    .col-xs-1.top-buffer-2x
                         include partials/modes
 

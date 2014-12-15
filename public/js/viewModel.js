@@ -27,7 +27,7 @@ var viewModel = (function () {
         this.scheduled = ko.observable(false);
         this.criticalErrors = ko.observableArray(['jsErrors', 'notFound']);
         this.currentDataByDomain = ko.observableArray([]);
-        this.isLoading = ko.observable(false);
+        this.isLoading = ko.observable(true);
 
         var socket = io.connect(this.host());
 
@@ -38,6 +38,8 @@ var viewModel = (function () {
 
         this.selectedHistory.subscribe(function () {
             _this.isLoading(true);
+
+            _this.isLoading.valueHasMutated();
 
             if (!_this.selectedHistory())
                 return;
@@ -58,7 +60,6 @@ var viewModel = (function () {
                 }
             });
 
-            _this.currentData({});
             _this.currentData(data);
             _this.isLoading(false);
         });
@@ -87,6 +88,7 @@ var viewModel = (function () {
         });
 
         this.currentData.subscribe(function () {
+            _this.isLoading(true);
             var domains = [];
             var toAdd = [];
 
@@ -105,6 +107,7 @@ var viewModel = (function () {
             });
 
             _this.currentDataByDomain(toAdd);
+            _this.isLoading(false);
         });
 
         this.isValid = ko.computed(function () {
@@ -254,67 +257,69 @@ var viewModel = (function () {
         var graphWidth = 0;
 
         _.forEach(this.currentData().data, function (current) {
-            var cssClass = '.graph';
-            var divId = viewModel.getValidDivId(current.getData().url, cssClass, 'timeline');
-            var divSelector = '#' + divId;
-            var containerDiv = "<div class='col-md-10 no-margin' id='" + divId + "'></div>";
-            var docSelector = "*[data-url='" + current.getData().url + "']";
+            if (current.getData().url == getSelectedPage()) {
+                var cssClass = '.graph';
+                var divId = viewModel.getValidDivId(current.getData().url, cssClass, 'timeline');
+                var divSelector = '#' + divId;
+                var containerDiv = "<div class='col-md-10 no-margin' id='" + divId + "'></div>";
+                var docSelector = "*[data-url='" + current.getData().url + "']";
 
-            // append the div to DOM and set visibility
-            if (!$(divSelector).length) {
-                $(docSelector).find(cssClass).append(containerDiv);
-                $(divSelector).attr('data-bind', "visible: selectedMode() == 'timeline'");
-                $(divSelector).append("<div class='graphContainer' style='height: 600px; margin-left: 40px;'></div>");
-            }
+                // append the div to DOM and set visibility
+                if (!$(divSelector).length) {
+                    $(docSelector).find(cssClass).append(containerDiv);
+                    $(divSelector).attr('data-bind', "visible: selectedMode() == 'timeline'");
+                    $(divSelector).append("<div class='graphContainer' style='height: 600px; margin-left: 40px;'></div>");
+                }
 
-            // update the width of the graph
-            graphWidth = $(divSelector).find('.graphContainer').width() > graphWidth ? $(divSelector).find('.graphContainer').width() : graphWidth;
+                // update the width of the graph
+                graphWidth = $(divSelector).find('.graphContainer').width() > graphWidth ? $(divSelector).find('.graphContainer').width() : graphWidth;
 
-            var graphDates = [];
-            var seriesData = [];
-            var metricData;
+                var graphDates = [];
+                var seriesData = [];
+                var metricData;
 
-            _.forEach(_this.histories(), function (history) {
-                graphDates.push(history.getDate());
+                _.forEach(_this.histories(), function (history) {
+                    graphDates.push(history.getDate());
 
-                _.forEach(history.getTests(), function (item) {
-                    if (item.getData().url == current.getData().url) {
-                        _.forEach(_this.selectedMetrics(), function (metric) {
-                            var temp = item.getData().offenders[metric];
-                            metricData = temp ? temp.length : 0;
+                    _.forEach(history.getTests(), function (item) {
+                        if (item.getData().url == current.getData().url) {
+                            _.forEach(_this.selectedMetrics(), function (metric) {
+                                var temp = item.getData().offenders[metric];
+                                metricData = temp ? temp.length : 0;
 
-                            var myIndex = _.findIndex(seriesData, function (e) {
-                                return e.name == metric;
+                                var myIndex = _.findIndex(seriesData, function (e) {
+                                    return e.name == metric;
+                                });
+                                if (myIndex != -1) {
+                                    seriesData[myIndex].data.push(metricData);
+                                } else {
+                                    seriesData.push({ name: metric, data: [metricData] });
+                                }
                             });
-                            if (myIndex != -1) {
-                                seriesData[myIndex].data.push(metricData);
-                            } else {
-                                seriesData.push({ name: metric, data: [metricData] });
-                            }
-                        });
-                    }
+                        }
+                    });
                 });
-            });
 
-            $(divSelector).find('.graphContainer').highcharts({
-                title: {
-                    text: current.getData().url
-                },
-                chart: {
-                    width: graphWidth
-                },
-                xAxis: {
-                    categories: graphDates
-                },
-                yAxis: {
+                $(divSelector).find('.graphContainer').highcharts({
                     title: {
-                        text: 'metrics'
-                    }
-                },
-                series: seriesData
-            });
+                        text: current.getData().url
+                    },
+                    chart: {
+                        width: graphWidth
+                    },
+                    xAxis: {
+                        categories: graphDates
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'metrics'
+                        }
+                    },
+                    series: seriesData
+                });
 
-            updateKOBindings(divSelector);
+                updateKOBindings(divSelector);
+            }
         });
 
         this.isLoading(false);
@@ -324,56 +329,58 @@ var viewModel = (function () {
         var _this = this;
         this.isLoading(true);
         _.forEach(this.currentData().data, function (testInstance) {
-            var cssClass = '.graph';
-            var divId = viewModel.getValidDivId(testInstance.getData().url, cssClass, 'normal');
-            var divSelector = '#' + divId;
-            var containerDiv = "<div class='col-md-10 no-margin' id='" + divId + "'></div>";
-            var docSelector = "*[data-url='" + testInstance.getData().url + "']";
+            if (testInstance.getData().url == getSelectedPage()) {
+                var cssClass = '.graph';
+                var divId = viewModel.getValidDivId(testInstance.getData().url, cssClass, 'normal');
+                var divSelector = '#' + divId;
+                var containerDiv = "<div class='col-md-10 no-margin' id='" + divId + "'></div>";
+                var docSelector = "*[data-url='" + testInstance.getData().url + "']";
 
-            if (!$(divSelector).length) {
-                $(docSelector).find(cssClass).append(containerDiv);
-                $(divSelector).attr('data-bind', "visible: selectedMode() == 'graph'");
-                $(divSelector).append("<div class='graphContainer' style='height: 600px; margin-left: 40px;'></div>");
-            }
-
-            var metrics = [];
-            var data = [];
-            var metricData;
-
-            _.forEach(_this.selectedMetrics(), function (metric) {
-                var temp = testInstance.getData().offenders[metric];
-                metricData = temp ? temp.length : 0;
-
-                var myIndex = _.findIndex(data, function (e) {
-                    return e.name == metric;
-                });
-                if (myIndex != -1) {
-                    data[myIndex].data.push(metricData);
-                } else {
-                    data.push({ name: metric, data: [metricData] });
+                if (!$(divSelector).length) {
+                    $(docSelector).find(cssClass).append(containerDiv);
+                    $(divSelector).attr('data-bind', "visible: selectedMode() == 'graph'");
+                    $(divSelector).append("<div class='graphContainer' style='height: 600px; margin-left: 40px;'></div>");
                 }
-            });
 
-            $(divSelector).find('.graphContainer').highcharts({
-                title: {
-                    text: testInstance.getData().url
-                },
-                chart: {
-                    width: 1112,
-                    type: 'column'
-                },
-                xAxis: {
-                    categories: metrics
-                },
-                yAxis: {
-                    title: {
-                        text: 'count'
+                var metrics = [];
+                var data = [];
+                var metricData;
+
+                _.forEach(_this.selectedMetrics(), function (metric) {
+                    var temp = testInstance.getData().offenders[metric];
+                    metricData = temp ? temp.length : 0;
+
+                    var myIndex = _.findIndex(data, function (e) {
+                        return e.name == metric;
+                    });
+                    if (myIndex != -1) {
+                        data[myIndex].data.push(metricData);
+                    } else {
+                        data.push({ name: metric, data: [metricData] });
                     }
-                },
-                series: data
-            });
+                });
 
-            updateKOBindings(divSelector);
+                $(divSelector).find('.graphContainer').highcharts({
+                    title: {
+                        text: testInstance.getData().url
+                    },
+                    chart: {
+                        width: 1112,
+                        type: 'column'
+                    },
+                    xAxis: {
+                        categories: metrics
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'count'
+                        }
+                    },
+                    series: data
+                });
+
+                updateKOBindings(divSelector);
+            }
         });
 
         this.isLoading(false);

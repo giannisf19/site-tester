@@ -107,6 +107,9 @@ $(function() {
     };
 
 
+    window.getSelectedPage = function() {
+      return $('.selected-page').find('a').text();
+    };
 
 
 

@@ -10,6 +10,7 @@
 declare var io: any;
 declare var updateKOBindings : any ;
 declare var parseUri : any;
+declare var getSelectedPage : any;
 
 interface JQuery  {
     cron : any;
@@ -61,7 +62,7 @@ class viewModel {
         this.scheduled = ko.observable(false);
         this.criticalErrors = ko.observableArray(['jsErrors', 'notFound']);
         this.currentDataByDomain = ko.observableArray([]);
-        this.isLoading = ko.observable(false);
+        this.isLoading = ko.observable(true);
 
 
         var socket = io.connect(this.host());
@@ -77,6 +78,8 @@ class viewModel {
 
             this.isLoading(true);
 
+            this.isLoading.valueHasMutated();
+
             if (!this.selectedHistory()) return; // if no history, get the hell out of here.
 
                 this.addToHistories(this.selectedHistory());
@@ -91,15 +94,13 @@ class viewModel {
                             var arr  = _.map(val.offenders, (v,i) => {return i});
                             ko.utils.arrayPushAll(this.availableMetrics(), _.difference(arr, this.availableMetrics()));
 
-                        })
+                        });
 
                     }
                 });
 
 
 
-
-                this.currentData({});
                 this.currentData(data);
                 this.isLoading(false);
         });
@@ -137,6 +138,7 @@ class viewModel {
 
         this.currentData.subscribe(() =>{
 
+            this.isLoading(true);
             var domains = [];
             var toAdd : SiteTesterTypes.DomainWithTests[] = [];
 
@@ -156,7 +158,7 @@ class viewModel {
             });
 
            this.currentDataByDomain(toAdd);
-
+           this.isLoading(false);
         });
 
 
@@ -194,7 +196,6 @@ class viewModel {
                 useGentleSelect: true
             });
     }
-
 
 
    schedule() {
@@ -255,7 +256,6 @@ class viewModel {
           }
        })
     }
-
 
 
      static shakeForm() {
@@ -329,31 +329,34 @@ class viewModel {
 
         _.forEach(this.currentData().data, (current : SiteTesterTypes.TestInstance)=> {
 
-            var cssClass = '.graph';
-            var divId = viewModel.getValidDivId(current.getData().url, cssClass, 'timeline');
-            var divSelector = '#'  +divId;
-            var containerDiv = "<div class='col-md-10 no-margin' id='" +  divId+ "'></div>";
-            var docSelector = "*[data-url='" + current.getData().url + "']";
+
+            if (current.getData().url == getSelectedPage()) {
+
+                var cssClass = '.graph';
+                var divId = viewModel.getValidDivId(current.getData().url, cssClass, 'timeline');
+                var divSelector = '#' + divId;
+                var containerDiv = "<div class='col-md-10 no-margin' id='" + divId + "'></div>";
+                var docSelector = "*[data-url='" + current.getData().url + "']";
 
 
-            // append the div to DOM and set visibility
+                // append the div to DOM and set visibility
 
-            if (!$(divSelector).length) { // prepare the DOM for the graph
-                $(docSelector).find(cssClass).append(containerDiv);
-                $(divSelector).attr('data-bind', "visible: selectedMode() == 'timeline'");
-                $(divSelector).append("<div class='graphContainer' style='height: 600px; margin-left: 40px;'></div>");
+                if (!$(divSelector).length) { // prepare the DOM for the graph
+                    $(docSelector).find(cssClass).append(containerDiv);
+                    $(divSelector).attr('data-bind', "visible: selectedMode() == 'timeline'");
+                    $(divSelector).append("<div class='graphContainer' style='height: 600px; margin-left: 40px;'></div>");
 
-            }
+                }
 
-            // update the width of the graph
-                graphWidth = $(divSelector).find('.graphContainer').width() > graphWidth ? $(divSelector).find('.graphContainer').width(): graphWidth;
+                // update the width of the graph
+                graphWidth = $(divSelector).find('.graphContainer').width() > graphWidth ? $(divSelector).find('.graphContainer').width() : graphWidth;
 
 
-            var graphDates = [];
+                var graphDates = [];
                 var seriesData = [];
-                var metricData ;
+                var metricData;
 
-                _.forEach(this.histories(), (history : SiteTesterTypes.TestHistory) => {
+                _.forEach(this.histories(), (history:SiteTesterTypes.TestHistory) => {
 
 
                     graphDates.push(history.getDate());
@@ -361,12 +364,14 @@ class viewModel {
                     _.forEach(history.getTests(), (item) => {
                         if (item.getData().url == current.getData().url) { // Is this the current url ?
 
-                            _.forEach(this.selectedMetrics(), (metric) =>{ // Collect data for selected metrics
+                            _.forEach(this.selectedMetrics(), (metric) => { // Collect data for selected metrics
 
                                 var temp = item.getData().offenders[metric];
-                                metricData =  temp ? temp.length  : 0;
+                                metricData = temp ? temp.length : 0;
 
-                                var myIndex = _.findIndex(seriesData, (e) => {return e.name == metric});
+                                var myIndex = _.findIndex(seriesData, (e) => {
+                                    return e.name == metric
+                                });
                                 if (myIndex != -1) {
 
                                     seriesData[myIndex].data.push(metricData);
@@ -382,7 +387,6 @@ class viewModel {
                     });
 
 
-
                 });
 
 
@@ -393,7 +397,7 @@ class viewModel {
                     },
 
                     chart: {
-                      width: graphWidth
+                        width: graphWidth
                     },
 
                     xAxis: {
@@ -410,11 +414,12 @@ class viewModel {
                 });
 
 
-               updateKOBindings(divSelector);
-
+                updateKOBindings(divSelector);
+            }
         });
 
         this.isLoading(false);
+
     }
 
     makeGraph()  {
@@ -422,73 +427,78 @@ class viewModel {
         this.isLoading(true);
         _.forEach(this.currentData().data, (testInstance : SiteTesterTypes.TestInstance) => {
 
-            var cssClass = '.graph';
-            var divId = viewModel.getValidDivId(testInstance.getData().url, cssClass, 'normal');
-            var divSelector = '#'  +divId;
-            var containerDiv = "<div class='col-md-10 no-margin' id='" +  divId+ "'></div>";
-            var docSelector = "*[data-url='" + testInstance.getData().url + "']";
+            if (testInstance.getData().url == getSelectedPage()) {
 
 
-            if (!$(divSelector).length) { // prepare the DOM for the graph
+                var cssClass = '.graph';
+                var divId = viewModel.getValidDivId(testInstance.getData().url, cssClass, 'normal');
+                var divSelector = '#' + divId;
+                var containerDiv = "<div class='col-md-10 no-margin' id='" + divId + "'></div>";
+                var docSelector = "*[data-url='" + testInstance.getData().url + "']";
 
-                $(docSelector).find(cssClass).append(containerDiv);
-                $(divSelector).attr('data-bind', "visible: selectedMode() == 'graph'");
-                $(divSelector).append("<div class='graphContainer' style='height: 600px; margin-left: 40px;'></div>");
+
+                if (!$(divSelector).length) { // prepare the DOM for the graph
+
+                    $(docSelector).find(cssClass).append(containerDiv);
+                    $(divSelector).attr('data-bind', "visible: selectedMode() == 'graph'");
+                    $(divSelector).append("<div class='graphContainer' style='height: 600px; margin-left: 40px;'></div>");
+
+                }
+
+
+                var metrics = [];
+                var data = [];
+                var metricData;
+
+                _.forEach(this.selectedMetrics(), (metric) => {
+
+
+                    var temp = testInstance.getData().offenders[metric];
+                    metricData = temp ? temp.length : 0;
+
+                    var myIndex = _.findIndex(data, (e) => {
+                        return e.name == metric
+                    });
+                    if (myIndex != -1) {
+
+                        data[myIndex].data.push(metricData);
+                    }
+
+                    else {
+
+                        data.push({name: metric, data: [metricData]})
+                    }
+
+                });
+
+                $(divSelector).find('.graphContainer').highcharts({
+
+                    title: {
+                        text: testInstance.getData().url
+                    },
+
+                    chart: {
+                        width: 1112,
+                        type: 'column'
+                    },
+
+                    xAxis: {
+                        categories: metrics
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'count'
+                        }
+                    },
+                    series: data
+
+
+                });
+
+
+                updateKOBindings(divSelector);
 
             }
-
-
-            var metrics = [];
-            var data = [];
-            var metricData ;
-
-            _.forEach(this.selectedMetrics(), (metric) => {
-
-
-                var temp = testInstance.getData().offenders[metric];
-                metricData =  temp ? temp.length  : 0;
-
-                var myIndex = _.findIndex(data, (e) => {return e.name == metric});
-                if (myIndex != -1) {
-
-                    data[myIndex].data.push(metricData);
-                }
-
-                else {
-
-                    data.push({name: metric, data: [metricData]})
-                }
-
-            });
-
-            $(divSelector).find('.graphContainer').highcharts({
-
-                title: {
-                    text: testInstance.getData().url
-                },
-
-                chart: {
-                    width: 1112,
-                    type: 'column'
-                },
-
-                xAxis: {
-                    categories: metrics
-                },
-                yAxis: {
-                    title: {
-                        text: 'count'
-                    }
-                },
-                series: data
-
-
-            });
-
-
-            updateKOBindings(divSelector);
-
-
         });
 
         this.isLoading(false);
