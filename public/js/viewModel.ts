@@ -18,6 +18,9 @@ interface JQuery  {
     accordion : any;
 }
 
+interface Window {
+    getSelectedPage : any;
+}
 
 class viewModel {
 
@@ -40,7 +43,10 @@ class viewModel {
     private scheduled: KnockoutObservable<boolean>;
     private availableHistoryNames : KnockoutObservableArray<string>;
     private currentDataByDomain : KnockoutObservableArray<any>;
-    private criticalErrors : KnockoutObservableArray<string>; // remove this
+    private criticalErrors : KnockoutObservableArray<string>;
+    private selectedPage : KnockoutObservable<string>;
+    private currentPageData : KnockoutObservable<any>;
+
     private isLoading : KnockoutObservable<boolean>;
 
     constructor(private settings : SiteTesterTypes.SiteTesterSettings,  host : string) {
@@ -63,10 +69,11 @@ class viewModel {
         this.criticalErrors = ko.observableArray(['jsErrors', 'notFound']);
         this.currentDataByDomain = ko.observableArray([]);
         this.isLoading = ko.observable(true);
+        this.selectedPage = ko.observable(null);
 
+        this.currentPageData = ko.observable({offenders: []});
 
         var socket = io.connect(this.host());
-
 
 
         // Get the history names
@@ -76,15 +83,12 @@ class viewModel {
 
         this.selectedHistory.subscribe(() => {
 
+
             this.isLoading(true);
-
-            this.isLoading.valueHasMutated();
-
-            if (!this.selectedHistory()) return; // if no history, get the hell out of here.
+            if (!this.selectedHistory()) return;
 
                 this.addToHistories(this.selectedHistory());
-                var data = {};
-
+                var data = {data: []};
 
                 _.forEach(this.histories(), (item)=> {
                     if (item.getDate() == this.selectedHistory()) {
@@ -99,10 +103,13 @@ class viewModel {
                     }
                 });
 
-
-
                 this.currentData(data);
                 this.isLoading(false);
+        });
+
+
+        this.selectedPage.subscribe((item) => {
+            this.currentPageData(_.find(this.currentData().data, (it : any) => {return it.url == this.selectedPage()}))
         });
 
         this.selectedMode.subscribe((mode) => {
@@ -131,18 +138,14 @@ class viewModel {
             }
         });
 
-        this.newItem.subscribe(()=> {
-
-        });
-
-
         this.currentData.subscribe(() =>{
 
             this.isLoading(true);
-            var domains = [];
-            var toAdd : SiteTesterTypes.DomainWithTests[] = [];
 
-            _.forEach(this.currentData().data, (item : SiteTesterTypes.TestInstance) => {
+           var domains = [];
+           var toAdd : SiteTesterTypes.DomainWithTests[] = [];
+
+           _.forEach(this.currentData().data, (item : SiteTesterTypes.TestInstance) => {
 
                var host = parseUri(item.getData().url).host;
 
@@ -155,7 +158,7 @@ class viewModel {
                    var indexOfItem = _.findIndex(toAdd, (i) =>  {return i.domain == host});
                     toAdd[indexOfItem].tests.push(item.getData());
                 }
-            });
+           });
 
            this.currentDataByDomain(toAdd);
            this.isLoading(false);
@@ -333,10 +336,10 @@ class viewModel {
             if (current.getData().url == getSelectedPage()) {
 
                 var cssClass = '.graph';
-                var divId = viewModel.getValidDivId(current.getData().url, cssClass, 'timeline');
+                var divId = 'graph-wrapper1timeline'//viewModel.getValidDivId(current.getData().url, cssClass, 'timeline');
                 var divSelector = '#' + divId;
                 var containerDiv = "<div class='col-md-10 no-margin' id='" + divId + "'></div>";
-                var docSelector = "*[data-url='" + current.getData().url + "']";
+                var docSelector = '#graph-wrapper' ;//"*[data-url='" + current.getData().url + "']";
 
 
                 // append the div to DOM and set visibility
@@ -431,10 +434,10 @@ class viewModel {
 
 
                 var cssClass = '.graph';
-                var divId = viewModel.getValidDivId(testInstance.getData().url, cssClass, 'normal');
+                var divId = 'graph-wrapper1'//viewModel.getValidDivId(testInstance.getData().url, cssClass, 'normal');
                 var divSelector = '#' + divId;
                 var containerDiv = "<div class='col-md-10 no-margin' id='" + divId + "'></div>";
-                var docSelector = "*[data-url='" + testInstance.getData().url + "']";
+                var docSelector = $('#graph-wrapper')//"*[data-url='" + testInstance.getData().url + "']";
 
 
                 if (!$(divSelector).length) { // prepare the DOM for the graph
@@ -507,6 +510,7 @@ class viewModel {
 
     getHistoryNames() {
 
+        this.isLoading(true);
       $.ajax({
           type: 'post',
           url: this.host() + '/api/getHistoryNames',
@@ -515,6 +519,8 @@ class viewModel {
           }
 
       });
+
+        this.isLoading(false);
     }
 
 
@@ -543,4 +549,7 @@ class viewModel {
         return url.replace(/\//g, '').replace(/\./g, '').replace(/\:/g, '');
 
     }
+
+
+
 }

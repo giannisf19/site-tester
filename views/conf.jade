@@ -11,10 +11,11 @@ html
                 .col-md-4
                     h4 Pages
                     form(role='form', id='main-input-box')
-                        div.input-group
+                        div.input-group.bottom-buffer
                             input(type='text', placeholder='http://example.com', name='item', data-bind="value: newItem, valueUpdate: 'afterkeydown'").form-control
                             span.input-group-btn
                                 input(type='submit' value='Add' data-bind="click: add, enable: isValid()").btn.btn-primary
+
 
                         ol(data-bind="foreach: urls").list-group
                             li.list-group-item

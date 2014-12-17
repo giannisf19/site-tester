@@ -1,5 +1,34 @@
-$(function() {
 
+ko.bindingHandlers.updatePage = {
+
+    update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+
+        if ($(element).hasClass('selected-page')) {
+
+            var interval = setInterval(function() {
+
+                console.log('Running interval')
+                if ($(element).text().length > 0) {
+                    bindingContext.$parentContext.$parent.selectedPage($(element).text());
+                    clearInterval(interval);
+
+                }
+            }, 10)
+
+        }
+
+        $(element).click(function () {
+            bindingContext.$parentContext.$parent.selectedPage($(element).text())
+        });
+
+
+    }
+
+};
+
+
+
+$(function() {
 
 
 
@@ -15,7 +44,6 @@ $(function() {
                 i.removeClass('selected-page');
             }
         });
-
 
         target.parent().addClass('selected-page');
 
@@ -67,15 +95,12 @@ $(function() {
             if (temp.hasClass('active')) {
                 temp.removeClass('active')
             }
-
-
         });
 
         //Enable selected tab contents.
         tabs.addClass('active');
 
     });
-
 
     window.updateKOBindings = function(newElement) {
 
@@ -94,15 +119,9 @@ $(function() {
 
            }
        }
-
-
-
     };
 
-
-
     window.prepare = function(offenders) {
-
         _.map(offenders, function(item, index) {return {'name' : index, 'data' : item}});
     };
 
@@ -117,8 +136,6 @@ $(function() {
        var box = $(e.target).siblings().eq(0);
         $(box).filterByText(e.target)
     });
-
-
-
-
 });
+
+

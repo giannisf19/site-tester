@@ -18,7 +18,7 @@ html
                                       label(href='#' data-bind="text: $data.domain, attr: {for: $index}")
                                            span Open or Close
                                        article.ac-small(data-bind="foreach: $data.tests")
-                                              span.url-page(data-bind="css: {'selected-page': ($index() == 0) && ($parentContext.$index() == 0)  }")
+                                              span.url-page(data-bind="css: {'selected-page': ($index() == 0) && ($parentContext.$index() == 0)}, updatePage: $root.selectedPage() ")
                                                   a(data-toggle='tab' , data-bind= "text: $data.url, attr: {href: '#' + $root.makeValidIdFromUrl($data.url)  }")
                                   // /ko
                    .col-xs-9
@@ -27,9 +27,8 @@ html
                                 include partials/metrics
 
                        .tab-content.top-buffer.col-xs-12.no-margin#content-wrap
-                           // ko foreach: currentData
-                           .tab-pane.result-content.col-xs-12.no-margin(data-bind="css: {active: $index() == 0}, attr: {id: $root.makeValidIdFromUrl($data.url)} ")
-                               .tab-content.metric-tabs.col-xs-12.no-margin(data-bind="attr: {'data-url': $data.url}")
+                           .tab-pane.result-content.col-xs-12.no-margin.active
+                               .tab-content.metric-tabs.col-xs-12.no-margin(data-bind="attr: {'data-url': currentPageData().url}")#graph-wrapper
                                    .tab-pane.summary.active.graph.col-xs-12.no-margin
                                        div(data-bind="visible: $root.selectedMode() == 'timeline' || $root.selectedMode() == 'graph'").metric-selector.col-xs-2.no-margin
                                            input(type='text', placeholder='search').metric-filter.top-buffer
@@ -45,14 +44,14 @@ html
                                                         th More Info
 
 
-                                                   //ko foreach: _.map($data.offenders, function(item, index) {return {'name' : index, 'values' : item}})
+                                                   //ko foreach: _.map($root.currentPageData().offenders, function(item, index) {return {'name' : index, 'values' : item}})
                                                    tr(data-bind="css {danger: _.contains($root.criticalErrors(),$data.name)}")
                                                         td(data-bind= "text: $data.name")
                                                         td(data-bind= "text: $data.values.length")
                                                         td
-                                                            a(data-bind="attr: {'data-target': ('#' + ($root.makeValidIdFromUrl($parent.url) + $index())) }", data-toggle="modal", href="#")
+                                                            a(data-bind="attr: {'data-target': ('#' + ($root.makeValidIdFromUrl($root.currentPageData().url) + $index())) }", data-toggle="modal", href="#")
                                                                 i.fa.fa-info.fa-2x
-                                                            .modal.fade(data-bind="attr: {id:  ($root.makeValidIdFromUrl($parent.url) + $index()) }", role="dialog", aria-hidden='true')
+                                                            .modal.fade(data-bind="attr: {id:  ($root.makeValidIdFromUrl($root.currentPageData().url) + $index()) }", role="dialog", aria-hidden='true')
                                                                 .modal-dialog
                                                                     .modal-content
                                                                         .modal-header
@@ -69,8 +68,8 @@ html
 
 
                                    .tab-pane.screenshot
-                                      img(data-bind="attr: {src: 'screens/' + $data.screen}")
-                            // /ko
+                                      img(data-bind="attr: {src: 'screens/' + $root.currentPageData().screen}")
+
 
                    .loader(data-bind="visible: isLoading()")
                         i.fa.fa-spin.fa-spinner.fa-5x

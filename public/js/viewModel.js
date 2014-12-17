@@ -28,6 +28,9 @@ var viewModel = (function () {
         this.criticalErrors = ko.observableArray(['jsErrors', 'notFound']);
         this.currentDataByDomain = ko.observableArray([]);
         this.isLoading = ko.observable(true);
+        this.selectedPage = ko.observable(null);
+
+        this.currentPageData = ko.observable({ offenders: [] });
 
         var socket = io.connect(this.host());
 
@@ -38,14 +41,11 @@ var viewModel = (function () {
 
         this.selectedHistory.subscribe(function () {
             _this.isLoading(true);
-
-            _this.isLoading.valueHasMutated();
-
             if (!_this.selectedHistory())
                 return;
 
             _this.addToHistories(_this.selectedHistory());
-            var data = {};
+            var data = { data: [] };
 
             _.forEach(_this.histories(), function (item) {
                 if (item.getDate() == _this.selectedHistory()) {
@@ -62,6 +62,12 @@ var viewModel = (function () {
 
             _this.currentData(data);
             _this.isLoading(false);
+        });
+
+        this.selectedPage.subscribe(function (item) {
+            _this.currentPageData(_.find(_this.currentData().data, function (it) {
+                return it.url == _this.selectedPage();
+            }));
         });
 
         this.selectedMode.subscribe(function (mode) {
@@ -84,11 +90,9 @@ var viewModel = (function () {
             }
         });
 
-        this.newItem.subscribe(function () {
-        });
-
         this.currentData.subscribe(function () {
             _this.isLoading(true);
+
             var domains = [];
             var toAdd = [];
 
@@ -259,10 +263,10 @@ var viewModel = (function () {
         _.forEach(this.currentData().data, function (current) {
             if (current.getData().url == getSelectedPage()) {
                 var cssClass = '.graph';
-                var divId = viewModel.getValidDivId(current.getData().url, cssClass, 'timeline');
+                var divId = 'graph-wrapper1timeline';
                 var divSelector = '#' + divId;
                 var containerDiv = "<div class='col-md-10 no-margin' id='" + divId + "'></div>";
-                var docSelector = "*[data-url='" + current.getData().url + "']";
+                var docSelector = '#graph-wrapper';
 
                 // append the div to DOM and set visibility
                 if (!$(divSelector).length) {
@@ -331,10 +335,10 @@ var viewModel = (function () {
         _.forEach(this.currentData().data, function (testInstance) {
             if (testInstance.getData().url == getSelectedPage()) {
                 var cssClass = '.graph';
-                var divId = viewModel.getValidDivId(testInstance.getData().url, cssClass, 'normal');
+                var divId = 'graph-wrapper1';
                 var divSelector = '#' + divId;
                 var containerDiv = "<div class='col-md-10 no-margin' id='" + divId + "'></div>";
-                var docSelector = "*[data-url='" + testInstance.getData().url + "']";
+                var docSelector = $('#graph-wrapper');
 
                 if (!$(divSelector).length) {
                     $(docSelector).find(cssClass).append(containerDiv);
@@ -388,6 +392,7 @@ var viewModel = (function () {
 
     viewModel.prototype.getHistoryNames = function () {
         var _this = this;
+        this.isLoading(true);
         $.ajax({
             type: 'post',
             url: this.host() + '/api/getHistoryNames',
@@ -395,6 +400,8 @@ var viewModel = (function () {
                 _this.availableHistoryNames(JSON.parse(data));
             }
         });
+
+        this.isLoading(false);
     };
 
     viewModel.prototype.deleteHistoryByName = function (name) {
