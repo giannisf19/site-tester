@@ -15,6 +15,7 @@ html
                             input(type='text', placeholder='http://example.com', name='item', data-bind="value: newItem, valueUpdate: 'afterkeydown'").form-control
                             span.input-group-btn
                                 input(type='submit' value='Add' data-bind="click: add, enable: isValid()").btn.btn-primary
+                                input(type='submit' value='Clear' data-bind="click: clearList").btn.btn-danger
 
 
                         ol(data-bind="foreach: urls").list-group
@@ -34,7 +35,10 @@ html
 
 
                     span.display-block.left.bottom
-                        button.btn.btn-info(data-toggle='modal', data-target='#deleteModal') Histories
+                        button.btn.btn-info(data-toggle='modal', data-target='#deleteModal') Configure critical errors
+
+                    span.display-block.left.bottom
+                        button.btn.btn-info.top-buffer-4px(data-toggle='modal', data-target='#deleteModal') Histories
                         .modal.fade#deleteModal(aria-hidden = 'true')
                             .modal-dialog
                                 .modal-content

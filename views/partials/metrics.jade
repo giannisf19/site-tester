@@ -3,5 +3,5 @@ div(role='tabpanel')
         li.active
             a(href='#summary', role='tab', data-toggle='tab') Summary
 
-        li
+        li(data-bind="visible: $root.currentPageData().screen.length")
             a(href='#screenshot', role='tab', data-toggle='tab') Screenshot

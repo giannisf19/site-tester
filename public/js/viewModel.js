@@ -10,6 +10,9 @@ var viewModel = (function () {
     function viewModel(settings, host) {
         var _this = this;
         this.settings = settings;
+        this.runThis = function (data) {
+            alert(data.foo);
+        };
         this.availableHistoryNames = ko.observableArray([]);
 
         this.host = ko.observable('http://' + host);
@@ -29,8 +32,9 @@ var viewModel = (function () {
         this.currentDataByDomain = ko.observableArray([]);
         this.isLoading = ko.observable(true);
         this.selectedPage = ko.observable(null);
-
-        this.currentPageData = ko.observable({ offenders: [] });
+        this.searchBoxTerm = ko.observable('');
+        this.copy = this.availableMetrics();
+        this.currentPageData = ko.observable({ offenders: [], screen: '' });
 
         var socket = io.connect(this.host());
 
@@ -38,6 +42,18 @@ var viewModel = (function () {
         this.getHistoryNames();
 
         this.count = 0;
+
+        this.searchBoxTerm.subscribe(function () {
+            if (_this.searchBoxTerm() != '') {
+                _this.availableMetrics(_this.copy);
+                var matches = _.filter(_this.availableMetrics(), function (item) {
+                    return _.contains(item.toLowerCase(), _this.searchBoxTerm().toLowerCase());
+                });
+                _this.availableMetrics(matches);
+            } else {
+                _this.availableMetrics(_this.copy);
+            }
+        });
 
         this.selectedHistory.subscribe(function () {
             _this.isLoading(true);
@@ -141,6 +157,14 @@ var viewModel = (function () {
                 useGentleSelect: true
             });
     }
+    viewModel.prototype.clearList = function () {
+        this.urls.removeAll();
+        this.pushSettingsToServer();
+    };
+
+    viewModel.prototype.getScreenshotPath = function () {
+        return this.currentPageData().screen.length ? 'screens/' + this.currentPageData().screen : '';
+    };
     viewModel.prototype.schedule = function () {
         $.ajax({
             type: 'post',

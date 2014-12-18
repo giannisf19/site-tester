@@ -46,7 +46,8 @@ class viewModel {
     private criticalErrors : KnockoutObservableArray<string>;
     private selectedPage : KnockoutObservable<string>;
     private currentPageData : KnockoutObservable<any>;
-
+    private searchBoxTerm : KnockoutObservable<string>;
+    private copy : Array<string>;
     private isLoading : KnockoutObservable<boolean>;
 
     constructor(private settings : SiteTesterTypes.SiteTesterSettings,  host : string) {
@@ -70,8 +71,9 @@ class viewModel {
         this.currentDataByDomain = ko.observableArray([]);
         this.isLoading = ko.observable(true);
         this.selectedPage = ko.observable(null);
-
-        this.currentPageData = ko.observable({offenders: []});
+        this.searchBoxTerm = ko.observable('');
+        this.copy = this.availableMetrics();
+        this.currentPageData = ko.observable({offenders: [], screen: ''});
 
         var socket = io.connect(this.host());
 
@@ -81,8 +83,35 @@ class viewModel {
 
         this.count = 0;
 
-        this.selectedHistory.subscribe(() => {
 
+
+
+
+
+
+
+
+        this.searchBoxTerm.subscribe(() => {
+
+            if (this.searchBoxTerm() != '') {
+                this.availableMetrics(this.copy);
+                var matches = _.filter(this.availableMetrics(), (item) => {return _.contains(item.toLowerCase(), this.searchBoxTerm().toLowerCase()) });
+                this.availableMetrics(matches);
+            }
+
+            else {
+                this.availableMetrics(this.copy);
+            }
+
+        });
+
+
+
+
+
+
+
+        this.selectedHistory.subscribe(() => {
 
             this.isLoading(true);
             if (!this.selectedHistory()) return;
@@ -201,6 +230,17 @@ class viewModel {
     }
 
 
+
+
+    clearList() {
+        this.urls.removeAll();
+        this.pushSettingsToServer();
+    }
+
+
+    getScreenshotPath() {
+        return this.currentPageData().screen.length ? 'screens/' + this.currentPageData().screen : ''
+    }
    schedule() {
        $.ajax({
            type: 'post',
@@ -539,6 +579,11 @@ class viewModel {
         })
 
     }
+
+
+    runThis = function(data){
+        alert(data.foo);
+    };
 
     static getValidDivId(url : string, cssClass : string, type  :string) {
         return url.replace(/\//g, '').replace(/\./g, '').replace(/\:/g, '') + cssClass.split('.')[1] + type;

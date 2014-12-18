@@ -31,11 +31,13 @@ html
                                .tab-content.metric-tabs.col-xs-12.no-margin(data-bind="attr: {'data-url': currentPageData().url}")#graph-wrapper
                                    .tab-pane.summary.active.graph.col-xs-12.no-margin
                                        div(data-bind="visible: $root.selectedMode() == 'timeline' || $root.selectedMode() == 'graph'").metric-selector.col-xs-2.no-margin
-                                           input(type='text', placeholder='search').metric-filter.top-buffer
-                                           select(data-bind= "options: $root.availableMetrics, selectedOptions: $root.selectedMetrics", size=30, multiple='true')
+                                           .row.clearfix.left-buffer
+                                               input(type='text', placeholder='search' data-bind="value: searchBoxTerm, valueUpdate: 'afterkeydown'").metric-filter.top-buffer
+                                           .row.clearfix.left-buffer
+                                               select(data-bind= "options: $root.availableMetrics, selectedOptions: $root.selectedMetrics", size=30, multiple='true')
 
                                        div(data-bind="visible: $root.selectedMode() == 'numbers'")#default-view
-                                           h1.text-center Result
+                                           h1(data-bind="text: 'Result for ' + $root.currentPageData().url").text-center
 
                                            table.table.table-hover.no-bg
                                                    tr
@@ -68,7 +70,7 @@ html
 
 
                                    .tab-pane.screenshot
-                                      img(data-bind="attr: {src: 'screens/' + $root.currentPageData().screen}")
+                                      img(data-bind="attr: {src: $root.getScreenshotPath()}")
 
 
                    .loader(data-bind="visible: isLoading()")

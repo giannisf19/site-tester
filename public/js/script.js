@@ -132,10 +132,6 @@ $(function() {
 
 
 
-    $('.metric-filter').on('keyup', function(e,data) {
-       var box = $(e.target).siblings().eq(0);
-        $(box).filterByText(e.target)
-    });
 });
 
 
