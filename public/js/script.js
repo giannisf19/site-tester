@@ -32,6 +32,15 @@ $(function() {
 
 
 
+    $('.page-item').on('click', function() {
+        var $item = $(this);
+        var index = $item.attr('id').split('').pop();
+
+        $('.content' + 'index').slideToggle();
+    });
+
+
+
     $(document).on('click', '.url-page > a', function(e) {
         e.preventDefault();
 

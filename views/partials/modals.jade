@@ -1,0 +1,43 @@
+.modal.fade#deleteModal(aria-hidden = 'true')
+    .modal-dialog
+        .modal-content
+            .modal-header
+                h4.modal-title Delete histories
+            .modal-body
+                button.form-control.bottom-buffer.btn.btn-danger(data-bind="click: deleteDb, css: {disabled: !availableHistoryNames().length}") Delete all
+                ul(data-bind="foreach: availableHistoryNames")
+                    li
+                        span(data-bind="text: $data")
+                        span.btn.btn-default(data-bind="click: function() {$parent.deleteHistoryByName($data)}")
+                            i.fa.fa-trash-o.left-buffer
+
+
+.modal.fade#newPageModal(aria-hidden = 'true')
+    .modal-dialog
+        .modal-content
+            .modal-header
+                h4.modal-title New Page
+            .modal-body
+                    div(role='form')
+                        .form-group
+                            label(for='urlInput') Url
+                            input#urlInput.form-control(type='text', placeholder='http://example.com', data-bind="value: newItem().url, valueUpdate: 'afterkeydown'")
+                        | &#x9;&#x9;&#x9;&#x9;
+                        .checkbox
+                            label
+                                input(type='checkbox', data-bind="checked: newItem().screenshot, valueUpdate: 'afterkeydown'")
+                                |  Screenshot
+                        .checkbox
+                            label
+                                input(type='checkbox', data-bind="checked: newItem().active, valueUpdate: 'afterkeydown'")
+                                |  Active
+
+                        .row
+                            .col-lg-2
+                                button.btn.btn-default Save
+                                    //i.fa.fa-spinner.fa-spin.fa-2x
+
+
+
+
+

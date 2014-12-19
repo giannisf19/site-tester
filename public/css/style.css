@@ -121,9 +121,26 @@
 
 }
 
+.page-content {
+    display: none;
+}
 
+.page-item {
+    cursor: pointer;
+}
 
+.page-item:hover {
+    background-color: cyan;
+}
 
+.footer {
+    background-color: black;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    color: #ffffff;
+    padding: 10px 10px;
+}
 
 
 .top-buffer-4px {

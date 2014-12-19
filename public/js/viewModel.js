@@ -17,9 +17,7 @@ var viewModel = (function () {
 
         this.host = ko.observable('http://' + host);
         this.cron = ko.observable(settings.cron);
-        this.screenshot = ko.observable(settings.screenshot);
-        this.newItem = ko.observable('');
-        this.urls = ko.observableArray(settings.urls);
+        this.newItem = ko.observable(new SiteTesterTypes.SavePageModel({}));
         this.histories = ko.observableArray([]);
         this.isRunning = ko.observable(false);
         this.selectedHistory = ko.observable('');
@@ -35,14 +33,18 @@ var viewModel = (function () {
         this.searchBoxTerm = ko.observable('');
         this.copy = this.availableMetrics();
         this.currentPageData = ko.observable({ offenders: [], screen: '' });
+        this.urls = ko.observableArray([]);
 
         var socket = io.connect(this.host());
 
         // Get the history names
         this.getHistoryNames();
 
-        this.count = 0;
+        _.forEach(settings.urls, function (item) {
+            _this.urls.push(new SiteTesterTypes.SavePageModel(item));
+        });
 
+        this.count = 0;
         this.searchBoxTerm.subscribe(function () {
             if (_this.searchBoxTerm() != '') {
                 _this.availableMetrics(_this.copy);
@@ -131,8 +133,9 @@ var viewModel = (function () {
         });
 
         this.isValid = ko.computed(function () {
-            var pattern = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
-            return pattern.test(_this.newItem());
+            return true;
+            //var pattern = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+            //return pattern.test(this.newItem());
         });
 
         this.canRun = ko.computed(function () {
@@ -182,10 +185,14 @@ var viewModel = (function () {
     };
 
     viewModel.prototype.add = function () {
-        if (!_.contains(this.urls(), this.newItem())) {
+        var _this = this;
+        if (_.findIndex(this.urls(), function (item) {
+            return item.url == _this.newItem().url;
+        }) == -1) {
             this.urls.unshift(this.newItem());
-            this.newItem('');
-            this.pushSettingsToServer();
+            this.newItem();
+
+            // this.pushSettingsToServer();
             return;
         }
 
@@ -231,7 +238,7 @@ var viewModel = (function () {
     };
 
     viewModel.prototype.pushSettingsToServer = function () {
-        var data = ko.toJSON({ settings: { 'urls': this.urls(), 'screenshot': this.screenshot(), 'cron': this.cron() } });
+        var data = ko.toJSON({ settings: { 'urls': this.urls(), 'cron': this.cron() } });
         $.ajax({
             type: 'post',
             url: this.host() + '/api/saveSettings',

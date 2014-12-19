@@ -26,15 +26,14 @@ class viewModel {
 
     private host : KnockoutObservable<string>;
     private cron: KnockoutObservable<string>;
-    private newItem : KnockoutObservable<string>;
+    private newItem : KnockoutObservable<SiteTesterTypes.SavePageModel>;
     private screenshot: KnockoutObservable<boolean>;
-    private urls: KnockoutObservableArray<string>;
+    private urls: KnockoutObservableArray<SiteTesterTypes.SavePageModel>;
     private isRunning : KnockoutObservable<boolean>;
     private histories: KnockoutObservableArray<any>;
     private selectedHistory : KnockoutObservable<string>;
     private isValid : KnockoutComputed<boolean>;
     private canRun : KnockoutComputed<boolean>;
-    private socket : SocketIO.Socket;
     private count: number;
     private currentData : KnockoutObservable<any>;
     private selectedMode : KnockoutObservable<string>;
@@ -56,9 +55,7 @@ class viewModel {
 
         this.host = ko.observable('http://' + host);
         this.cron  = ko.observable(settings.cron);
-        this.screenshot = ko.observable(settings.screenshot);
-        this.newItem  = ko.observable('');
-        this.urls = ko.observableArray(settings.urls);
+        this.newItem  = ko.observable(new SiteTesterTypes.SavePageModel({}));
         this.histories = ko.observableArray([]);
         this.isRunning = ko.observable(false);
         this.selectedHistory = ko.observable('');
@@ -74,6 +71,7 @@ class viewModel {
         this.searchBoxTerm = ko.observable('');
         this.copy = this.availableMetrics();
         this.currentPageData = ko.observable({offenders: [], screen: ''});
+        this.urls = ko.observableArray([]);
 
         var socket = io.connect(this.host());
 
@@ -81,16 +79,16 @@ class viewModel {
         // Get the history names
         this.getHistoryNames();
 
+
+
+        _.forEach(settings.urls, (item)=>{
+            this.urls.push(new SiteTesterTypes.SavePageModel(item))
+        });
+
+
+
+
         this.count = 0;
-
-
-
-
-
-
-
-
-
         this.searchBoxTerm.subscribe(() => {
 
             if (this.searchBoxTerm() != '') {
@@ -195,8 +193,10 @@ class viewModel {
 
 
         this.isValid = ko.computed(() => {
-            var pattern = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
-            return pattern.test(this.newItem());
+
+            return true;
+            //var pattern = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+            //return pattern.test(this.newItem());
         });
 
 
@@ -258,11 +258,11 @@ class viewModel {
     }
 
     add()  {
-        if (! _.contains(this.urls(), this.newItem())) {
+        if ( _.findIndex(this.urls(), (item : SiteTesterTypes.SavePageModel) => {return item.url == this.newItem().url}) == -1) {
 
             this.urls.unshift(this.newItem());
-            this.newItem('');
-            this.pushSettingsToServer();
+            this.newItem();
+           // this.pushSettingsToServer();
             return;
         }
 
@@ -310,7 +310,7 @@ class viewModel {
 
      pushSettingsToServer() {
 
-        var data = ko.toJSON({settings :{'urls' : this.urls(), 'screenshot' : this.screenshot(), 'cron' : this.cron()}}) ;
+        var data = ko.toJSON({settings :{'urls' : this.urls(), 'cron' : this.cron()}}) ;
         $.ajax({
             type: 'post',
             url: this.host() + '/api/saveSettings',

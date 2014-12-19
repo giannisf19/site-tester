@@ -10,49 +10,46 @@ html
 
                 .col-md-4
                     h4 Pages
-                    form(role='form', id='main-input-box')
-                        div.input-group.bottom-buffer
-                            input(type='text', placeholder='http://example.com', name='item', data-bind="value: newItem, valueUpdate: 'afterkeydown'").form-control
-                            span.input-group-btn
-                                input(type='submit' value='Add' data-bind="click: add, enable: isValid()").btn.btn-primary
-                                input(type='submit' value='Clear' data-bind="click: clearList").btn.btn-danger
-
-
                         ol(data-bind="foreach: urls").list-group
-                            li.list-group-item
-                                span(data-bind="text: $data")
-                                button(data-bind="click: function() {$root.remove($data)}").btn-group.pull-right
-                                    i.glyphicon.glyphicon-trash
+                            li.list-group-item.page-item(data-bind="attr: {id: 'item' + $index()}")
+                                span(data-bind="text: $data.url").page-item-name
+                                span
+                                    i.fa.fa-arrow-down.pull-right
+                            div.page-content(data-bind="attr {id: 'content' + $index()}")
+                                div(role='form')
+                                    .form-group
+                                        label(for='urlInput') Url
+                                        input#urlInput.form-control(type='text', placeholder='http://example.com', data-bind="value: $data.url, valueUpdate: 'afterkeydown'")
+                                    | &#x9;&#x9;&#x9;&#x9;
+                                    .checkbox
+                                        label
+                                            input(type='checkbox', data-bind="checkbox: $data.screenshot, valueUpdate: 'afterkeydown'")
+                                            | Screenshot
+                                    .checkbox
+                                        label
+                                            input(type='checkbox', data-bind="checkbox: $data.active, valueUpdate: 'afterkeydown'")
+                                            | Active
+                                            .row
+                                        .col-lg-2
+                                            button.btn.btn-default Save
+                                                //i.fa.fa-spinner.fa-spin.fa-2x
+
+
+                        button(data-toggle="modal" ,data-target="#newPageModal").btn.btn-primary New page
 
 
 
                 .col-md-2
                     h4 Options
-                    .checkbox
-                        label
-                            input(type='checkbox', data-bind="checked: screenshot, click: pushSettingsToServer() ")#screenshot
-                            | Screenshot
-
 
                     span.display-block.left.bottom
                         button.btn.btn-info(data-toggle='modal', data-target='#deleteModal') Configure critical errors
 
                     span.display-block.left.bottom
                         button.btn.btn-info.top-buffer-4px(data-toggle='modal', data-target='#deleteModal') Histories
-                        .modal.fade#deleteModal(aria-hidden = 'true')
-                            .modal-dialog
-                                .modal-content
-                                    .modal-header
-                                        h4.modal-title Delete histories
-                                    .modal-body
-                                        button.form-control.bottom-buffer.btn.btn-danger(data-bind="click: deleteDb, css: {disabled: !availableHistoryNames().length}") Delete all
-                                        ul(data-bind="foreach: availableHistoryNames")
-                                            li
-                                                span(data-bind="text: $data")
-                                                span.btn.btn-default(data-bind="click: function() {$parent.deleteHistoryByName($data)}")
-                                                    i.fa.fa-trash-o.left-buffer
 
 
+                    include partials/modals
 
 
                 .col-md-6
