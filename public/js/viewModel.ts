@@ -55,13 +55,13 @@ class viewModel {
 
         this.host = ko.observable('http://' + host);
         this.cron  = ko.observable(settings.cron);
-        this.newItem  = ko.observable(new SiteTesterTypes.SavePageModel({}));
+        this.newItem  = ko.observable(new SiteTesterTypes.SavePageModel(settings.urls[0]));
         this.histories = ko.observableArray([]);
         this.isRunning = ko.observable(false);
         this.selectedHistory = ko.observable('');
         this.currentData = ko.observable({});
         this.selectedMode = ko.observable('numbers');
-        this.availableMetrics  = ko.observableArray([]);
+        this.availableMetrics  = ko.observableArray([]);$
         this.selectedMetrics = ko.observableArray([]);
         this.scheduled = ko.observable(false);
         this.criticalErrors = ko.observableArray(['jsErrors', 'notFound']);
@@ -70,7 +70,7 @@ class viewModel {
         this.selectedPage = ko.observable(null);
         this.searchBoxTerm = ko.observable('');
         this.copy = this.availableMetrics();
-        this.currentPageData = ko.observable({offenders: [], screen: ''});
+        this.currentPageData = ko.observable({offenders: [], screen: '', url: {url: ''}});
         this.urls = ko.observableArray([]);
 
         var socket = io.connect(this.host());
@@ -81,8 +81,11 @@ class viewModel {
 
 
 
-        _.forEach(settings.urls, (item)=>{
-            this.urls.push(new SiteTesterTypes.SavePageModel(item))
+        _.forEach(settings.urls, (item : string)=>{
+
+            if (_.findIndex(this.urls(), (nn) => {return nn.url() == item}) == -1) {
+                this.urls.push(new SiteTesterTypes.SavePageModel(item))
+            }
         });
 
 
@@ -136,7 +139,7 @@ class viewModel {
 
 
         this.selectedPage.subscribe((item) => {
-            this.currentPageData(_.find(this.currentData().data, (it : any) => {return it.url == this.selectedPage()}))
+            this.currentPageData(_.find(this.currentData().data, (it : any) => {return it.url.url == this.selectedPage()}))
         });
 
         this.selectedMode.subscribe((mode) => {
@@ -157,7 +160,6 @@ class viewModel {
 
             }
 
-
             if (mode == 'graph') {
                 this.selectedMetrics.subscribe(() => {
                     this.makeGraph();
@@ -174,7 +176,7 @@ class viewModel {
 
            _.forEach(this.currentData().data, (item : SiteTesterTypes.TestInstance) => {
 
-               var host = parseUri(item.getData().url).host;
+               var host = parseUri(item.getData().url.url).host;
 
                 if (! _.contains(domains, host))  {
                     domains.push(host);
@@ -194,9 +196,8 @@ class viewModel {
 
         this.isValid = ko.computed(() => {
 
-            return true;
-            //var pattern = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
-            //return pattern.test(this.newItem());
+            var pattern = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+            return pattern.test(this.newItem().url());
         });
 
 
@@ -221,11 +222,17 @@ class viewModel {
             $('#cron').cron({
                 initial: this.cron(),
                 onChange:  () =>{
-                    this.cron($('#cron').cron('value'));
-                    this.pushSettingsToServer();
-
+                    if (this.cron() != $('#cron').cron('value')) {
+                        this.cron($('#cron').cron('value'));
+                        this.pushSettingsToServer();
+                    }
                 },
-                useGentleSelect: true
+                useGentleSelect: true,
+                customValues: {
+                    'Every 10 minutes': '0 0/10 * 1/1 * ? *'
+                }
+
+
             });
     }
 
@@ -250,19 +257,20 @@ class viewModel {
        });
    }
 
-    stopScheduler() {
+    stopScheduler = () => {
         $.ajax({
             type: 'post',
             url: this.host() + '/api/stopSchedule'
         });
-    }
+    };
 
-    add()  {
-        if ( _.findIndex(this.urls(), (item : SiteTesterTypes.SavePageModel) => {return item.url == this.newItem().url}) == -1) {
+    add = () =>  {
+
+        if ( _.findIndex(this.urls(), (item : SiteTesterTypes.SavePageModel) => {return item.url() == this.newItem().url()}) == -1) {
 
             this.urls.unshift(this.newItem());
-            this.newItem();
-           // this.pushSettingsToServer();
+            this.newItem(new SiteTesterTypes.SavePageModel({}));
+            this.pushSettingsToServer();
             return;
         }
 
@@ -270,7 +278,7 @@ class viewModel {
         viewModel.shakeForm();
         this.count++
 
-    }
+    };
 
     remove(item) {
         this.urls.remove(item);
@@ -304,11 +312,11 @@ class viewModel {
      static shakeForm() {
         var l = 20;
         for( var i = 0; i < 10; i++ )
-            $( "form > div > input").eq(0).animate( { 'margin-left': "+=" + ( l = -l ) + 'px' }, 30);
+            $( "#newPageModal").eq(0).animate( { 'margin-left': "+=" + ( l = -l ) + 'px' }, 30);
     }
 
 
-     pushSettingsToServer() {
+     pushSettingsToServer = () => {
 
         var data = ko.toJSON({settings :{'urls' : this.urls(), 'cron' : this.cron()}}) ;
         $.ajax({
@@ -318,7 +326,7 @@ class viewModel {
             data: data
 
         });
-     }
+     };
 
     addToHistories(name: string) {
         var data = ko.toJSON({ 'name': name.trim() });
@@ -373,7 +381,7 @@ class viewModel {
         _.forEach(this.currentData().data, (current : SiteTesterTypes.TestInstance)=> {
 
 
-            if (current.getData().url == getSelectedPage()) {
+            if (current.getData().url.url == getSelectedPage()) {
 
                 var cssClass = '.graph';
                 var divId = 'graph-wrapper1timeline'//viewModel.getValidDivId(current.getData().url, cssClass, 'timeline');
@@ -405,7 +413,7 @@ class viewModel {
                     graphDates.push(history.getDate());
 
                     _.forEach(history.getTests(), (item) => {
-                        if (item.getData().url == current.getData().url) { // Is this the current url ?
+                        if (item.getData().url.url == current.getData().url.url) { // Is this the current url ?
 
                             _.forEach(this.selectedMetrics(), (metric) => { // Collect data for selected metrics
 
@@ -436,7 +444,7 @@ class viewModel {
                 $(divSelector).find('.graphContainer').highcharts({
 
                     title: {
-                        text: current.getData().url
+                        text: current.getData().url.url
                     },
 
                     chart: {
@@ -470,7 +478,7 @@ class viewModel {
         this.isLoading(true);
         _.forEach(this.currentData().data, (testInstance : SiteTesterTypes.TestInstance) => {
 
-            if (testInstance.getData().url == getSelectedPage()) {
+            if (testInstance.getData().url.url == getSelectedPage()) {
 
 
                 var cssClass = '.graph';
@@ -517,7 +525,7 @@ class viewModel {
                 $(divSelector).find('.graphContainer').highcharts({
 
                     title: {
-                        text: testInstance.getData().url
+                        text: testInstance.getData().url.url
                     },
 
                     chart: {

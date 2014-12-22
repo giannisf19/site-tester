@@ -19,7 +19,7 @@ html
                                            span Open or Close
                                        article.ac-small(data-bind="foreach: $data.tests")
                                               span.url-page(data-bind="css: {'selected-page': ($index() == 0) && ($parentContext.$index() == 0)}, updatePage: $root.selectedPage() ")
-                                                  a(data-toggle='tab' , data-bind= "text: $data.url, attr: {href: '#' + $root.makeValidIdFromUrl($data.url)  }")
+                                                  a(data-toggle='tab' , data-bind= "text: $data.url.url, attr: {href: '#' + $root.makeValidIdFromUrl($data.url.url)  }")
                                   // /ko
                    .col-xs-9
                        .row.clearfix
@@ -37,7 +37,7 @@ html
                                                select(data-bind= "options: $root.availableMetrics, selectedOptions: $root.selectedMetrics", size=30, multiple='true')
 
                                        div(data-bind="visible: $root.selectedMode() == 'numbers'")#default-view
-                                           h1(data-bind="text: 'Result for ' + $root.currentPageData().url").text-center
+                                           h1(data-bind="text: 'Result for ' + $root.currentPageData().url.url").text-center
 
                                            table.table.table-hover.no-bg
                                                    tr
@@ -51,9 +51,9 @@ html
                                                         td(data-bind= "text: $data.name")
                                                         td(data-bind= "text: $data.values.length")
                                                         td
-                                                            a(data-bind="attr: {'data-target': ('#' + ($root.makeValidIdFromUrl($root.currentPageData().url) + $index())) }", data-toggle="modal", href="#")
+                                                            a(data-bind="attr: {'data-target': ('#' + ($root.makeValidIdFromUrl($root.currentPageData().url.url) + $index())) }", data-toggle="modal", href="#")
                                                                 i.fa.fa-info.fa-2x
-                                                            .modal.fade(data-bind="attr: {id:  ($root.makeValidIdFromUrl($root.currentPageData().url) + $index()) }", role="dialog", aria-hidden='true')
+                                                            .modal.fade(data-bind="attr: {id:  ($root.makeValidIdFromUrl($root.currentPageData().url.url) + $index()) }", role="dialog", aria-hidden='true')
                                                                 .modal-dialog
                                                                     .modal-content
                                                                         .modal-header

@@ -61,7 +61,7 @@ module SiteTesterTypes {
     export class TestInstance {
         private offenders  : any;
         private metrics : any;
-        private url : string;
+        private url : any;
         private screen : string;
 
         constructor(offenders, metrics, url, screen) {
@@ -84,9 +84,11 @@ module SiteTesterTypes {
          public active : KnockoutObservable<boolean>;
 
          constructor(data : any) {
+
+
              this.url = ko.observable(data.url);
-             this.screenshot =ko.observable(data.screenshot || false);
-             this.active = ko.observable(data.active || true);
+             this.screenshot =ko.observable(data.screenshot);
+             this.active = ko.observable(data.active);
          }
 
          canSave() {

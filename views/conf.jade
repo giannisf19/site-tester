@@ -21,18 +21,18 @@ html
                                         label(for='urlInput') Url
                                         input#urlInput.form-control(type='text', placeholder='http://example.com', data-bind="value: $data.url, valueUpdate: 'afterkeydown'")
                                     | &#x9;&#x9;&#x9;&#x9;
-                                    .checkbox
-                                        label
-                                            input(type='checkbox', data-bind="checkbox: $data.screenshot, valueUpdate: 'afterkeydown'")
-                                            | Screenshot
-                                    .checkbox
-                                        label
-                                            input(type='checkbox', data-bind="checkbox: $data.active, valueUpdate: 'afterkeydown'")
-                                            | Active
-                                            .row
-                                        .col-lg-2
-                                            button.btn.btn-default Save
-                                                //i.fa.fa-spinner.fa-spin.fa-2x
+
+                                    label
+                                        input(type='checkbox', data-bind="checked: $data.screenshot, valueUpdate: 'afterkeydown'")
+                                        | Screenshot
+
+                                    label
+                                        input(type='checkbox', data-bind="checked: $data.active, valueUpdate: 'afterkeydown'")
+                                        | Active
+                                        .row
+                                    .col-lg-2
+                                        button.btn.btn-success(data-bind="click: $root.pushSettingsToServer") Save
+                                            //i.fa.fa-spinner.fa-spin.fa-2x
 
 
                         button(data-toggle="modal" ,data-target="#newPageModal").btn.btn-primary New page

@@ -51,8 +51,8 @@ var SiteTesterTypes;
     var SavePageModel = (function () {
         function SavePageModel(data) {
             this.url = ko.observable(data.url);
-            this.screenshot = ko.observable(data.screenshot || false);
-            this.active = ko.observable(data.active || true);
+            this.screenshot = ko.observable(data.screenshot);
+            this.active = ko.observable(data.active);
         }
         SavePageModel.prototype.canSave = function () {
             var pattern = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;

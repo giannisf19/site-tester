@@ -10,10 +10,14 @@ var express = require('express'),
     parser = require('./lib/parser'),
     _ = require('lodash');
 
+
 helper.Init();
 
 
-db = new Jsondb('./db/db.json', true, true);
+
+
+
+var db = new Jsondb('./db/db.json', true, true);
 
 var globalSocket = {};
 var testEngine = new engine();
@@ -37,7 +41,6 @@ app.get('/', function(req, res) {
     dates = [];
 
     app.locals.activePage = 'main';
-
 
 
     _.forEach(results, function(item){
@@ -68,6 +71,7 @@ app.get('/conf', function(req, res){
 
 
 app.post('/api/saveSettings', function(req,res){
+
     db.push('./settings', req.body.settings);
     res.send('Ok');
 });

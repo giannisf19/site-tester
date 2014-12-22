@@ -10,6 +10,38 @@ var viewModel = (function () {
     function viewModel(settings, host) {
         var _this = this;
         this.settings = settings;
+        this.stopScheduler = function () {
+            $.ajax({
+                type: 'post',
+                url: _this.host() + '/api/stopSchedule'
+            });
+        };
+        this.add = function () {
+            if (_.findIndex(_this.urls(), function (item) {
+                return item.url() == _this.newItem().url();
+            }) == -1) {
+                _this.urls.unshift(_this.newItem());
+                _this.newItem(new SiteTesterTypes.SavePageModel({}));
+                _this.pushSettingsToServer();
+                return;
+            }
+
+            if (_this.count >= 1) {
+                toastr.error("Url already in list");
+                _this.count = -1;
+            }
+            viewModel.shakeForm();
+            _this.count++;
+        };
+        this.pushSettingsToServer = function () {
+            var data = ko.toJSON({ settings: { 'urls': _this.urls(), 'cron': _this.cron() } });
+            $.ajax({
+                type: 'post',
+                url: _this.host() + '/api/saveSettings',
+                contentType: 'application/json',
+                data: data
+            });
+        };
         this.runThis = function (data) {
             alert(data.foo);
         };
@@ -17,13 +49,14 @@ var viewModel = (function () {
 
         this.host = ko.observable('http://' + host);
         this.cron = ko.observable(settings.cron);
-        this.newItem = ko.observable(new SiteTesterTypes.SavePageModel({}));
+        this.newItem = ko.observable(new SiteTesterTypes.SavePageModel(settings.urls[0]));
         this.histories = ko.observableArray([]);
         this.isRunning = ko.observable(false);
         this.selectedHistory = ko.observable('');
         this.currentData = ko.observable({});
         this.selectedMode = ko.observable('numbers');
         this.availableMetrics = ko.observableArray([]);
+        $;
         this.selectedMetrics = ko.observableArray([]);
         this.scheduled = ko.observable(false);
         this.criticalErrors = ko.observableArray(['jsErrors', 'notFound']);
@@ -32,7 +65,7 @@ var viewModel = (function () {
         this.selectedPage = ko.observable(null);
         this.searchBoxTerm = ko.observable('');
         this.copy = this.availableMetrics();
-        this.currentPageData = ko.observable({ offenders: [], screen: '' });
+        this.currentPageData = ko.observable({ offenders: [], screen: '', url: { url: '' } });
         this.urls = ko.observableArray([]);
 
         var socket = io.connect(this.host());
@@ -41,7 +74,11 @@ var viewModel = (function () {
         this.getHistoryNames();
 
         _.forEach(settings.urls, function (item) {
-            _this.urls.push(new SiteTesterTypes.SavePageModel(item));
+            if (_.findIndex(_this.urls(), function (nn) {
+                return nn.url() == item;
+            }) == -1) {
+                _this.urls.push(new SiteTesterTypes.SavePageModel(item));
+            }
         });
 
         this.count = 0;
@@ -84,7 +121,7 @@ var viewModel = (function () {
 
         this.selectedPage.subscribe(function (item) {
             _this.currentPageData(_.find(_this.currentData().data, function (it) {
-                return it.url == _this.selectedPage();
+                return it.url.url == _this.selectedPage();
             }));
         });
 
@@ -115,7 +152,7 @@ var viewModel = (function () {
             var toAdd = [];
 
             _.forEach(_this.currentData().data, function (item) {
-                var host = parseUri(item.getData().url).host;
+                var host = parseUri(item.getData().url.url).host;
 
                 if (!_.contains(domains, host)) {
                     domains.push(host);
@@ -133,9 +170,8 @@ var viewModel = (function () {
         });
 
         this.isValid = ko.computed(function () {
-            return true;
-            //var pattern = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
-            //return pattern.test(this.newItem());
+            var pattern = /^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+            return pattern.test(_this.newItem().url());
         });
 
         this.canRun = ko.computed(function () {
@@ -154,10 +190,15 @@ var viewModel = (function () {
             $('#cron').cron({
                 initial: this.cron(),
                 onChange: function () {
-                    _this.cron($('#cron').cron('value'));
-                    _this.pushSettingsToServer();
+                    if (_this.cron() != $('#cron').cron('value')) {
+                        _this.cron($('#cron').cron('value'));
+                        _this.pushSettingsToServer();
+                    }
                 },
-                useGentleSelect: true
+                useGentleSelect: true,
+                customValues: {
+                    'Every 10 minutes': '0 0/10 * 1/1 * ? *'
+                }
             });
     }
     viewModel.prototype.clearList = function () {
@@ -175,33 +216,6 @@ var viewModel = (function () {
             contentType: 'application/json',
             url: this.host() + '/api/schedule'
         });
-    };
-
-    viewModel.prototype.stopScheduler = function () {
-        $.ajax({
-            type: 'post',
-            url: this.host() + '/api/stopSchedule'
-        });
-    };
-
-    viewModel.prototype.add = function () {
-        var _this = this;
-        if (_.findIndex(this.urls(), function (item) {
-            return item.url == _this.newItem().url;
-        }) == -1) {
-            this.urls.unshift(this.newItem());
-            this.newItem();
-
-            // this.pushSettingsToServer();
-            return;
-        }
-
-        if (this.count >= 1) {
-            toastr.error("Url already in list");
-            this.count = -1;
-        }
-        viewModel.shakeForm();
-        this.count++;
     };
 
     viewModel.prototype.remove = function (item) {
@@ -234,17 +248,7 @@ var viewModel = (function () {
     viewModel.shakeForm = function () {
         var l = 20;
         for (var i = 0; i < 10; i++)
-            $("form > div > input").eq(0).animate({ 'margin-left': "+=" + (l = -l) + 'px' }, 30);
-    };
-
-    viewModel.prototype.pushSettingsToServer = function () {
-        var data = ko.toJSON({ settings: { 'urls': this.urls(), 'cron': this.cron() } });
-        $.ajax({
-            type: 'post',
-            url: this.host() + '/api/saveSettings',
-            contentType: 'application/json',
-            data: data
-        });
+            $("#newPageModal").eq(0).animate({ 'margin-left': "+=" + (l = -l) + 'px' }, 30);
     };
 
     viewModel.prototype.addToHistories = function (name) {
@@ -292,7 +296,7 @@ var viewModel = (function () {
         var graphWidth = 0;
 
         _.forEach(this.currentData().data, function (current) {
-            if (current.getData().url == getSelectedPage()) {
+            if (current.getData().url.url == getSelectedPage()) {
                 var cssClass = '.graph';
                 var divId = 'graph-wrapper1timeline';
                 var divSelector = '#' + divId;
@@ -317,7 +321,7 @@ var viewModel = (function () {
                     graphDates.push(history.getDate());
 
                     _.forEach(history.getTests(), function (item) {
-                        if (item.getData().url == current.getData().url) {
+                        if (item.getData().url.url == current.getData().url.url) {
                             _.forEach(_this.selectedMetrics(), function (metric) {
                                 var temp = item.getData().offenders[metric];
                                 metricData = temp ? temp.length : 0;
@@ -337,7 +341,7 @@ var viewModel = (function () {
 
                 $(divSelector).find('.graphContainer').highcharts({
                     title: {
-                        text: current.getData().url
+                        text: current.getData().url.url
                     },
                     chart: {
                         width: graphWidth
@@ -364,7 +368,7 @@ var viewModel = (function () {
         var _this = this;
         this.isLoading(true);
         _.forEach(this.currentData().data, function (testInstance) {
-            if (testInstance.getData().url == getSelectedPage()) {
+            if (testInstance.getData().url.url == getSelectedPage()) {
                 var cssClass = '.graph';
                 var divId = 'graph-wrapper1';
                 var divSelector = '#' + divId;
@@ -397,7 +401,7 @@ var viewModel = (function () {
 
                 $(divSelector).find('.graphContainer').highcharts({
                     title: {
-                        text: testInstance.getData().url
+                        text: testInstance.getData().url.url
                     },
                     chart: {
                         width: 1112,
