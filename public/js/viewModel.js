@@ -21,7 +21,7 @@ var viewModel = (function () {
                 return item.url() == _this.newItem().url();
             }) == -1) {
                 _this.urls.unshift(_this.newItem());
-                _this.newItem(new SiteTesterTypes.SavePageModel({}));
+                _this.newItem(new SiteTesterTypes.SavePageModel(null));
                 _this.pushSettingsToServer();
                 return;
             }
@@ -49,7 +49,7 @@ var viewModel = (function () {
 
         this.host = ko.observable('http://' + host);
         this.cron = ko.observable(settings.cron);
-        this.newItem = ko.observable(new SiteTesterTypes.SavePageModel(settings.urls[0]));
+        this.newItem = ko.observable(new SiteTesterTypes.SavePageModel(null));
         this.histories = ko.observableArray([]);
         this.isRunning = ko.observable(false);
         this.selectedHistory = ko.observable('');
@@ -197,7 +197,7 @@ var viewModel = (function () {
                 },
                 useGentleSelect: true,
                 customValues: {
-                    'Every 10 minutes': '0 0/10 * 1/1 * ? *'
+                    '10 minutes': '*/10 * * * *'
                 }
             });
     }
@@ -219,7 +219,11 @@ var viewModel = (function () {
     };
 
     viewModel.prototype.remove = function (item) {
-        this.urls.remove(item);
+        var index = _.findIndex(this.urls(), function (it) {
+            return it.url == item.url;
+        });
+        this.urls().splice(index, 1);
+        this.urls(this.urls());
         this.pushSettingsToServer();
     };
 

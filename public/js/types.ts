@@ -86,9 +86,9 @@ module SiteTesterTypes {
          constructor(data : any) {
 
 
-             this.url = ko.observable(data.url);
-             this.screenshot =ko.observable(data.screenshot);
-             this.active = ko.observable(data.active);
+             this.url = ko.observable(data ? data.url : '');
+             this.screenshot =ko.observable(data ? data.screenshot : false);
+             this.active = ko.observable(data ? data.active: true);
          }
 
          canSave() {

@@ -28,10 +28,25 @@ ko.bindingHandlers.updatePage = {
 $(function() {
 
 
-    $('.page-item').on('click', function() {
+    $(document.body).on('click', '.page-item',  function() {
         var $item = $(this);
         var index = $item.attr('id').split('').pop();
         $('#content' + index).slideToggle();
+
+        var downArrowClass = 'fa fa-arrow-down';
+        var upArrowClass = 'fa fa-arrow-up';
+
+        var arrow = $($item).find('span').eq(1).find('i');
+
+        if (arrow.hasClass(downArrowClass)) {
+            arrow.removeClass(downArrowClass);
+            arrow.addClass(upArrowClass);
+        }
+
+        else {
+            arrow.removeClass(upArrowClass);
+            arrow.addClass(downArrowClass)
+        }
     });
 
 

@@ -55,7 +55,7 @@ class viewModel {
 
         this.host = ko.observable('http://' + host);
         this.cron  = ko.observable(settings.cron);
-        this.newItem  = ko.observable(new SiteTesterTypes.SavePageModel(settings.urls[0]));
+        this.newItem  = ko.observable(new SiteTesterTypes.SavePageModel(null));
         this.histories = ko.observableArray([]);
         this.isRunning = ko.observable(false);
         this.selectedHistory = ko.observable('');
@@ -229,7 +229,7 @@ class viewModel {
                 },
                 useGentleSelect: true,
                 customValues: {
-                    'Every 10 minutes': '0 0/10 * 1/1 * ? *'
+                    '10 minutes': '*/10 * * * *'
                 }
 
 
@@ -269,7 +269,7 @@ class viewModel {
         if ( _.findIndex(this.urls(), (item : SiteTesterTypes.SavePageModel) => {return item.url() == this.newItem().url()}) == -1) {
 
             this.urls.unshift(this.newItem());
-            this.newItem(new SiteTesterTypes.SavePageModel({}));
+            this.newItem(new SiteTesterTypes.SavePageModel(null));
             this.pushSettingsToServer();
             return;
         }
@@ -281,7 +281,10 @@ class viewModel {
     };
 
     remove(item) {
-        this.urls.remove(item);
+
+        var index = _.findIndex(this.urls(), (it) => {return it.url == item.url});
+        this.urls().splice(index, 1);
+        this.urls(this.urls());
         this.pushSettingsToServer();
 
     }

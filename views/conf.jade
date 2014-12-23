@@ -19,7 +19,7 @@ html
                                 div(role='form')
                                     .form-group
                                         label(for='urlInput') Url
-                                        input#urlInput.form-control(type='text', placeholder='http://example.com', data-bind="value: $data.url, valueUpdate: 'afterkeydown'")
+                                        input#urlInput.form-control(type='text' tabindex=-1 ,placeholder='http://example.com', data-bind="value: $data.url, valueUpdate: 'afterkeydown'")
                                     | &#x9;&#x9;&#x9;&#x9;
 
                                     label
@@ -30,9 +30,10 @@ html
                                         input(type='checkbox', data-bind="checked: $data.active, valueUpdate: 'afterkeydown'")
                                         | Active
                                         .row
-                                    .col-lg-2
-                                        button.btn.btn-success(data-bind="click: $root.pushSettingsToServer") Save
-                                            //i.fa.fa-spinner.fa-spin.fa-2x
+
+                                    button.btn.btn-success(data-bind="click: $root.pushSettingsToServer") Save
+                                        //i.fa.fa-spinner.fa-spin.fa-2x
+                                    button.btn.btn-danger(data-bind="click: function() { $root.remove($data) }") Delete
 
 
                         button(data-toggle="modal" ,data-target="#newPageModal").btn.btn-primary New page
