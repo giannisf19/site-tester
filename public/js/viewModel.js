@@ -56,7 +56,6 @@ var viewModel = (function () {
         this.currentData = ko.observable({});
         this.selectedMode = ko.observable('numbers');
         this.availableMetrics = ko.observableArray([]);
-        $;
         this.selectedMetrics = ko.observableArray([]);
         this.scheduled = ko.observable(false);
         this.criticalErrors = ko.observableArray(['jsErrors', 'notFound']);
@@ -121,7 +120,7 @@ var viewModel = (function () {
 
         this.selectedPage.subscribe(function (item) {
             _this.currentPageData(_.find(_this.currentData().data, function (it) {
-                return it.url.url == _this.selectedPage();
+                return it.url == _this.selectedPage();
             }));
         });
 
@@ -146,13 +145,12 @@ var viewModel = (function () {
         });
 
         this.currentData.subscribe(function () {
-            _this.isLoading(true);
-
+            $('.loader').css('display', 'blick');
             var domains = [];
             var toAdd = [];
 
             _.forEach(_this.currentData().data, function (item) {
-                var host = parseUri(item.getData().url.url).host;
+                var host = parseUri(item.getData().url).host;
 
                 if (!_.contains(domains, host)) {
                     domains.push(host);
@@ -166,7 +164,6 @@ var viewModel = (function () {
             });
 
             _this.currentDataByDomain(toAdd);
-            _this.isLoading(false);
         });
 
         this.isValid = ko.computed(function () {
@@ -274,11 +271,13 @@ var viewModel = (function () {
                 data: data,
                 success: function (result, status) {
                     var toAdd = [];
+                    result = JSON.parse(result).data;
 
-                    _.forEach(result[name], function (test) {
-                        if (test.result) {
-                            var offenders = test.result.offenders || {};
-                            var metrics = test.result.metrics || {};
+                    _.forEach(result, function (test) {
+                        if (test) {
+                            var data = JSON.parse(test.result);
+                            var offenders = data.offenders || {};
+                            var metrics = data.metrics || {};
 
                             toAdd.push(new SiteTesterTypes.TestInstance(offenders, metrics, test.url, test.screen.split('/').pop()));
                         }
@@ -300,7 +299,7 @@ var viewModel = (function () {
         var graphWidth = 0;
 
         _.forEach(this.currentData().data, function (current) {
-            if (current.getData().url.url == getSelectedPage()) {
+            if (current.getData().url == getSelectedPage()) {
                 var cssClass = '.graph';
                 var divId = 'graph-wrapper1timeline';
                 var divSelector = '#' + divId;
@@ -325,7 +324,7 @@ var viewModel = (function () {
                     graphDates.push(history.getDate());
 
                     _.forEach(history.getTests(), function (item) {
-                        if (item.getData().url.url == current.getData().url.url) {
+                        if (item.getData().url == current.getData().url) {
                             _.forEach(_this.selectedMetrics(), function (metric) {
                                 var temp = item.getData().offenders[metric];
                                 metricData = temp ? temp.length : 0;
@@ -345,7 +344,7 @@ var viewModel = (function () {
 
                 $(divSelector).find('.graphContainer').highcharts({
                     title: {
-                        text: current.getData().url.url
+                        text: current.getData().url
                     },
                     chart: {
                         width: graphWidth
@@ -372,7 +371,7 @@ var viewModel = (function () {
         var _this = this;
         this.isLoading(true);
         _.forEach(this.currentData().data, function (testInstance) {
-            if (testInstance.getData().url.url == getSelectedPage()) {
+            if (testInstance.getData().url == getSelectedPage()) {
                 var cssClass = '.graph';
                 var divId = 'graph-wrapper1';
                 var divSelector = '#' + divId;
@@ -405,7 +404,7 @@ var viewModel = (function () {
 
                 $(divSelector).find('.graphContainer').highcharts({
                     title: {
-                        text: testInstance.getData().url.url
+                        text: testInstance.getData().url
                     },
                     chart: {
                         width: 1112,

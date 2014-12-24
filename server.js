@@ -1,23 +1,22 @@
 var express = require('express'),
     app = new express(),
-    helper = require('./lib/helper'),
     server = require('http').Server(app),
     bodyParser = require('body-parser'),
     io = require('socket.io')(server),
     fs = require('fs'),
     engine = require('./lib/engine.js'),
     Jsondb  = require('node-json-db'),
-    parser = require('./lib/parser'),
     _ = require('lodash');
 
 
-helper.Init();
+var models = require('./models');
 
 
 
 
 
-var db = new Jsondb('./db/db.json', true, true);
+var config = new Jsondb('./config/config.json', true, true);
+
 
 var globalSocket = {};
 var testEngine = new engine();
@@ -35,36 +34,27 @@ app.locals.pretty = true;
 var dates = [];
 
 app.get('/', function(req, res) {
-    db.reload();
-    var results = db.getData('./history');
-    var urls = [];
-    dates = [];
 
     app.locals.activePage = 'main';
 
+    models.Result.findAll({attributes: ['url', 'date']}).then(function(result) {
 
-    _.forEach(results, function(item){
-        dates.unshift(Object.keys(item)[0]);
+        app.locals.urls = _.map(result, function(item) {return item.dataValues.url});
+        app.locals.dates = _.map(result, function(item) {return item.dataValues.date.replace(/"/g, '')}).reverse();
+        app.locals.settings = JSON.stringify(config.getData('./settings'));
+        app.locals.host = req.headers.host.toString();
+        res.render('index');
+
     });
 
-    _.forEach(results.pop(), function(item) {
-        _.forEach(item, function(current){
-            urls.unshift(current.url);
-        });
-    });
 
-    app.locals.urls = urls;
-    app.locals.dates = dates;
-    app.locals.settings = JSON.stringify(db.getData('./settings'));
-    app.locals.host = req.headers.host.toString();
-    res.render('index');
 });
 
 
 app.get('/conf', function(req, res){
-    db.reload();
+    config.reload();
     app.locals.activePage = 'conf';
-    app.locals.settings = JSON.stringify(db.getData('./settings'));
+    app.locals.settings = JSON.stringify(config.getData('./settings'));
     app.locals.host = req.headers.host.toString();
     res.render('conf');
 });
@@ -72,18 +62,17 @@ app.get('/conf', function(req, res){
 
 app.post('/api/saveSettings', function(req,res){
 
-    db.push('./settings', req.body.settings);
+    config.push('./settings', req.body.settings);
     res.send('Ok');
 });
 
 
 
 app.post('/api/runNow', function(req, res) {
-    testEngine.runNow();
+    testEngine.runNow(models, config.getData('/settings'));
 });
 
 app.post('/api/deleteDb', function(req,res) {
-    parser.ClearHistory();
     res.json(JSON.stringify({message: 'ok'}));
 });
 
@@ -106,8 +95,20 @@ app.post('/api/', function(req, res) {
 
 app.post('/api/GetHistoryByName', function(req, res) {
 
-    var data = parser.GetHistoryByName(req.body.name);
-     res.json(data);
+
+    models.Result.findAll({where: {date: '"' +req.body.name + '"'}}).then(function(result) {
+
+
+        if (result) {
+            var dataTosend = _.map(result, function(item) {obj ={}; return obj[item.dataValues.date.replace(/"/g)] = {screen: item.dataValues.screen,url: item.dataValues.url, result: item.dataValues.testResult}});
+            res.json(JSON.stringify({data: dataTosend}));
+        }
+
+        else {
+            res.json(JSON.stringify({error: 'error'}))
+        }
+
+    });
 
 });
 
@@ -139,7 +140,7 @@ io.on('connection', function(socket) {
 });
 
 
-
 server.listen(300, function() {
     console.log('Listening on port ' + server.address().port);
 });
+

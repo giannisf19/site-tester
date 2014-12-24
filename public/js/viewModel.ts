@@ -61,7 +61,7 @@ class viewModel {
         this.selectedHistory = ko.observable('');
         this.currentData = ko.observable({});
         this.selectedMode = ko.observable('numbers');
-        this.availableMetrics  = ko.observableArray([]);$
+        this.availableMetrics  = ko.observableArray([]);
         this.selectedMetrics = ko.observableArray([]);
         this.scheduled = ko.observable(false);
         this.criticalErrors = ko.observableArray(['jsErrors', 'notFound']);
@@ -139,7 +139,7 @@ class viewModel {
 
 
         this.selectedPage.subscribe((item) => {
-            this.currentPageData(_.find(this.currentData().data, (it : any) => {return it.url.url == this.selectedPage()}))
+            this.currentPageData(_.find(this.currentData().data, (it : any) => {return it.url == this.selectedPage()}))
         });
 
         this.selectedMode.subscribe((mode) => {
@@ -169,14 +169,14 @@ class viewModel {
 
         this.currentData.subscribe(() =>{
 
-            this.isLoading(true);
 
+            $('.loader').css('display', 'blick')
            var domains = [];
            var toAdd : SiteTesterTypes.DomainWithTests[] = [];
 
            _.forEach(this.currentData().data, (item : SiteTesterTypes.TestInstance) => {
 
-               var host = parseUri(item.getData().url.url).host;
+               var host = parseUri(item.getData().url).host;
 
                 if (! _.contains(domains, host))  {
                     domains.push(host);
@@ -190,7 +190,7 @@ class viewModel {
            });
 
            this.currentDataByDomain(toAdd);
-           this.isLoading(false);
+
         });
 
 
@@ -349,12 +349,17 @@ class viewModel {
                 success: (result, status) => {
 
                     var toAdd : SiteTesterTypes.TestInstance[] = [];
+                    result = JSON.parse(result).data;
 
-                    _.forEach(result[name], (test : any) => {
-                        if (test.result)
+
+
+
+                    _.forEach(result, (test : any) => {
+                        if (test)
                         {
-                            var offenders = test.result.offenders || {};
-                            var metrics = test.result.metrics || {};
+                            var data = JSON.parse(test.result);
+                            var offenders =data.offenders || {};
+                            var metrics = data.metrics || {};
 
                             toAdd.push(new SiteTesterTypes.TestInstance(offenders, metrics, test.url, test.screen.split('/').pop()));
                         }
@@ -384,7 +389,7 @@ class viewModel {
         _.forEach(this.currentData().data, (current : SiteTesterTypes.TestInstance)=> {
 
 
-            if (current.getData().url.url == getSelectedPage()) {
+            if (current.getData().url == getSelectedPage()) {
 
                 var cssClass = '.graph';
                 var divId = 'graph-wrapper1timeline'//viewModel.getValidDivId(current.getData().url, cssClass, 'timeline');
@@ -416,7 +421,7 @@ class viewModel {
                     graphDates.push(history.getDate());
 
                     _.forEach(history.getTests(), (item) => {
-                        if (item.getData().url.url == current.getData().url.url) { // Is this the current url ?
+                        if (item.getData().url == current.getData().url) { // Is this the current url ?
 
                             _.forEach(this.selectedMetrics(), (metric) => { // Collect data for selected metrics
 
@@ -447,7 +452,7 @@ class viewModel {
                 $(divSelector).find('.graphContainer').highcharts({
 
                     title: {
-                        text: current.getData().url.url
+                        text: current.getData().url
                     },
 
                     chart: {
@@ -481,11 +486,11 @@ class viewModel {
         this.isLoading(true);
         _.forEach(this.currentData().data, (testInstance : SiteTesterTypes.TestInstance) => {
 
-            if (testInstance.getData().url.url == getSelectedPage()) {
+            if (testInstance.getData().url == getSelectedPage()) {
 
 
                 var cssClass = '.graph';
-                var divId = 'graph-wrapper1'//viewModel.getValidDivId(testInstance.getData().url, cssClass, 'normal');
+                var divId = 'graph-wrapper1'
                 var divSelector = '#' + divId;
                 var containerDiv = "<div class='col-md-10 no-margin' id='" + divId + "'></div>";
                 var docSelector = $('#graph-wrapper')//"*[data-url='" + testInstance.getData().url + "']";
@@ -528,7 +533,7 @@ class viewModel {
                 $(divSelector).find('.graphContainer').highcharts({
 
                     title: {
-                        text: testInstance.getData().url.url
+                        text: testInstance.getData().url
                     },
 
                     chart: {
@@ -601,7 +606,6 @@ class viewModel {
     }
 
     makeValidIdFromUrl(url, index) {
-
         return url.replace(/\//g, '').replace(/\./g, '').replace(/\:/g, '');
 
     }
