@@ -51,19 +51,13 @@ html
                                                         td(data-bind= "text: $data.name")
                                                         td(data-bind= "text: $data.values.length")
                                                         td
-                                                            a(data-bind="attr: {'data-target': ('#' + ($root.makeValidIdFromUrl($root.currentPageData().url) + $index())) }", data-toggle="modal", href="#")
+                                                            a(data-bind="attr: {id: 'to' + $root.makeValidIdFromUrl($root.currentPageData().url + $index())}").show-details-btn
                                                                 i.fa.fa-info.fa-2x
-                                                            .modal.fade(data-bind="attr: {id:  ($root.makeValidIdFromUrl($root.currentPageData().url) + $index()) }", role="dialog", aria-hidden='true')
-                                                                .modal-dialog
-                                                                    .modal-content
-                                                                        .modal-header
-                                                                            h4.modal-title
-                                                                        .modal-body
-                                                                            ul
-                                                                                // ko foreach: $data.values
-                                                                                li
-                                                                                    span(data-bind="text: $data")
-                                                                                // /ko
+                                                            .div(data-bind="attr: {id: $root.makeValidIdFromUrl($root.currentPageData().url + $index())}").result-content-details
+                                                                ul(data-bind="foreach: $data.values")
+                                                                    li
+                                                                        span(data-bind="text: $data")
+
                                                      // /ko
 
 

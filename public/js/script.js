@@ -20,6 +20,7 @@ ko.bindingHandlers.updatePage = {
         });
 
 
+
     }
 
 };
@@ -27,6 +28,14 @@ ko.bindingHandlers.updatePage = {
 
 $(function() {
 
+
+
+    $(document.body).on('click', '.show-details-btn', function() {
+
+        var id = $(this).attr('id').replace('to', '');
+
+        $('#' + id).slideToggle()
+    });
 
     $(document.body).on('click', '.page-item',  function() {
         var $item = $(this);

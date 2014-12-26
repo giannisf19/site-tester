@@ -9,13 +9,23 @@
     "settings": {
         "urls": [
             {
+                "url": "http://greek-furs.com",
+                "screenshot": true,
+                "active": true
+            },
+            {
+                "url": "http://csr-air.com",
+                "screenshot": false,
+                "active": true
+            },
+            {
                 "url": "http://mzt.ru",
                 "screenshot": true,
                 "active": true
             },
             {
                 "url": "http://google.com",
-                "screenshot": false,
+                "screenshot": true,
                 "active": true
             },
             {
@@ -24,6 +34,6 @@
                 "active": true
             }
         ],
-        "cron": "* * * * *"
+        "cron": "*/10 * * * *"
     }
 }

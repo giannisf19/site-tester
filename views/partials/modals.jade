@@ -12,6 +12,22 @@
                             i.fa.fa-trash-o.left-buffer
 
 
+
+.modal.fade#criticalErrorsModal(aria-hidden = 'true')
+    .modal-dialog
+        .modal-content
+            .modal-header
+                h4.modal-title Critical errors
+            .modal-body
+                button.form-control.bottom-buffer.btn.btn-danger(data-bind="click: deleteDb, css: {disabled: !availableHistoryNames().length}") Delete all
+                ul(data-bind="foreach: criticalErrors")
+                    li
+                        span(data-bind="text: $data")
+                        span.btn.btn-default(data-bind="click: function() {$parent.deleteHistoryByName($data)}")
+                            i.fa.fa-trash-o.left-buffer
+
+
+
 .modal.fade#newPageModal(aria-hidden = 'true')
     .modal-dialog
         .modal-content

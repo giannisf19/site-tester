@@ -135,10 +135,13 @@ class viewModel {
 
                 this.currentData(data);
                 this.isLoading(false);
+
         });
 
 
         this.selectedPage.subscribe((item) => {
+            console.log('Current page data changed')
+
             this.currentPageData(_.find(this.currentData().data, (it : any) => {return it.url == this.selectedPage()}))
         });
 

@@ -119,6 +119,8 @@ var viewModel = (function () {
         });
 
         this.selectedPage.subscribe(function (item) {
+            console.log('Current page data changed');
+
             _this.currentPageData(_.find(_this.currentData().data, function (it) {
                 return it.url == _this.selectedPage();
             }));

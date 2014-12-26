@@ -37,16 +37,22 @@ app.get('/', function(req, res) {
 
     app.locals.activePage = 'main';
 
-    models.Result.findAll({attributes: ['url', 'date']}).then(function(result) {
+    models.sequelize.sync()
+        .then(function() {
+            models.Result.findAll({attributes: ['url', 'date']}).then(function (result) {
 
-        app.locals.urls = _.map(result, function(item) {return item.dataValues.url});
-        app.locals.dates = _.map(result, function(item) {return item.dataValues.date.replace(/"/g, '')}).reverse();
-        app.locals.settings = JSON.stringify(config.getData('./settings'));
-        app.locals.host = req.headers.host.toString();
-        res.render('index');
+                app.locals.urls = _.map(result, function (item) {
+                    return item.dataValues.url
+                });
+                app.locals.dates = _.unique(_.map(result, function(item) {return item.dataValues.date.replace(/"/g, '')}).reverse())
 
-    });
+                app.locals.settings = JSON.stringify(config.getData('./settings'));
+                app.locals.host = req.headers.host.toString();
+                res.render('index');
 
+            });
+
+        });
 
 });
 
@@ -61,7 +67,7 @@ app.get('/conf', function(req, res){
 
 
 app.post('/api/saveSettings', function(req,res){
-
+    config.reload();
     config.push('./settings', req.body.settings);
     res.send('Ok');
 });
@@ -69,17 +75,23 @@ app.post('/api/saveSettings', function(req,res){
 
 
 app.post('/api/runNow', function(req, res) {
-    testEngine.runNow(models, config.getData('/settings'));
+    testEngine.runNow(models, config);
 });
 
 app.post('/api/deleteDb', function(req,res) {
-    res.json(JSON.stringify({message: 'ok'}));
+    models.sequelize.query('delete from Results').then(function() {
+        res.send('ok')
+    })
 });
 
 
 
 app.post('/api/getHistoryNames', function(req, res) {
-    res.json(JSON.stringify(dates));
+    models.Result.findAll({attributes: ['url', 'date']}).then(function(result) {
+        var dates = _.unique(_.map(result, function(item) {return item.dataValues.date.replace(/"/g, '')}).reverse());
+
+        res.json(JSON.stringify(dates))
+    });
 });
 
 
@@ -114,7 +126,7 @@ app.post('/api/GetHistoryByName', function(req, res) {
 
 
 app.post('/api/schedule', function(req, res) {
-    testEngine.Schedule(req.body.cron)
+    testEngine.Schedule(req.body.cron, models,config)
 });
 
 
@@ -126,8 +138,19 @@ app.post('/api/stopSchedule', function(req, res) {
 
 app.post('/api/deleteHistoryByName', function(req, res) {
 
-    parser.DeleteHistoryByName(req.body.name);
-    res.json(JSON.stringify({message: 'ok'}))
+
+    if (req.body.name)
+    {
+        models.Result.findAll({where: {date: '"' +req.body.name + '"'}}).then(function(items) {
+            _.forEach(items, function(item) {
+                item.destroy();
+            });
+
+            res.send('ok');
+        });
+
+    }
+
 
 
 });

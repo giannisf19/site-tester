@@ -160,3 +160,12 @@
     padding-left: 6px;
     padding-right: 6px;
 }
+
+
+.result-content-details {
+    display: none;
+}
+
+.show-details-btn {
+    cursor: pointer;
+}
