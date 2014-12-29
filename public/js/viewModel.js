@@ -33,13 +33,26 @@ var viewModel = (function () {
             viewModel.shakeForm();
             _this.count++;
         };
+        this.addToCriticalErrors = function () {
+            _.forEach(_this.choosenMetricsToAdd(), function (item) {
+                _this.criticalErrors.push(item);
+            });
+
+            _this.pushSettingsToServer();
+        };
+        this.removeFromCriticalErrors = function (item) {
+            _this.criticalErrors.remove(item);
+            _this.pushSettingsToServer();
+        };
         this.pushSettingsToServer = function () {
-            var data = ko.toJSON({ settings: { 'urls': _this.urls(), 'cron': _this.cron() } });
+            var data = ko.toJSON({ settings: { 'urls': _this.urls(), 'cron': _this.cron(), 'criticalErrors': _this.criticalErrors() } });
             $.ajax({
                 type: 'post',
                 url: _this.host() + '/api/saveSettings',
                 contentType: 'application/json',
-                data: data
+                data: data,
+                success: function (data) {
+                }
             });
         };
         this.runThis = function (data) {
@@ -58,7 +71,7 @@ var viewModel = (function () {
         this.availableMetrics = ko.observableArray([]);
         this.selectedMetrics = ko.observableArray([]);
         this.scheduled = ko.observable(false);
-        this.criticalErrors = ko.observableArray(['jsErrors', 'notFound']);
+        this.criticalErrors = ko.observableArray(settings.criticalErrors);
         this.currentDataByDomain = ko.observableArray([]);
         this.isLoading = ko.observable(true);
         this.selectedPage = ko.observable(null);
@@ -66,6 +79,15 @@ var viewModel = (function () {
         this.copy = this.availableMetrics();
         this.currentPageData = ko.observable({ offenders: [], screen: '', url: { url: '' } });
         this.urls = ko.observableArray([]);
+        this.choosenMetricsToAdd = ko.observableArray([]);
+        this.fixedMetrics = ko.observableArray([
+            "gzipRequests", "htmlCount", "cssCount", "jsCount", "imageCount", "otherCount", "cacheHits", "cachingNotSpecified", "cachingTooShort",
+            "cachingDisabled", "oldCachingHeaders", "domainsWithCookies", "nodesWithInlineCSS", "imagesScaledDown", "imagesWithoutDimensions", "hiddenContentSize", "DOMqueriesById",
+            "DOMqueriesByClassName", "DOMqueriesByTagName", "DOMqueriesByQuerySelectorAll", "DOMinserts", "DOMqueriesDuplicated", "domains", "eventsBound", "globalVariables",
+            "globalVariablesFalsy", "headersBiggerThanContent", "localStorageEntries", "redirects", "assetsNotGzipped", "assetsWithQueryString", "assetsWithCookies",
+            "smallImages", "timeToFirstCss", "timeToFirstJs", "timeToFirstImage", "smallestResponse", "biggestResponse", "fastestResponse", "slowestResponse",
+            "smallestLatency", "biggestLatency", "webfontCount", "commentsSize", "postRequests", "httpsRequests", "ajaxRequests", "jsonCount",
+            "notFound", "DOMidDuplicated", "jsErrors"]);
 
         var socket = io.connect(this.host());
 

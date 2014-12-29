@@ -8,8 +8,8 @@
                 ul(data-bind="foreach: availableHistoryNames")
                     li
                         span(data-bind="text: $data")
-                        span.btn.btn-default(data-bind="click: function() {$parent.deleteHistoryByName($data)}")
-                            i.fa.fa-trash-o.left-buffer
+                        span.btn.btn-danger(data-bind="click: function() {$parent.deleteHistoryByName($data)}")
+                            i.fa.fa-trash-o
 
 
 
@@ -19,12 +19,28 @@
             .modal-header
                 h4.modal-title Critical errors
             .modal-body
-                button.form-control.bottom-buffer.btn.btn-danger(data-bind="click: deleteDb, css: {disabled: !availableHistoryNames().length}") Delete all
-                ul(data-bind="foreach: criticalErrors")
-                    li
-                        span(data-bind="text: $data")
-                        span.btn.btn-default(data-bind="click: function() {$parent.deleteHistoryByName($data)}")
-                            i.fa.fa-trash-o.left-buffer
+                .row
+                   .col-xs-5
+                       select(data-bind="options: _.difference(fixedMetrics(), criticalErrors()), selectedOptions: choosenMetricsToAdd" multiple='true', size='20')
+                   .col-xs-1
+                       .row
+                           .col-xs-12
+                               span.btn.btn-info(data-bind="click: addToCriticalErrors")
+                                    i.fa.fa-arrow-right.fa-2x
+                       .row.top-buffer
+                           .col-xs-12
+                               span.btn.btn-info(data-bind="click: function() {$root.criticalErrors.removeAll()}")
+                                   i.fa.fa-arrow-left.fa-2x
+
+                    .col-xs-6
+                        ul(data-bind="foreach: criticalErrors")
+                            li
+                                span.col-xs-9
+                                    span(data-bind="text: $data")
+                                span.col-xs-3
+                                    span.btn.btn-danger(data-bind="click: function() {$root.removeFromCriticalErrors($data)}")
+                                            i.fa.fa-trash-o
+
 
 
 

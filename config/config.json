@@ -15,12 +15,12 @@
             },
             {
                 "url": "http://csr-air.com",
-                "screenshot": false,
+                "screenshot": true,
                 "active": true
             },
             {
                 "url": "http://mzt.ru",
-                "screenshot": true,
+                "screenshot": false,
                 "active": true
             },
             {
@@ -34,6 +34,10 @@
                 "active": true
             }
         ],
-        "cron": "*/10 * * * *"
+        "cron": "* * * * *",
+        "criticalErrors": [
+            "jsErrors",
+            "notFound"
+        ]
     }
 }

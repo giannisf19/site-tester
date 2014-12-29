@@ -28,6 +28,7 @@ module SiteTesterTypes {
     export interface SiteTesterSettings {
         urls: SavePageModel[];
         cron : string;
+        criticalErrors : any[];
     }
 
 

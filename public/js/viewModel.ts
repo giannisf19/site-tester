@@ -48,6 +48,8 @@ class viewModel {
     private searchBoxTerm : KnockoutObservable<string>;
     private copy : Array<string>;
     private isLoading : KnockoutObservable<boolean>;
+    private fixedMetrics : KnockoutObservableArray<string>;
+    private choosenMetricsToAdd : KnockoutObservableArray<string>;
 
     constructor(private settings : SiteTesterTypes.SiteTesterSettings,  host : string) {
 
@@ -64,7 +66,7 @@ class viewModel {
         this.availableMetrics  = ko.observableArray([]);
         this.selectedMetrics = ko.observableArray([]);
         this.scheduled = ko.observable(false);
-        this.criticalErrors = ko.observableArray(['jsErrors', 'notFound']);
+        this.criticalErrors = ko.observableArray(settings.criticalErrors);
         this.currentDataByDomain = ko.observableArray([]);
         this.isLoading = ko.observable(true);
         this.selectedPage = ko.observable(null);
@@ -72,6 +74,14 @@ class viewModel {
         this.copy = this.availableMetrics();
         this.currentPageData = ko.observable({offenders: [], screen: '', url: {url: ''}});
         this.urls = ko.observableArray([]);
+        this.choosenMetricsToAdd = ko.observableArray([]);
+        this.fixedMetrics = ko.observableArray(["gzipRequests", "htmlCount", "cssCount", "jsCount", "imageCount", "otherCount", "cacheHits", "cachingNotSpecified", "cachingTooShort",
+            "cachingDisabled", "oldCachingHeaders", "domainsWithCookies", "nodesWithInlineCSS", "imagesScaledDown", "imagesWithoutDimensions", "hiddenContentSize", "DOMqueriesById",
+            "DOMqueriesByClassName", "DOMqueriesByTagName", "DOMqueriesByQuerySelectorAll", "DOMinserts", "DOMqueriesDuplicated", "domains", "eventsBound", "globalVariables",
+            "globalVariablesFalsy", "headersBiggerThanContent", "localStorageEntries", "redirects", "assetsNotGzipped", "assetsWithQueryString", "assetsWithCookies",
+            "smallImages", "timeToFirstCss", "timeToFirstJs", "timeToFirstImage", "smallestResponse", "biggestResponse", "fastestResponse", "slowestResponse",
+            "smallestLatency", "biggestLatency", "webfontCount", "commentsSize", "postRequests", "httpsRequests", "ajaxRequests", "jsonCount",
+            "notFound", "DOMidDuplicated", "jsErrors"]);
 
         var socket = io.connect(this.host());
 
@@ -107,11 +117,6 @@ class viewModel {
         });
 
 
-
-
-
-
-
         this.selectedHistory.subscribe(() => {
 
             this.isLoading(true);
@@ -129,9 +134,9 @@ class viewModel {
                             ko.utils.arrayPushAll(this.availableMetrics(), _.difference(arr, this.availableMetrics()));
 
                         });
-
                     }
                 });
+
 
                 this.currentData(data);
                 this.isLoading(false);
@@ -283,6 +288,24 @@ class viewModel {
 
     };
 
+
+    addToCriticalErrors = () => {
+
+           _.forEach(this.choosenMetricsToAdd(), (item) => {
+               this.criticalErrors.push(item);
+           });
+
+        this.pushSettingsToServer();
+
+    };
+
+    removeFromCriticalErrors = (item) => {
+        this.criticalErrors.remove(item);
+        this.pushSettingsToServer();
+    };
+
+
+
     remove(item) {
 
         var index = _.findIndex(this.urls(), (it) => {return it.url == item.url});
@@ -323,13 +346,15 @@ class viewModel {
 
 
      pushSettingsToServer = () => {
-
-        var data = ko.toJSON({settings :{'urls' : this.urls(), 'cron' : this.cron()}}) ;
+        var data = ko.toJSON({settings :{'urls' : this.urls(), 'cron' : this.cron(), 'criticalErrors' : this.criticalErrors()}}) ;
         $.ajax({
             type: 'post',
             url: this.host() + '/api/saveSettings',
             contentType: 'application/json',
-            data: data
+            data: data,
+            success: (data) => {
+
+            }
 
         });
      };

@@ -9,7 +9,7 @@ var express = require('express'),
     _ = require('lodash');
 
 
-var models = require('./models');
+
 
 
 
@@ -31,11 +31,16 @@ app.disable('x-powered-by');
 app.locals.pretty = true;
 
 
+var models = require('./models');
+
 var dates = [];
 
 app.get('/', function(req, res) {
 
     app.locals.activePage = 'main';
+
+
+
 
     models.sequelize.sync()
         .then(function() {
@@ -126,7 +131,9 @@ app.post('/api/GetHistoryByName', function(req, res) {
 
 
 app.post('/api/schedule', function(req, res) {
-    testEngine.Schedule(req.body.cron, models,config)
+
+    var models = require('./models');
+    testEngine.Schedule(req.body.cron, config,models)
 });
 
 
