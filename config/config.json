@@ -9,6 +9,11 @@
     "settings": {
         "urls": [
             {
+                "url": "http://mzt.ru/shuba",
+                "screenshot": false,
+                "active": true
+            },
+            {
                 "url": "http://greek-furs.com",
                 "screenshot": true,
                 "active": true
