@@ -4,6 +4,9 @@ html
         include partials/head
     body
         .container-fluid
+            .spinner(data-bind="visible: isLoading()")
+                .content
+                    i.fa.fa-spin.fa-spinner.fa-3x
             include partials/navbar
             h1.text-center Settings
             .row.clearfix.top-buffer-2x#settings

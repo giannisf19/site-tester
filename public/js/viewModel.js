@@ -45,6 +45,7 @@ var viewModel = (function () {
             _this.pushSettingsToServer();
         };
         this.pushSettingsToServer = function () {
+            _this.isLoading(true);
             var data = ko.toJSON({ settings: { 'urls': _this.urls(), 'cron': _this.cron(), 'criticalErrors': _this.criticalErrors() } });
             $.ajax({
                 type: 'post',
@@ -52,6 +53,10 @@ var viewModel = (function () {
                 contentType: 'application/json',
                 data: data,
                 success: function (data) {
+                    console.log(data);
+                    if (data.toLowerCase() == 'ok') {
+                        _this.isLoading(false);
+                    }
                 }
             });
         };

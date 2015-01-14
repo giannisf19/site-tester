@@ -73,8 +73,16 @@ app.get('/conf', function(req, res){
 
 app.post('/api/saveSettings', function(req,res){
     config.reload();
-    config.push('./settings', req.body.settings);
-    res.send('Ok');
+
+    try {
+        config.push('./settings', req.body.settings);
+        res.send('Ok');
+    }
+
+    catch (ex) {
+        res.send('error');
+    }
+
 });
 
 

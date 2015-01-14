@@ -346,6 +346,7 @@ class viewModel {
 
 
      pushSettingsToServer = () => {
+         this.isLoading(true);
         var data = ko.toJSON({settings :{'urls' : this.urls(), 'cron' : this.cron(), 'criticalErrors' : this.criticalErrors()}}) ;
         $.ajax({
             type: 'post',
@@ -353,7 +354,10 @@ class viewModel {
             contentType: 'application/json',
             data: data,
             success: (data) => {
-
+                console.log(data)
+                if (data.toLowerCase() == 'ok') {
+                    this.isLoading(false);
+                }
             }
 
         });
