@@ -4,7 +4,9 @@
         "username": "",
         "password": "",
         "dialect": "sqlite",
-        "storage": "./db/db.sqlite"
+        "storage": "./db/db.sqlite",
+        "logging": false
+
     },
     "settings": {
         "urls": [
